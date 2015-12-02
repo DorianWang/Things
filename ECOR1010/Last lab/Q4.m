@@ -14,13 +14,13 @@ end
 KmPer100L = zeros(sizeD(1,1), sizeD(1,2));
 
 for n = 1:sizeD(1,1)
-    KmPer100L(n, 1) = KmPer100L; distance(n, 1)/fuel(n, 1)*100;
+    KmPer100L(n, 1) = distance(n, 1)/fuel(n, 1) * 100;
 end
 
 MlPerG = zeros(sizeD(1,1), sizeD(1,2));
 
 for n = 1:sizeD(1,1)
-    MlPerG(n, 1) = KmPer100L(n, 1) * 2.35214583 / 100;
+    MlPerG(n, 1) = KmPer100L(n, 1) * KMpLToMpG / 100;
 end
 
 
