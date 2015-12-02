@@ -1,15 +1,26 @@
 function Q4 = y(distance, fuel)
 
-sizeD = size(distance)
+sizeD = size(distance);
 
-if (size(distance) ~= size(fuel) || sizeD(1, 2) ~= 1)
+KMpLToMpG = 2.35214583;
+
+if ((size(distance) ~= size(fuel)) | (sizeD(1, 2) ~= 1))
+    disp('Input is not the correct size.')
     return %error
 end
 
-KmPer100L = []
+'Things!'
+
+KmPer100L = zeros(sizeD(1,1), sizeD(1,2));
 
 for n = 1:sizeD(1,1)
-    KmPer100L = [KmPer100L; distance(n, 1)/fuel(n, 1)*100];
+    KmPer100L(n, 1) = KmPer100L; distance(n, 1)/fuel(n, 1)*100;
+end
+
+MlPerG = zeros(sizeD(1,1), sizeD(1,2));
+
+for n = 1:sizeD(1,1)
+    MlPerG(n, 1) = KmPer100L(n, 1) * 2.35214583 / 100;
 end
 
 
@@ -18,4 +29,14 @@ end
 
 
 
+
+
+
 end
+
+
+
+
+
+
+
