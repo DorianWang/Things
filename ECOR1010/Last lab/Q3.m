@@ -1,4 +1,9 @@
 
+h = figure;
+set(h,'name','Dorian Wang Matlab plot 1','numbertitle','off')
+
+
+
 
 for i = -40:0.1:20
     if (i >= 9.0)
@@ -8,9 +13,9 @@ for i = -40:0.1:20
     else
         plot(i, i*sin(i) + 38/11, '*'); hold on;
     end
-    
 end
 
 
-
-
+xlabel('x')
+ylabel('y')
+title('Dorian Wang Matlab plot of piecewise function')

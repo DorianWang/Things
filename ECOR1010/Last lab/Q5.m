@@ -4,7 +4,6 @@ if size(input) ~= size(1)
     return % Error
 end
 
-%hope this is enough
 inputLog = zeros(275, 1);
 count = 0;
 
@@ -22,11 +21,6 @@ revSeries = flipud(inputLog);
 revSeries = log10(revSeries);
 
 plot((1:275), revSeries, '*');
-
-
-
-
-
 
 end
 

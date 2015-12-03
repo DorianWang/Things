@@ -34,23 +34,8 @@ for n = 1:size(x)
 end
 
 disp('     x     y    xy^2')
-
 answ = [x, y, xy2];
-
 disp(answ)
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 end
 
