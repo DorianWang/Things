@@ -1,9 +1,14 @@
 #include "FileIO_C.h"
 
 
-unsigned int readFileText(FILE* file, char** outputLines, unsigned int numLines, int bufferSize){
+unsigned int readFileText(FILE* file, char** outputLines, unsigned int numLines, unsigned int bufferSize){
    int i = 0;
+   unsigned int bufferSetSize = 0;
+
+   *outputLines = (char**) malloc(sizeof(char*) * numLines);
+
    if (bufferSize != NULL){
+      bufferSetSize = bufferSize;
       char* a = (char*) malloc(sizeof(char) * numLines * bufferSize);
       if (a){
          for (i = 0; i < numLines; i++){
@@ -16,6 +21,7 @@ unsigned int readFileText(FILE* file, char** outputLines, unsigned int numLines,
       }
    }
    else{
+      bufferSetSize = DEFAULT_MAX_READ;
       char* a = malloc(sizeof(char) * numLines * DEFAULT_MAX_READ);
       if (a){
          for (i = 0; i < numLines; i++){
@@ -27,27 +33,32 @@ unsigned int readFileText(FILE* file, char** outputLines, unsigned int numLines,
          return 0; // Memory failure.
       }
    }
+
    i = 0;
    for (i = 0; i < numLines; i++){
          //TODO: Things from here.
-      char *fgets( char *buf, int n, FILE *fp );
+      char inputTest[bufferSetSize] = fgets( outputLines[i], bufferSetSize, file);
+      if (strcmp(inputTest, outputLines[i]) != 0){
+         break;
+      }
    }
 
-return 1;
+   return i;
 }
 
-unsigned int readFileData(FILE* File, char**, unsigned int maxRead){
+unsigned int readFileData(FILE* File, char** inputPtr, unsigned int maxRead){
    if (maxRead){
       char* buffer = malloc(sizeof(char) * maxRead);
+      unsigned int readBytes = fread(buffer, sizeof(char), maxRead, File);
+      *inputPtr = buffer;
+      return readBytes;
    }
    else{
       char* buffer = malloc(sizeof(char) * DEFAULT_MAX_READ);
+      unsigned int readBytes = fread(buffer, sizeof(char), maxRead, File);
+      *inputPtr = buffer;
+      return readBytes;
    }
-
-
-   fread(void *ptr, size_t size_of_elements, size_t number_of_elements, FILE *a_file);
-
-
 }
 
 
