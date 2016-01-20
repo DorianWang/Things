@@ -1,11 +1,11 @@
 #include "FileIO_C.h"
 
 
-unsigned int readFileText(FILE* file, char** outputLines, unsigned int numLines, unsigned int bufferSize){
+unsigned int readFileText(FILE* file, char*** outputLines, unsigned int numLines, unsigned int bufferSize){
    int i = 0;
    unsigned int bufferSetSize = 0;
 
-   *outputLines = (char**) malloc(sizeof(char*) * numLines);
+   *outputLines = (char**) malloc(sizeof(char*) * numLines); // outputLines now points to an array of character pointers.
 
    if (bufferSize != NULL){
       bufferSetSize = bufferSize;
@@ -37,8 +37,7 @@ unsigned int readFileText(FILE* file, char** outputLines, unsigned int numLines,
    i = 0;
    for (i = 0; i < numLines; i++){
          //TODO: Things from here.
-      char inputTest[bufferSetSize] = fgets( outputLines[i], bufferSetSize, file);
-      if (strcmp(inputTest, outputLines[i]) != 0){
+      if (fgets( (*outputLines)[i], bufferSetSize, file) == NULL){
          break;
       }
    }
@@ -59,6 +58,11 @@ unsigned int readFileData(FILE* File, char** inputPtr, unsigned int maxRead){
       *inputPtr = buffer;
       return readBytes;
    }
+}
+
+void releaseLineBuffer(char*** inputLines, unsigned int numLines)
+{
+   ;//for
 }
 
 

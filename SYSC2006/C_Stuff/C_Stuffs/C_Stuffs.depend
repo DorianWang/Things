@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1453230903 source:c:\users\admin\documents\github\things\sysc2006\c_stuff\c_stuffs\fileio_c.c
+	"FileIO_C.h"
+
+1452715301 c:\users\admin\documents\github\things\sysc2006\c_stuff\c_stuffs\fileio_c.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1453230913 source:c:\users\admin\documents\github\things\sysc2006\c_stuff\c_stuffs\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"FileIO_C.h"
+
