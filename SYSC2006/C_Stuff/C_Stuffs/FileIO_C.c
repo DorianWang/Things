@@ -7,16 +7,17 @@ unsigned int readFileText(FILE* file, char*** outputLines, unsigned int numLines
 
    *outputLines = (char**) malloc(sizeof(char*) * numLines); // outputLines now points to an array of character pointers.
 
-   if (bufferSize != NULL){
+   if (bufferSize != 0){
       bufferSetSize = bufferSize;
-      char* a = (char*) malloc(sizeof(char) * numLines * bufferSize);
+      char* a = (char*) malloc(sizeof(char) * numLines * bufferSize); // a is now a bufferSize * numLines sized memory block.
       if (a){
          for (i = 0; i < numLines; i++){
-            outputLines[i] = &(a[i * bufferSize]);
+            (*outputLines)[i] = &(a[i * bufferSize]);
          }
       }
       else{
-         *outputLines = NULL;
+         free(*outputLines);
+         free(a);
          return 0; // Memory failure.
       }
    }
@@ -25,21 +26,24 @@ unsigned int readFileText(FILE* file, char*** outputLines, unsigned int numLines
       char* a = malloc(sizeof(char) * numLines * DEFAULT_MAX_READ);
       if (a){
          for (i = 0; i < numLines; i++){
-            outputLines[i] = &(a[i * DEFAULT_MAX_READ]);
+            *(outputLines)[i] = &(a[i * DEFAULT_MAX_READ]);
          }
       }
       else{
-         *outputLines = NULL;
+         free(*outputLines);
+         free(a);
          return 0; // Memory failure.
       }
    }
 
    i = 0;
    for (i = 0; i < numLines; i++){
-         //TODO: Things from here.
       if (fgets( (*outputLines)[i], bufferSetSize, file) == NULL){
          break;
       }
+      printf(numLines + '0');
+      printf((*outputLines)[i]);
+      printf("\n");
    }
 
    return i;

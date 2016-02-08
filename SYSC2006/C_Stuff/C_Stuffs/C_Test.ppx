@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings version="1.0">
+	<category name="main.c">
+		<category name="Window">
+			<property name="Left" type="integer">38</property>
+			<property name="Top" type="integer">38</property>
+			<property name="Right" type="integer">1129</property>
+			<property name="Bottom" type="integer">568</property>
+			<property name="Maximized" type="integer">0</property>
+			<property name="Active" type="integer">0</property>
+		</category>
+	</category>
+	<category name="FileIO_C.h">
+		<category name="Window">
+			<property name="Left" type="integer">114</property>
+			<property name="Top" type="integer">114</property>
+			<property name="Right" type="integer">1205</property>
+			<property name="Bottom" type="integer">644</property>
+			<property name="Maximized" type="integer">0</property>
+			<property name="Active" type="integer">0</property>
+		</category>
+	</category>
+	<category name="FileIO_C.c">
+		<category name="Window">
+			<property name="Left" type="integer">-11</property>
+			<property name="Top" type="integer">-45</property>
+			<property name="Right" type="integer">1466</property>
+			<property name="Bottom" type="integer">718</property>
+			<property name="Maximized" type="integer">1</property>
+			<property name="Active" type="integer">1</property>
+		</category>
+	</category>
+</settings>
