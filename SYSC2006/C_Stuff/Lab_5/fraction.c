@@ -98,3 +98,5 @@ fraction_t multiply_fractions(fraction_t f1, fraction_t f2)
 {
 	return make_fraction(f1.num * f2.num, f1.den * f2.den);
 }
+
+
