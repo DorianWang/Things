@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1458585445 source:c:\users\admin\documents\github\things\sysc2006\c_stuff\lab_9\main.c
+	<assert.h>
+	<stdlib.h>
+	<stdbool.h>
+	<stdio.h>
+	"singly_linked_list.h"
+
+1458585450 c:\users\admin\documents\github\things\sysc2006\c_stuff\lab_9\singly_linked_list.h
+
+1458757996 source:c:\users\admin\documents\github\things\sysc2006\c_stuff\lab_9\singly_linked_list.c
+	<assert.h>
+	<stdlib.h>
+	<stdbool.h>
+	<stdio.h>
+	"singly_linked_list.h"
+

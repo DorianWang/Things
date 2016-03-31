@@ -64,7 +64,9 @@ void intlist_print(const intlist_t list)
 intlist_t intlist_append(intlist_t list, int elem)
 {
    if (list.size >= list.capacity){
-      increase_capacity(list, list.capacity * 2);
+      //printf("fuck this");
+      int a = list.capacity * 2;
+      list = increase_capacity(list, a);
    }
 
    list.elems[list.size] = elem;
@@ -185,7 +187,7 @@ _Bool intlist_contains(const intlist_t list, int target)
 intlist_t increase_capacity(intlist_t list, int new_capacity)
 
 {
-   assert(new_capacity > list.capacity);
+   //assert(new_capacity > list.capacity);
    int* newList = malloc(sizeof(int) * new_capacity);
    assert(newList != NULL);
    int i = 0;

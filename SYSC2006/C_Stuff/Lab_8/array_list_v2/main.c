@@ -489,9 +489,8 @@ static void test_intlist_contains(void)
 
 static void test_intlist_delete(void)
 {
-   printf("Things!");
     setup();
-   printf("Things!");
+
     /* Delete the integer @ index 0 in this list: [5]
      * list should become []
      */

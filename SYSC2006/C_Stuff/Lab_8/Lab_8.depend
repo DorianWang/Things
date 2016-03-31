@@ -1,0 +1,23 @@
+# depslib dependency file v1.0
+1458156115 source:c:\users\admin\documents\github\things\sysc2006\c_stuff\lab_8\main.c
+	<stdlib.h>
+	<stdio.h>
+	"sput.h"
+	"array_list.h"
+
+1458087548 c:\users\admin\documents\github\things\sysc2006\c_stuff\lab_8\sput.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+
+1458087548 c:\users\admin\documents\github\things\sysc2006\c_stuff\lab_8\array_list.h
+	<stdbool.h>
+
+1458155687 source:c:\users\admin\documents\github\things\sysc2006\c_stuff\lab_8\array_list.c
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"array_list.h"
+
