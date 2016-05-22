@@ -10,8 +10,8 @@ import java.util.*;
  * @author (of AuctionSkeleton) Lynn Marshall
  * @version 2.0
  * 
- * @author <YOUR NAME HERE>
- * @version <THE DATE AND HERE>
+ * @author Dorian Wang
+ * @version 2.1, 21st May, 2016
  * 
  */
 public class Auction
@@ -122,16 +122,20 @@ public class Auction
      * @param number The lot number being bid for.
      * @param bidder The person bidding for the lot.
      * @param value  The value of the bid.
+     * 
+     * @return true if the bid was submitted, false if the bid was not valid.
      */
     public boolean bidFor(int lotNumber, Person bidder, long value)
     {        
         Lot selectedLot = getLot(lotNumber);
-        if(selectedLot != null) {
+        if(selectedLot != null && isOpen == true && bidder != null && value > 0 ) {
             Bid bid = new Bid(bidder, value);
             boolean successful = selectedLot.bidFor(bid);
+            System.out.println("");
             if(successful) {
                 System.out.println("The bid for lot number " +
-                                   lotNumber + " was successful.");
+                                   lotNumber + " by: " +
+                                   bidder.getName() + " was successful.");
             }
             else {
                 // Report which bid is higher.
@@ -140,7 +144,9 @@ public class Auction
                                    " already has a bid of: " +
                                    highestBid.getValue());
             }
+            return true;
         }
+        return false;
     }
 
 
@@ -158,7 +164,7 @@ public class Auction
     public Lot getLot(int lotNumber)
     {
         for (Lot nextLot : lots){
-            if (nextLot.getNumber() == number){
+            if (nextLot.getNumber() == lotNumber){
                 return nextLot;
             }
         }
@@ -187,11 +193,11 @@ public class Auction
             Bid highestBid = lot.getHighestBid();
             
             if (highestBid == null){
-                System.out.println("Lot number: " + lotNumber + " did not sell.");
+                System.out.println("Lot number: " + lot.getNumber() + " did not sell.");
             }
             else
             {
-                System.out.println("Lot number: " + lotNumber +
+                System.out.println("Lot number: " + lot.getNumber() +
                                            " has sold for: " +
                                            highestBid.getValue() +
                                            "to: " + highestBid.getBidder().getName());
@@ -199,6 +205,7 @@ public class Auction
             
         }
         isOpen = false;
+        return true;
     }
     
     /**
@@ -234,6 +241,10 @@ public class Auction
      */
     public boolean removeLot(int number)
     {
+        if (isOpen == false){
+            return false;
+        }
+        
         for (Lot nextLot : lots){
             if (nextLot.getNumber() == number){
                 if (nextLot.getHighestBid() != null){
