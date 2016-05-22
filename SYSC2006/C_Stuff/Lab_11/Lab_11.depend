@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1459880796 source:c:\users\admin\documents\github\things\sysc2006\c_stuff\lab_11\main.c
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	"recursive_functions.h"
+
+1459879262 c:\users\admin\documents\github\things\sysc2006\c_stuff\lab_11\recursive_functions.h
+
+1459880873 source:c:\users\admin\documents\github\things\sysc2006\c_stuff\lab_11\recursive_functions.c
+	<stdio.h>
+	<math.h>
+
