@@ -1,0 +1,8 @@
+3 7 0 13    
+00003B90400startmov CX, 0004H20
+00033BAE904mov DX, 04E9H20
+00062B048mov AL, 'H'20
+00081EEout DX, AL20
+00092B069mov AL, 'i'20
+000B1EEout DX, AL20
+000C1F4hlt20
