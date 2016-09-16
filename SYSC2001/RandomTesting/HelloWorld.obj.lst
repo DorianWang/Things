@@ -2,18 +2,56 @@
 					; This should be a comment. 
 					; The below code is (hopefully) a hello world program.
 						
-					
+						
+					testfunc:
+0000	B9FF00			mov		CX, 00FFh
+0003	BB0F0F			mov 	BX, 0F0Fh
+0006	C3			ret
+						
+						
+						
+						
+						
 						
 					start:
-0000	B90400				mov		CX, 0004h
-0003	BAE904		        mov     DX, 04E9h	; load the display port I/O address into register DX (16 bits wide)
-0006	B048		        mov     AL, 'H'		; load the ASCII value of the character 'H' into register AL (8 bits wide)
-0008	EE		        out     DX, al		; send the ASCII character in AL out to the display at the port number in DX
+0007	B90000				mov		CX, 0000h
+000A	BAE904		        mov     DX, 04E9h	; load the display port I/O address into register DX (16 bits wide)
+					        ;mov     AL, 'H'		; load the ASCII value of the character 'H' into register AL (8 bits wide)
+					        ;out     DX, al		; send the ASCII character in AL out to the display at the port number in DX
 							
-0009	B069		        mov     AL, 'i'		; load the ASCII value of the character 'H' into register AL (8 bits wide)
-000B	EE		        out     DX, al		; send the ASCII character in AL out to the display at the port number in DX
+					        ;mov     AL, 'i'		; load the ASCII value of the character 'H' into register AL (8 bits wide)
+					        ;out     DX, al		; send the ASCII character in AL out to the display at the port number in DX
 							
+							
+000D	BE616E				mov 	SI, "an"
+0010	56				push SI
+							
+0011	BE7269				mov 	SI, "ri"
+0014	56				push SI
+							
+0015	BE446F				mov 	SI, "Do"
+0018	56				push SI
 					
 							
-000C	F4		        hlt					;  STOP the Libra CPU!
+							testt:
+0019	80C101					add		CL, 1
+								
+001C	58					pop     AX  		; 
+								
+								;mov     CH, AH		; 
+								;mov 	AH, AL
+								;mov 	AL, CH
+					
+001D	EE					out     DX, AL		; send the ASCII character in AL out to the display at the port number in DX
+								
+001E	88E0					mov 	AL, AH
+								
+0020	EE					out 	DX, AL
+								
+0021	80F903					cmp		CL, 0003h	; Repeats 10 times.
+0024	7EF3					jle 	testt
+0026	E8D7FF				call testfunc
+					
+							
+0029	F4		        hlt					;  STOP the Libra CPU!
 							

@@ -1,8 +1,21 @@
-3 7 0 13    
-00003B90400startmov CX, 0004H20
-00033BAE904mov DX, 04E9H20
-00062B048mov AL, 'H'20
-00081EEout DX, AL20
-00092B069mov AL, 'i'20
-000B1EEout DX, AL20
-000C1F4hlt20
+3 20 7 42    
+00003B9FF00testfuncmov CX, 00FFH20
+00033BB0F0Fmov BX, 0F0FH20
+00061C3ret20
+00073B90000startmov CX, 0000H20
+000A3BAE904mov DX, 04E9H20
+000D3BE616Emov SI, 'an'20
+0010156push SI20
+00113BE7269mov SI, 'ri'20
+0014156push SI20
+00153BE446Fmov SI, 'Do'20
+0018156push SI20
+0019380C101testtadd CL, 120
+001C158pop AX20
+001D1EEout DX, AL20
+001E288E0mov AL, AH20
+00201EEout DX, AL20
+0021380F903cmp CL, 0003H20
+002427EF3jle testt20
+00263E8D7FFcall testfunc20
+00291F4hlt20
