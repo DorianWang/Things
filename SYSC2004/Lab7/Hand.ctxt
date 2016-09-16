@@ -1,0 +1,20 @@
+#BlueJ class context
+comment0.params=
+comment0.target=Hand()
+comment0.text=\r\n\ Constructs\ a\ new,\ empty\ hand.\r\n
+comment1.params=aCard
+comment1.target=void\ addCard(Card)
+comment1.text=\r\n\ Adds\ the\ specified\ card\ to\ this\ hand.\r\n\ @param\ aCard\ the\ card\ to\ be\ added\r\n
+comment2.params=
+comment2.target=Card\ playCard()
+comment2.text=\r\n\ Removes\ a\ card\ from\ this\ hand.\ Cards\ are\ removed\ in\ the\ order\ in\r\n\ which\ they\ were\ added\ to\ the\ hand.\r\n\ @return\ the\ card\ that\ was\ removed\ from\ the\ hand\r\n
+comment3.params=
+comment3.target=int\ size()
+comment3.text=\r\n\ Returns\ the\ number\ of\ cards\ that\ are\ currently\ in\ this\ hand.\r\n\ \r\n\ @return\ the\ number\ of\ cards\ in\ the\ hand\r\n
+comment4.params=
+comment4.target=boolean\ isEmpty()
+comment4.text=\r\n\ Determines\ if\ this\ hand\ is\ empty.\r\n\ \r\n\ @return\ true\ if\ the\ hand\ is\ empty,\ false\ otherwise\r\n
+comment5.params=
+comment5.target=java.lang.String\ toString()
+comment5.text=\r\n\ Returns\ a\ String\ that\ lists\ the\ ranks\ (but\ not\ the\ suits)\ of\ all\ the\ \r\n\ cards\ in\ this\ hand,\ starting\ with\ the\ first\ card\ and\ finishing\ with\r\n\ the\ last\ card.\ For\ example,\ if\ the\ first\ card\ is\ the\ two\ of\ hearts,\ \r\n\ the\ second\ card\ is\ the\ five\ of\ diamonds,\ and\ the\ last\ card\ is\ the\r\n\ queen\ of\ clubs,\ the\ String\ returned\ by\ this\ method\ will\ be\:\ "2\ 5\ 12".\r\n\ \r\n\ @return\ a\ String\ which\ lists\ the\ ranks\ of\ the\ cards\ in\ the\ hand\r\n
+numComments=6

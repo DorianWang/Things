@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.params=
+comment0.target=Beamer()
+comment0.text=\r\n\ Constructor\ for\ objects\ of\ class\ Beamer\r\n
+comment1.params=currentRoom
+comment1.target=boolean\ charge(Room)
+comment1.text=\r\n\ An\ example\ of\ a\ method\ -\ replace\ this\ comment\ with\ your\ own\r\n\ \r\n\ @param\ currentRoom\ the\ room\ the\ beamer\ is\ to\ be\ saved\ to.\r\n\ @return\ true\ if\ successful,\ false\ otherwise\r\n
+comment2.params=
+comment2.target=Room\ fire()
+comment2.text=\r\n\ An\ example\ of\ a\ method\ -\ replace\ this\ comment\ with\ your\ own\r\n\ \r\n\ @return\ the\ saved\ location\ where\ the\ beamer\ was\ charged.\r\n
+numComments=3

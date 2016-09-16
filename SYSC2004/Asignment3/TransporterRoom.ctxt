@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.params=description
+comment0.target=TransporterRoom(java.lang.String)
+comment0.text=\r\n\ Constructor.\r\n\r\n
+comment1.params=direction
+comment1.target=Room\ getExit(java.lang.String)
+comment1.text=\r\n\ Returns\ a\ random\ room,\ independent\ of\ the\ direction\ parameter.\r\n\r\n\ @param\ direction\ Ignored.\r\n\ @return\ A\ randomly\ selected\ room.\r\n
+comment2.params=
+comment2.target=Room\ findRandomRoom()
+comment2.text=\r\n\ Choose\ a\ random\ room.\r\n\r\n\ @return\ The\ room\ we\ end\ up\ in\ upon\ leaving\ this\ one.\r\n
+numComments=3
