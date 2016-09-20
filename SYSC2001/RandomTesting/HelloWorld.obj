@@ -1,21 +1,27 @@
-3 20 7 42    
+3 26 11 62    
 00003B9FF00testfuncmov CX, 00FFH20
 00033BB0F0Fmov BX, 0F0FH20
 00061C3ret20
-00073B90000startmov CX, 0000H20
-000A3BAE904mov DX, 04E9H20
-000D3BE616Emov SI, 'an'20
-0010156push SI20
-00113BE7269mov SI, 'ri'20
-0014156push SI20
-00153BE446Fmov SI, 'Do'20
-0018156push SI20
-0019380C101testtadd CL, 120
-001C158pop AX20
-001D1EEout DX, AL20
-001E288E0mov AL, AH20
-00201EEout DX, AL20
-0021380F903cmp CL, 0003H20
-002427EF3jle testt20
-00263E8D7FFcall testfunc20
-00291F4hlt20
+00074FE060010increaseTestVarSizeinc [1000H]20
+000B3BAE904startmov DX, 04E9H20
+000E3B90210mov CX, 1002H20
+00114890E0010mov [1000H], CX20
+00153B90000mov CX, 0000H20
+001848B360010mov SI, [1000H]20
+001C2890Cmov [SI], CX20
+001E3B9616Emov CX, 'an'20
+0021151push CX20
+00223B97269mov CX, 'ri'20
+0025151push CX20
+00263B9446Fmov CX, 'Do'20
+0029151push CX20
+002A3B90000mov CX, 0000H20
+002D380C101testtadd CL, 120
+0030158pop AX20
+00311EEout DX, AL20
+0032288E0mov AL, AH20
+00341EEout DX, AL20
+0035380F902cmp CL, 0002H20
+003827EF3jle testt20
+003A3E8C3FFcall testfunc20
+003D1F4hlt20

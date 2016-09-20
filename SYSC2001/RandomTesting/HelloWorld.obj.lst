@@ -2,56 +2,98 @@
 					; This should be a comment. 
 					; The below code is (hopefully) a hello world program.
 						
-						
+					;;{
 					testfunc:
 0000	B9FF00			mov		CX, 00FFh
 0003	BB0F0F			mov 	BX, 0F0Fh
 0006	C3			ret
+					;;}
+					
+					
+					;Adds another space to the list.
+					increaseTestVarSize:
+					;;{
+						add [1000h], 2h
+0007	C3			ret
+					;;}
+					
+					;Clobbers whatever is in the last spot of the list, and reduces the size. Also refills the former last spot with FFFF.
+					decreaseTestVarSize:
+					;;{
+						cmp		[1000h], 1002h	; If 1000h is less than 1002h (IE, list is empty, skip doing things.)
+0008	7E00			jle 	skipDecreaseTestVarValue
 						
+						sub [1000h], 2
 						
+						skipDecreaseTestVarValue:
 						
+000A	C3			ret
+					;;}
+					
+					
+					;Adds a value to the stack, and increases its size.
+					;Uses the value contained in the SI register, no registers should be affected.
+					pushTestVar:
+					;;{
+000B	8B0E0010			mov CX, [1000h]
+						mov [CX], SI
+000F	E8F5FF			call increaseTestVarSize
 						
-						
-						
+0012	C3			ret
+					;;}
+					
+					
 					start:
-0007	B90000				mov		CX, 0000h
-000A	BAE904		        mov     DX, 04E9h	; load the display port I/O address into register DX (16 bits wide)
+					
+0013	BAE904		        mov     DX, 04E9h	; load the display port I/O address into register DX (16 bits wide)
 					        ;mov     AL, 'H'		; load the ASCII value of the character 'H' into register AL (8 bits wide)
 					        ;out     DX, al		; send the ASCII character in AL out to the display at the port number in DX
 							
 					        ;mov     AL, 'i'		; load the ASCII value of the character 'H' into register AL (8 bits wide)
 					        ;out     DX, al		; send the ASCII character in AL out to the display at the port number in DX
 							
+0016	B90210				mov CX, 1002h
+0019	890E0010				mov [1000h], CX
+001D	BE2301				mov SI, 0123h
+0020	E8E8FF				call pushTestVar
+0023	BE5142				mov SI, 4251h
+0026	E8E2FF				call pushTestVar
 							
-000D	BE616E				mov 	SI, "an"
-0010	56				push SI
 							
-0011	BE7269				mov 	SI, "ri"
-0014	56				push SI
+0029	B9616E				mov 	CX, "an"
+002C	51				push CX
 							
-0015	BE446F				mov 	SI, "Do"
-0018	56				push SI
+002D	B97269				mov 	CX, "ri"
+0030	51				push CX
+							
+0031	B9446F				mov 	CX, "Do"
+0034	51				push CX
 					
-							
+0035	B90000				mov		CX, 0000h
 							testt:
-0019	80C101					add		CL, 1
+0038	80C101					add		CL, 1
 								
-001C	58					pop     AX  		; 
+003B	58					pop     AX  		; 
 								
 								;mov     CH, AH		; 
 								;mov 	AH, AL
 								;mov 	AL, CH
 					
-001D	EE					out     DX, AL		; send the ASCII character in AL out to the display at the port number in DX
+003C	EE					out     DX, AL		; send the ASCII character in AL out to the display at the port number in DX
 								
-001E	88E0					mov 	AL, AH
+003D	88E0					mov 	AL, AH 		; swaps the characters in AX
 								
-0020	EE					out 	DX, AL
+003F	EE					out 	DX, AL		; sends the second character to the display
 								
-0021	80F903					cmp		CL, 0003h	; Repeats 10 times.
-0024	7EF3					jle 	testt
-0026	E8D7FF				call testfunc
+0040	80F902					cmp		CL, 0002h	; Repeats 3 times.
+0043	7EF3					jle 	testt
+0045	E8B8FF				call testfunc
 					
 							
-0029	F4		        hlt					;  STOP the Libra CPU!
+0048	F4		        hlt					;  STOP the Libra CPU!
+							
+					        .END     start				; Directive to assembler: this is the end of the program. The entry point of the program should be at the "start:" label
+							
+							
+							
 							
