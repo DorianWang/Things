@@ -1,0 +1,25 @@
+3 24 0 42    
+00003BB5000Mainmov BX, 0050H20
+00033BAE904mov DX, 04E9H20
+000628A07mainLoopmov AL, [BX]20
+000823C00cmp AL, 020
+000A27D07jge skipnegNum20
+000C150negNumpush AX20
+000D2B02Dmov AL, '-'20
+000F1EEout DX, AL20
+0010158pop AX20
+00112F6D8neg AL20
+00132B10AskipnegNummov CL, 0AH20
+00152F6F1div CL20
+001723C00cmp AL, 020
+001927403je skipFirstDigit20
+001B20430add AL, '0'20
+001D1EEout DX, AL20
+001E288E0skipFirstDigitmov AL, AH20
+002020430add AL, '0'20
+00221EEout DX, AL20
+00232B00Dmov AL, 0DH20
+00251EEout DX, AL20
+00262B00Amov AL, 0AH20
+00281EEout DX, AL20
+00291F4EndPrthlt20

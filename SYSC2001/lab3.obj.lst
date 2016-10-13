@@ -1,0 +1,59 @@
+					; SYSC2001 - Lab 3
+					; Program to complete 8-bit unsigned shift & add multiplication
+					; AH = A; CH = Q; BH = M; Final 16-bit result in AX
+					
+					.ORG 0000h
+					Data:
+0000	0F			Y:	.DB	15		; Multiplicand
+0001	49			X: 	.DB	73		; Multiplier
+						
+					.ORG 0010h
+					Init:
+										; Initialize AX to zero. AH serves as accumulator and AX will hold product
+0010	B80000			mov AX, 0000h
+										; Initialize CH (Q) = X
+0013	8A2E0100			mov CH, [X]
+										; Init BH (M) = Y
+0017	8A3E0000			mov BH, [Y]
+										; Init DL as a loop counter with number of iterations required
+001B	B208			mov DL, 8h
+						
+					mainLoop:
+										; Shift out the lsb of the multiplier (Q[0]) into the carry flag
+001D	C0DD01			rcr CH, 1
+										; Check the carry flag: If Q[0] was not set, skip over Add and just shift
+0020	7302			jnc shift
+					AddM:
+										; A = A + M
+0022	00FC			add AH, BH
+					shift:
+										; Shift AH and AL (16-bit result will be here eventually). Also need to shift CF into MSb of AH...
+0024	C1D801			rcr AX, 1
+										; Decrement loop counter
+0027	FECA			dec DL
+										; If loop counter reaches zero, quit, else, loop back
+0029	75F2			jnz mainLoop
+					quit:
+002B	F4			HLT
+					.END	Init
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					

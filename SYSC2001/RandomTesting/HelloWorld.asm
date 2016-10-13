@@ -2,41 +2,43 @@
 ; This should be a comment. 
 ; The below code is (hopefully) a hello world program.
 	
-;;{
-testfunc:
-	mov		CX, 00FFh
-	mov 	BX, 0F0Fh
-	ret
-;;}
 
+.org 3000;
+testVariable: .dw -5
+	
+
+;[DI] contains the value of the next location in the stack. DI is the head of the stack
 
 ;Adds another space to the list.
-increaseTestVarSize:
+increaseTestVarSizeOne:
 ;;{
-	push CX
+	push BX
 	
-	mov CX, [1000h]
-	add CX, 2h
-	mov [1000h], CX
+	mov BX, [DI]
+	add BX, 0001h
+	mov [DI], BX
 	
-	pop CX
+	pop BX
 	
 	ret
 ;;}
 
-;Clobbers whatever is in the last spot of the list, and reduces the size. Also refills the former last spot with FFFF.
-decreaseTestVarSize:
+;Reduces the size of the stack.
+decreaseTestVarSizeOne:
 ;;{
-	cmp		[1000h], 1002h	; If 1000h is less than 1002h (IE, list is empty, skip doing things.)
+	push BX
+	
+	mov BX, [DI]
+	add BX, 0001h
+	
+	cmp		[DI], BX	; If the value of DX is less than DX + 1 (IE, list is empty, skip doing things.)
 	jle 	skipDecreaseTestVarValue
+
+	mov BX, [DI]
+	sub BX, 0001h
+	mov [DI], BX
 	
-	push CX
-	
-	mov CX, [1000h]
-	sub CX, 2
-	mov [1000h], CX
-	
-	pop CX
+	pop BX
 	
 	skipDecreaseTestVarValue:
 	
@@ -44,16 +46,83 @@ decreaseTestVarSize:
 ;;}
 
 
-;Adds a value to the stack, and increases its size.
-;Uses the value contained in the SI register, no registers should be affected.
-pushTestVar:
+
+;Adds spaces to the list equal to the value in SI.
+increaseTestVarSize:
 ;;{
-	mov CX, [1000h]
-	mov [CX], SI
+	startIncreaseTestVarSizeLoop:
+	
 	call increaseTestVarSize
+	call increaseTestVarSize
+	ret
+;;}
+
+;Reduces the size of the stack.
+decreaseTestVarSizeTwo:
+;;{
+	push BX
+	
+	mov BX, [DI]
+	add BX, 2
+	
+	cmp		[DI], BX	; If the value of DX is less than DX + 2 (IE, list is empty, skip doing things.)
+	jle 	skipDecreaseTestVarValue
+
+	mov BX, [DI]
+	sub BX, 2
+	mov [DI], BX
+	
+	pop BX
+	
+	skipDecreaseTestVarValue:
 	
 	ret
 ;;}
+
+;Adds a value to the stack, and increases its size.
+;Adds the value in the SI register, and takes the list head from DI
+pushTestVar:
+;;{
+
+	push BX
+	
+	mov BX, [DI]
+	mov [BX], SI     ;   Value of current end is changed to the passed value.
+	call increaseTestVarSize
+	
+	pop BX
+	
+	ret
+;;}
+
+
+;Removes a value to the stack, and decreases its size.
+;Leaves the value in the SI register. The former value of SI is left on the stack.
+popTestVar:
+;;{
+
+	push SI
+	push BX
+
+	call decreaseTestVarSize
+	
+	mov BX, [DI]
+	mov SI, [BX]     ;   Value of current end is changed to the passed value.
+
+	
+	pop BX
+	
+	ret
+;;}
+
+
+
+printList:
+
+
+
+
+
 
 
 start:
@@ -65,11 +134,22 @@ start:
         ;mov     AL, 'i'		; load the ASCII value of the character 'H' into register AL (8 bits wide)
         ;out     DX, al		; send the ASCII character in AL out to the display at the port number in DX
 		
+		
+		mov DI, 1000h
+		
 		mov CX, 1002h
-		mov [1000h], CX
+		mov [DI], CX
 		mov SI, 0123h
 		call pushTestVar
 		mov SI, 4251h
+		call pushTestVar
+		mov SI, 4251h
+		call pushTestVar
+		mov SI, 4254h
+		call pushTestVar
+		mov SI, 4261h
+		call pushTestVar
+		mov SI, 4259h
 		call pushTestVar
 		
 		
@@ -100,7 +180,7 @@ start:
 			
 			cmp		CL, 0002h	; Repeats 3 times.
 			jle 	testt
-		call testfunc
+		;call testfunc
 
 		
         hlt					;  STOP the Libra CPU!

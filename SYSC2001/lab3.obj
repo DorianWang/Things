@@ -1,0 +1,14 @@
+3 13 16 30    
+000010FY1520
+0001149X7320
+00103B80000Initmov AX, 0000H20
+001348A2E0100mov CH, [X]20
+001748A3E0000mov BH, [Y]20
+001B2B208mov DL, 820
+001D3C0DD01mainLooprcr CH, 120
+002027302jnc shift20
+0022200FCAddMadd AH, BH20
+00243C1D801shiftrcr AX, 120
+00272FECAdec DL20
+0029275F2jnz mainLoop20
+002B1F4quithlt20

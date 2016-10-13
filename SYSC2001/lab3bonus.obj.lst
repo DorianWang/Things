@@ -1,0 +1,28 @@
+					; SYSC2001 - Lab 3 bonus
+					; Program to complete 8-bit multiplication
+					; AH = A; CH = Q; BH = M; Final 16-bit result in AX
+					
+					.ORG 0000h
+					Data:
+0000	0F			Y:	.DB	15		; Multiplicand
+0001	49			X: 	.DB	73		; Multiplier
+						
+					.ORG 0010h
+					Init:
+										; Initialize AX to zero. AH serves as accumulator and AX will hold product
+0010	B80000			mov AX, 0000h
+										; Initialize CH (Q) = X
+0013	8A060100			mov AL, [X]
+										; Init BH (M) = Y
+0017	8A3E0000			mov BH, [Y]
+					
+001B	F6E7			mul BH
+					
+					quit:
+001D	F4			HLT
+					.END	Init
+					
+					
+					
+					
+					
