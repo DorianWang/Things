@@ -1,0 +1,326 @@
+					; Lab5 - Subroutine to print a record from an array of structures
+					
+					; Constant definitions
+					Display		.EQU 04E9h	; address of Libra display
+					
+					
+					; Constant strings (prompts or labels to be printed to screen, etc)
+0000	4E616D65..		s_name: 	.DB 'Name: $'
+0007	4D722E2024		s_male: 	.DB 'Mr. $'
+000C	4D732E2024		s_female: 	.DB 'Ms. $'
+0011	456D706C..		s_empNum: 	.DB 'Employee number: $'
+0023	53616C61..		s_salary: 	.DB 'Salary: $'
+					
+					; Offsets to access individual fields within the records
+					ID			.EQU 0	; Zero bytes from start of record is ID
+					NAME 		.EQU 1	; One byte from start of record is name
+					GENDER 		.EQU 3	; 3 bytes from start of record is gender
+					SALARY 		.EQU 4	; 4 bytes from start of record is salary
+					REC_SIZE	.EQU 5	; Total size of each record is 5 bytes
+					
+					; Other defines
+					male		.EQU 0	; Gender field: 0=male, 1=female
+					female		.EQU 1	;
+					
+					;;;;;;;;;;;;;;;;;;;;
+					; Function: printEmployee
+					; Function to print an employee record to screen.
+					;
+					; Input Parameters:
+					; 	BX: Address of start of array of structures
+					;	AL: Record number to be printed (record numbering starts at 0)
+					; Output Paramters:
+					;	None.
+					printEmployee:
+							; Save register values that will be modified in this routine
+002C	50				PUSH AX			
+002D	56				PUSH SI			
+002E	52				PUSH DX			
+					
+							; Calculate starting address of this record
+							; Starting address is START+(REC_NUM*REC_SIZE)
+002F	B405				MOV AH, REC_SIZE			; Load REC_SIZE into AH
+0031	F6E4				MUL AH						; Multiply REC_NUM (already in AL) by REC_SIZE (in AH)
+0033	01C3				ADD BX, AX						; Compute START+(REC_NUM*REC_SIZE)
+					
+							; Print 'Name: ' label
+0035	BE0000				MOV SI, s_name				
+0038	E84000				CALL printStr
+					
+							; Print Mr/Mrs according to gender
+003B	8A4703				MOV AL, [BX + GENDER]			
+003E	3C00				CMP AL, male				; Compare gender to male
+0040	7409				je printMale
+						printFemale:
+0042	BE0C00				MOV SI, s_female			; Print Ms. if not male
+0045	E83300				CALL printStr
+0048	E90600				JMP	printName
+						printMale:
+004B	BE0700				MOV SI, s_male				; Print Mr. if male
+004E	E82A00				CALL printStr
+					
+							; Prints name. Must load name pointer into SI, then call printStr
+						printName:
+0051	8B7701				MOV SI, [BX + 1]				
+0054	E82400				CALL printStr				
+0057	E88500				CALL newLine				; Print a newLine character
+					
+							; Prints employee number
+						printEmpNum:
+005A	BE1100				MOV SI, s_empNum				; Print 'Employee number: '
+005D	E81B00				CALL printStr
+0060	8A07				MOV AL, [BX]			; Gets employee number from record.
+0062	E83900				CALL printInt
+0065	E87700				CALL newLine					; Print a newLine character
+					
+							; Print employee salary
+						printEmpSalary:
+0068	BE2300				MOV SI, s_salary			; Print the 'Salary: ' label 
+006B	E80D00				CALL printStr
+006E	8A4704				MOV AL,	[BX + SALARY]		; Loads the SALARY field into AL.
+0071	E84F00				CALL printSalary			; Prints salary in 1000's of $
+0074	E86800				CALL newLine				; Print a newLine character
+					
+							; Restore registers
+0077	5A				POP DX			
+0078	5E				POP SI			
+0079	58				POP AX			
+						; Return to calling function
+007A	C3			RET
+					
+					
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					; INSERT SUBROUTINES FROM lab5-P1.asm HERE
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					
+					printStr:
+						; Save registers modified by this subroutine
+007B	50			PUSH AX			
+007C	53			PUSH BX			
+007D	52			PUSH DX			
+					
+007E	BAE904			MOV DX, Display
+0081	BB0000			MOV BX,0
+					LoopPS:
+0084	8A00			MOV AL, [SI+BX]	; Load the next char to be printed - USING INPUT PARAMETER SI
+0086	3C24			CMP AL, '$'		; Compare the char to '$'
+0088	7405			JE quitPS		; If it is equal, then quit subroutine and return to calling code
+008A	EE			OUT DX,AL		; If it is not equal to '$', then print it
+008B	43			INC BX			; Point to the next char to be printed
+008C	E9F5FF			jmp LoopPS		; Jump back to the top of the loop
+					quitPS:
+						; Restore registers
+008F	5A			POP DX			
+0090	5B			POP BX			
+0091	58			POP AX			
+					
+0092	C3			RET
+					
+					
+					;;;;;;;;;;;;;;;;;
+					; printDigit: Subroutine to print a single decimal digit
+					; Input parameters:
+					; 	AL: Unsigned decimal digit (between 0-9) to be printed
+					; Output parameters:
+					;	None.
+					printDigit:
+						; Save registers modified by this subroutine
+0093	50			PUSH AX			
+0094	52			PUSH DX			
+						
+0095	BAE904			MOV DX, Display
+0098	0430			ADD AL, '0'		; Convert number to ASCII code
+009A	EE			OUT DX,AL		; Print it
+						
+						; Restore registers
+009B	5A			POP DX			; FIX ME
+009C	58			POP AX			; FIX ME
+						
+009D	C3			RET
+						
+							
+					;;;;;;;;;;;;;;;;;
+					; printInt: Subroutine to print a 1-byte unsigned (short) integer between 0-255
+					; Input parameters:
+					; 	AL: Unsigned short int to be printed
+					; Output parameters:
+					;	None.
+					printInt:
+						; Save registers modified by this subroutine
+009E	50			PUSH AX			
+009F	51			PUSH CX			
+00A0	52			PUSH DX			
+						
+00A1	BAE904			MOV DX, Display
+00A4	B10A			MOV CL, 10		; Will be dividing by 10...
+						
+					LoopPI:
+00A6	3C0A			CMP AL, 10		; Compare the number to 10
+00A8	7C0C			JL printLast	; If it is less than 10, then print this digit
+						; If it is greater than 10, divide by 10
+00AA	B400			MOV AH, 0		; Clear AH
+00AC	F6F1			DIV CL			; Divide number by 10
+00AE	E8E2FF			CALL printDigit ; Print the quotient in AL
+00B1	88E0			MOV AL, AH		; Move remainder into AL to be printed
+00B3	E9F0FF			jmp LoopPI		; Jump back to the top of the loop
+					printLast:
+00B6	E8DAFF			CALL printDigit
+						
+						; Restore registers
+00B9	5A			POP DX			
+00BA	59			POP CX			
+00BB	58			POP AX			
+						
+00BC	C3			RET
+					
+					
+					;;;;;;;;;;;;;;;;;
+					; printSalary: Subroutine to print employee salary
+					; Input parameters:
+					; 	AL: Unsigned short int (0-99) representing salary in 1000's of $
+					; Output parameters:
+					;	None.
+					
+					; Constant strings for this subroutine:
+00BD	2C30303024		s_thousands: .DB ',000$'
+00C2	24		s_dollars: .DB '$'
+					
+					printSalary:
+						; Save registers modified by this subroutine
+00C3	50			PUSH AX			
+00C4	56			PUSH SI			
+00C5	52			PUSH DX			
+						
+00C6	BAE904			MOV DX, Display
+						
+00C9	88C4			MOV AH,AL			; Keep a copy of the salary in AH (need AL for printing...)
+00CB	8A06C200			MOV AL, [s_dollars]	; Print '$' preceeding number
+00CF	EE			OUT DX,AL			; Print it
+00D0	88E0			MOV AL,AH			; Move salary back into AL
+00D2	E8C9FF			CALL printInt		; Print the salary (0-255)
+00D5	BEBD00			MOV SI, s_thousands	; Move the starting address of s_thousands string into BX
+00D8	E8A0FF			CALL printStr 		; Print ',000'
+						
+						; Restore registers
+00DB	5A			POP DX			
+00DC	5E			POP SI			
+00DD	58			POP AX			
+						
+00DE	C3			RET
+					
+					
+					;;;;;;;;;;;;;;;;;
+					; newLine: Subroutine to print a newline and a linefeed character
+					; Input parameters:
+					; 	None.
+					; Output parameters:
+					;	None.
+					
+					; Constants for this subroutine:
+					s_CR .EQU 0Dh		; ASCII value for Carriage return
+					s_LF .EQU 0Ah		; ASCII value for NewLine
+					
+					newLine:
+						; Save registers modified by this subroutine
+00DF	50			PUSH AX			
+00E0	52			PUSH DX			
+						
+00E1	BAE904			MOV DX, Display		; Initialize the output port number in DX
+00E4	B00A			MOV AL, s_LF		; Load line feed (LF) into AL
+00E6	EE			out DX,AL			; print the char
+00E7	B00D			MOV AL, s_CR		; Load carriage return (CR) into AL
+00E9	EE			out DX,AL			; print the char
+						
+						; Restore registers
+00EA	5A			POP DX			
+00EB	58			POP AX			
+						
+00EC	C3			RET
+						
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					; END OF SUBROUTINES FROM lab5-P1.asm
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					
+							
+					;;;;;;;;;;;;;;;;;;;;;;;;	
+					; main: Main function to test all subroutines
+					main:
+					
+						; Print dayShiftDB[2]
+00ED	BB0050			MOV BX, dayShiftDB		; Load address of dayShiftDB into register BX
+00F0	B002			MOV AL, 2				; Load record number into register AL
+00F2	E837FF			CALL printEmployee
+00F5	E8E7FF			CALL newLine
+						
+						; Print nightShiftDB[0]
+00F8	BB1450			MOV BX, nightShiftDB 	; Load address of nightShiftDB
+00FB	B000			MOV AL, 0				; Load record number
+00FD	E82CFF			CALL printEmployee
+0100	E8DCFF			CALL newLine
+						
+						; Print dayShiftDB[3]
+0103	BB0050			MOV BX, dayShiftDB 		; Load address of dayShiftDB
+0106	B003			MOV AL, 3				; Load record number
+0108	E821FF			CALL printEmployee
+010B	E8D1FF			CALL newLine
+						
+						;Quit
+010E	F4			HLT
+						
+						
+					;;;;;;;;;;;;;;;;;;;;;;;;
+					; Test data
+					;
+					
+					; Record format:
+					;Struct Employee {
+					;	int id;			// 1-byte unsigned integer ID
+					;	char* name;		// 2-byte pointer to string of chars
+					;	bool gender;	// 1-byte Boolean (zero-->male, else-->female)
+					;	short salary;	// 1-byte unsigned short int salary (in $1000’s)
+					;};
+					.ORG 5000h
+					
+					dayShiftDB:
+						; Record dayShiftDB[0]
+5000	0C			.DB 12			; dayShiftDB[0].id
+5001	1E50			.DW name0		; dayShiftDB[0].name
+5003	00			.DB 0			; dayShiftDB[0].gender
+5004	32			.DB 50			; dayShiftDB[0].salary
+						
+						; Record dayShiftDB[1]
+5005	1B			.DB 27
+5006	2850			.DW name1		
+5008	01			.DB 1
+5009	3A			.DB 58
+						
+						; Record dayShiftDB[2]
+500A	01			.DB 1
+500B	3450			.DW name2		
+500D	01			.DB 1
+500E	46			.DB 70
+					
+						; Record dayShiftDB[3]
+500F	4D			.DB 77
+5010	4150			.DW name3		
+5012	00			.DB 0
+5013	20			.DB 32
+					
+					nightShiftDB:
+5014	07			.DB 7
+5015	4E50			.DW name4		; Record nightShiftDB[0]
+5017	01			.DB 1
+5018	63			.DB 99
+						
+5019	50			.DB 80
+501A	5850			.DW name5		; Record nightShiftDB[1]
+501C	00			.DB 0
+501D	4B			.DB 75
+					
+501E	53616D20..		name0: .DB 'Sam Jones$'
+5028	53617261..		name1: .DB 'Sara Thomas$'
+5034	53616D69..		name2: .DB 'Samira Smith$'
+5041	4D617820..		name3: .DB 'Max Golshani$'
+504E	54686520..		name4: .DB 'The Boss!$'
+5058	5376656E..		name5: .DB 'Sven Svenderson$'
+					

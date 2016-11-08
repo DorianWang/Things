@@ -1,0 +1,153 @@
+					DisplayPort .EQU 04E9h
+					ApplicationNumber .EQU 42
+					
+					
+					
+					.ORG 0010h
+					AppNums:
+0010	55			.DB 85
+0011	1C			.DB 28
+0012	08			.DB 8 
+0013	5B			.DB 91
+0014	02		    .DB 2  
+0015	28			.DB 40
+0016	2A			.DB 42
+					
+					.org 0100h
+					SadMsg:
+0100	4E6F2067..		 .DB "No go Mars...$"
+					
+					HappyMsg:
+010E	4920676F..		 .DB "I go Mars at: $"
+					
+					ListEnd:
+011D	1700		 .DW 0017h
+					 
+					.org 0200h
+					printLargeNumber:
+0200	50			push AX
+0201	53			push BX
+0202	51			push CX
+						
+0203	89E3			mov BX, SP
+						
+0205	8B4708			mov AX, [BX + 8]
+0208	BB0000			mov BX, 0000h
+020B	B10A			mov CL, 0Ah
+						
+						loopGetLargeNumber:
+020D	F6F1			div CL
+					
+020F	50			push AX
+0210	43			inc BX
+						
+0211	3C00			cmp AL, 00h
+0213	77F8			ja loopGetLargeNumber
+						
+0215	88E0			mov AL, AH
+0217	B400			mov AH, 00h
+						
+						loopPrintLargeNumber:
+					
+0219	58			pop AX
+021A	80C430			add AH, '0'
+021D	88E0			mov AL, AH
+021F	EE			out DX, AL
+						
+0220	4B			dec BX
+						
+0221	81FB0000			cmp BX, 0000h
+0225	77F2			ja loopPrintLargeNumber
+						
+0227	59			pop CX
+0228	5B			pop BX
+0229	58			pop AX
+022A	C3		ret
+					
+					printMessage:
+022B	50			push AX
+022C	53			push BX
+022D	51			push CX
+						
+022E	89E3			mov BX, SP
+0230	8B4F08			mov CX, [BX + 8]
+0233	BB0E01			mov BX, HappyMsg
+0236	81F90000			cmp CX, 0h
+023A	7503			jne failure
+023C	BB0001				mov BX, SadMsg
+						failure:
+						
+023F	8A07			mov AL, [BX]
+						printMessageLoop:
+						
+0241	3C24			cmp AL, '$'
+0243	7407			je exitPrintMessageLoop
+						
+0245	EE			out DX, AL
+						
+0246	43			inc BX	
+0247	8A07			mov AL, [BX]
+					
+0249	E9F5FF			jmp printMessageLoop
+						
+						exitPrintMessageLoop:
+						
+024C	81F90000			cmp CX, 0h
+0250	7405			je skipPrintNumber
+0252	51				push CX
+0253	E8AAFF				call printLargeNumber
+0256	59				pop CX
+						skipPrintNumber:
+						
+0257	59			pop CX
+0258	5B			pop BX
+0259	58			pop AX
+025A	C3			ret
+					
+						
+					searchList:
+025B	BB1000			mov BX, AppNums
+025E	B12A			mov CL, ApplicationNumber
+						searchListLoop:
+0260	3A0F				cmp CL, [BX]
+0262	740B				je skipSearchListLoop
+0264	43				inc BX
+0265	81FB1D01			cmp BX, ListEnd
+0269	72F5			jb searchListLoop
+						
+026B	B80000			mov AX, 0000h
+026E	C3			ret
+						skipSearchListLoop:
+026F	81EB1000				sub BX, AppNums
+0273	81C30100				add BX, 1
+0277	89D8				mov AX, BX
+						
+0279	C3		ret
+						
+					main:
+					
+027A	BAE904			mov DX, DisplayPort
+					
+						
+						
+						
+						
+						
+027D	E8DBFF			call searchList
+0280	50			push AX
+0281	E8A7FF			call printMessage
+0284	58			pop AX
+						
+					
+					
+					
+					
+					
+					
+					
+					quit:
+0285	F4			hlt
+						
+						
+					.END main
+					

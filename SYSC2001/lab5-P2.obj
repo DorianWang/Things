@@ -1,0 +1,149 @@
+3 148 237 375   
+000074E616D653A2024s_name'Name: $'20
+000754D722E2024s_male'Mr. $'20
+000C54D732E2024s_female'Ms. $'20
+001118456D706C6F796565206E756D6265723A2024s_empNum'Employee number: $'20
+0023953616C6172793A2024s_salary'Salary: $'20
+002C150printEmployeepush AX20
+002D156push SI20
+002E152push DX20
+002F2B405mov AH, 520
+00312F6E4mul AH20
+0033201C3add BX, AX20
+00353BE0000mov SI, s_name20
+00383E84000call printStr20
+003B38A4703mov AL, [BX + 3]20
+003E23C00cmp AL, 020
+004027409je printMale20
+00423BE0C00printFemalemov SI, s_female20
+00453E83300call printStr20
+00483E90600jmp printName20
+004B3BE0700printMalemov SI, s_male20
+004E3E82A00call printStr20
+005138B7701printNamemov SI, [BX + 1]20
+00543E82400call printStr20
+00573E88500call newLine20
+005A3BE1100printEmpNummov SI, s_empNum20
+005D3E81B00call printStr20
+006028A07mov AL, [BX]20
+00623E83900call printInt20
+00653E87700call newLine20
+00683BE2300printEmpSalarymov SI, s_salary20
+006B3E80D00call printStr20
+006E38A4704mov AL, [BX + 4]20
+00713E84F00call printSalary20
+00743E86800call newLine20
+007715Apop DX20
+007815Epop SI20
+0079158pop AX20
+007A1C3ret20
+007B150printStrpush AX20
+007C153push BX20
+007D152push DX20
+007E3BAE904mov DX, 04E9H20
+00813BB0000mov BX, 020
+008428A00LoopPSmov AL, [BX + SI]20
+008623C24cmp AL, '$'20
+008827405je quitPS20
+008A1EEout DX, AL20
+008B143inc BX20
+008C3E9F5FFjmp LoopPS20
+008F15AquitPSpop DX20
+009015Bpop BX20
+0091158pop AX20
+00921C3ret20
+0093150printDigitpush AX20
+0094152push DX20
+00953BAE904mov DX, 04E9H20
+009820430add AL, '0'20
+009A1EEout DX, AL20
+009B15Apop DX20
+009C158pop AX20
+009D1C3ret20
+009E150printIntpush AX20
+009F151push CX20
+00A0152push DX20
+00A13BAE904mov DX, 04E9H20
+00A42B10Amov CL, 1020
+00A623C0ALoopPIcmp AL, 1020
+00A827C0Cjl printLast20
+00AA2B400mov AH, 020
+00AC2F6F1div CL20
+00AE3E8E2FFcall printDigit20
+00B1288E0mov AL, AH20
+00B33E9F0FFjmp LoopPI20
+00B63E8DAFFprintLastcall printDigit20
+00B915Apop DX20
+00BA159pop CX20
+00BB158pop AX20
+00BC1C3ret20
+00BD52C30303024s_thousands',000$'20
+00C2124s_dollars'$'20
+00C3150printSalarypush AX20
+00C4156push SI20
+00C5152push DX20
+00C63BAE904mov DX, 04E9H20
+00C9288C4mov AH, AL20
+00CB48A06C200mov AL, [s_dollars]20
+00CF1EEout DX, AL20
+00D0288E0mov AL, AH20
+00D23E8C9FFcall printInt20
+00D53BEBD00mov SI, s_thousands20
+00D83E8A0FFcall printStr20
+00DB15Apop DX20
+00DC15Epop SI20
+00DD158pop AX20
+00DE1C3ret20
+00DF150newLinepush AX20
+00E0152push DX20
+00E13BAE904mov DX, 04E9H20
+00E42B00Amov AL, 0AH20
+00E61EEout DX, AL20
+00E72B00Dmov AL, 0DH20
+00E91EEout DX, AL20
+00EA15Apop DX20
+00EB158pop AX20
+00EC1C3ret20
+00ED3BB0050mainmov BX, dayShiftDB20
+00F02B002mov AL, 220
+00F23E837FFcall printEmployee20
+00F53E8E7FFcall newLine20
+00F83BB1450mov BX, nightShiftDB20
+00FB2B000mov AL, 020
+00FD3E82CFFcall printEmployee20
+01003E8DCFFcall newLine20
+01033BB0050mov BX, dayShiftDB20
+01062B003mov AL, 320
+01083E821FFcall printEmployee20
+010B3E8D1FFcall newLine20
+010E1F4hlt20
+500010CdayShiftDB1220
+500121E5020
+5003100020
+50041325020
+500511B2720
+50062285020
+5008101120
+500913A5820
+500A101120
+500B2345020
+500D101120
+500E1467020
+500F14D7720
+50102415020
+5012100020
+50131203220
+5014107nightShiftDB720
+501524E5020
+5017101120
+50181639920
+50191508020
+501A2585020
+501C100020
+501D14B7520
+501E1053616D204A6F6E657324name0'Sam Jones$'20
+502812536172612054686F6D617324name1'Sara Thomas$'20
+50341353616D69726120536D69746824name2'Samira Smith$'20
+5041134D617820476F6C7368616E6924name3'Max Golshani$'20
+504E1054686520426F73732124name4'The Boss!$'20
+5058165376656E205376656E646572736F6E24name5'Sven Svenderson$'20

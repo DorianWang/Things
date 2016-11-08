@@ -1,0 +1,80 @@
+3 79 634 172   
+0010155AppNums8520
+001111C2820
+0012108820
+001315B9120
+0014102220
+00151284020
+001612A4220
+0100144E6F20676F204D6172732E2E2E24SadMsg'No go Mars...$'20
+010E154920676F204D6172732061743A2024HappyMsg'I go Mars at: $'20
+011D21700ListEnd0017H20
+0200150printLargeNumberpush AX20
+0201153push BX20
+0202151push CX20
+0203289E3mov BX, SP20
+020538B4708mov AX, [BX + 8]20
+02083BB0000mov BX, 0000H20
+020B2B10Amov CL, 0AH20
+020D2F6F1loopGetLargeNumberdiv CL20
+020F150push AX20
+0210143inc BX20
+021123C00cmp AL, 00H20
+0213277F8ja loopGetLargeNumber20
+0215288E0mov AL, AH20
+02172B400mov AH, 00H20
+0219158loopPrintLargeNumberpop AX20
+021A380C430add AH, '0'20
+021D288E0mov AL, AH20
+021F1EEout DX, AL20
+022014Bdec BX20
+0221481FB0000cmp BX, 0000H20
+0225277F2ja loopPrintLargeNumber20
+0227159pop CX20
+022815Bpop BX20
+0229158pop AX20
+022A1C3ret20
+022B150printMessagepush AX20
+022C153push BX20
+022D151push CX20
+022E289E3mov BX, SP20
+023038B4F08mov CX, [BX + 8]20
+02333BB0E01mov BX, HappyMsg20
+0236481F90000cmp CX, 020
+023A27503jne failure20
+023C3BB0001mov BX, SadMsg20
+023F28A07failuremov AL, [BX]20
+024123C24printMessageLoopcmp AL, '$'20
+024327407je exitPrintMessageLoop20
+02451EEout DX, AL20
+0246143inc BX20
+024728A07mov AL, [BX]20
+02493E9F5FFjmp printMessageLoop20
+024C481F90000exitPrintMessageLoopcmp CX, 020
+025027405je skipPrintNumber20
+0252151push CX20
+02533E8AAFFcall printLargeNumber20
+0256159pop CX20
+0257159skipPrintNumberpop CX20
+025815Bpop BX20
+0259158pop AX20
+025A1C3ret20
+025B3BB1000searchListmov BX, AppNums20
+025E2B12Amov CL, 4220
+026023A0FsearchListLoopcmp CL, [BX]20
+02622740Bje skipSearchListLoop20
+0264143inc BX20
+0265481FB1D01cmp BX, ListEnd20
+0269272F5jb searchListLoop20
+026B3B80000mov AX, 0000H20
+026E1C3ret20
+026F481EB1000skipSearchListLoopsub BX, AppNums20
+0273481C30100add BX, 120
+0277289D8mov AX, BX20
+02791C3ret20
+027A3BAE904mainmov DX, 04E9H20
+027D3E8DBFFcall searchList20
+0280150push AX20
+02813E8A7FFcall printMessage20
+0284158pop AX20
+02851F4quithlt20
