@@ -126,15 +126,20 @@ quitPS:
 printDigit:
 	; Save registers modified by this subroutine
 	PUSH AX			
-	PUSH DX			
+	PUSH DX
+	PUSH BP
+	
+	MOV BP, SP
+	MOV AX, [BP + 8]
 	
 	MOV DX, Display
 	ADD AL, '0'		; Convert number to ASCII code
-	OUT DX,AL		; Print it
+	OUT DX, AL		; Print it
 	
 	; Restore registers
-	POP DX			; FIX ME
-	POP AX			; FIX ME
+	POP BP
+	POP DX			
+	POP AX			
 	
 	RET
 	
