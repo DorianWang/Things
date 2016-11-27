@@ -67,8 +67,8 @@ printDigit:
 	PUSH BP			
 	
 	; Retrieve input parameter from stack into AL
-	MOV BP, SP		; FIX ME - make a copy of SP
-	MOV AL, [BP + 8]		; FIX ME - read from the appropriate slot of your stack frame
+	MOV BP, SP		; make a copy of SP
+	MOV AL, [BP + 8]; read from the appropriate slot of your stack frame
 	
 	MOV DX, Display
 	ADD AL, '0'		; Convert number to ASCII code
@@ -176,17 +176,17 @@ sal1: .DB 34 				; Should print as '$34,000'
 main:
 
 	; Print a short unsigned int (0-99). Use num1
-	MOV AL, 					; FIX ME - get input parameter
-								; FIX ME - place input parameter on stack
+	MOV AL, [num1]				; get input parameter
+	PUSH AX						; place input parameter on stack
 	CALL printInt
-								; FIX ME - remove input parameter from stack
+	POP AX						; remove input parameter from stack
 	CALL newLine
 	
 	; Print a salary. Use sal1
-	MOV AL, 					; FIX ME - get input parameter
-								; FIX ME - place input parameter on stack
+	MOV AL, [sal1]				; FIX ME - get input parameter
+	PUSH AX						; FIX ME - place input parameter on stack
 	CALL printSalary
-								; FIX ME - remove input parameter from stack
+	POP AX						; FIX ME - remove input parameter from stack
 	CALL newLine
 	
 	;Quit

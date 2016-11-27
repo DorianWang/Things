@@ -1,0 +1,255 @@
+					; Program to accept a signed decimal number in the format +/-xxxx
+					; Calculate the 8-bit "quarter precision" IEEE-754 encoding and print it to screen.
+					; 
+					
+					; Format -/+xxxx in decimal, entered as ASCII.
+					; 1) Get sign
+					; 2) Get number
+					; 3) Normalize number to get exponent
+					; 3) Compute bias-** representation of exponent
+					; 4) Create final IEEE-754 representation
+					
+					; Constant definitions
+					Display	.EQU 04E9h	; address of Libra display
+					
+					; Global variables
+					.ORG 0000
+0000	00		SIGN:	.DB	0		; Sign of entered number (0=positive, 1=negative)
+0001	00		NUM:	.DB	0		; Unsigned  binary representation of entered number
+0002	00		EXP:	.DB	0		; Excess/bias representation of exponent (only uses lower 3 bits)
+0003	00		FP:		.DB	0		; 8-bit quarter-precision IEEE-754 representation of number
+					
+					.ORG 1000h
+					
+					
+					;;;---------------------------
+					;Insert Sub-routines getChar, printStr, and newLine from Lab 7 here
+					;;;---------------------------
+					
+					KBSTATUS .EQU 0064h			; port number of keyboard STATUS reg
+					KBBUFFER .EQU 0060h			; port number of keyboard BUFFER reg
+					
+					getChar:
+1000	52			push DX        ; save reg used
+					GCWait:
+1001	BA6400			MOV DX, KBSTATUS	; load addr of keybrd STATUS
+1004	EC			IN	AL, DX			; Read contents of keyboard STATUS register
+1005	3C01			cmp AL, 1			; key pressed?
+1007	75F8			jne GCWait			; no, go back and check again for keypress
+					
+1009	BA6000			MOV DX, KBBUFFER	; load port number of kbrd BUFFER register
+100C	EC			IN  AL, DX			; get key into AL from BUFFER
+					GCDone:
+100D	5A			pop DX        	; restore regs
+100E	C3			ret
+					
+					;;;;;;;;;;;;;;;;;
+					; newLine: Subroutine to print a newline and a linefeed character
+					; Input parameters:
+					; 	None.
+					; Output parameters:
+					;	None.
+					
+					; Constants for this subroutine:
+					s_CR .EQU 0Dh		; ASCII value for Carriage return
+					s_LF .EQU 0Ah		; ASCII value for NewLine
+					
+					newLine:
+						; Save registers modified by this subroutine
+100F	50			PUSH AX			; FIX ME
+1010	52			PUSH DX			; FIX ME
+						
+1011	BAE904			MOV DX, Display		; Initialize the output port number in DX
+1014	B00A			MOV AL, s_LF		; Load line feed (LF) into AL
+1016	EE			out DX,AL			; print the char
+1017	B00D			MOV AL, s_CR		; Load carriage return (CR) into AL
+1019	EE			out DX,AL			; print the char
+						
+						; Restore registers
+101A	5A			POP DX			; FIX ME
+101B	58			POP AX			; FIX ME
+						
+101C	C3			RET
+					
+					;;;;;;;;;;;;;;;;;
+					; printStr: Subroutine to print a '$'-terminated string
+					; Input parameters:
+					; 	SI: Address of start of string to be printed
+					; Output parameters:
+					;	None.
+					printStr:
+						; Save registers modified by this subroutine
+101D	50			PUSH AX			; FIX ME
+101E	53			PUSH BX			; FIX ME
+101F	52			PUSH DX			; FIX ME
+					
+1020	BAE904			MOV DX, Display
+1023	BB0000			MOV BX,0
+					LoopPS:
+1026	8A00			MOV AL, [SI+BX]	; Load the next char to be printed - USING INPUT PARAMETER SI
+1028	3C24			CMP AL, '$'		; Compare the char to '$'
+102A	7405			JE quitPS		; If it is equal, then quit subroutine and return to calling code
+102C	EE			OUT DX,AL		; If it is not equal to '$', then print it
+102D	43			INC BX			; Point to the next char to be printed
+102E	E9F5FF			jmp LoopPS		; Jump back to the top of the loop
+					quitPS:
+						; Restore registers
+1031	5A			POP DX			; FIX ME
+1032	5B			POP BX			; FIX ME
+1033	58			POP AX			; FIX ME
+					
+1034	C3			RET
+					
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					; END OF SUBROUTINES FROM lab7.asm
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					
+					
+					;;;;;;;;;;;;;;;;;
+					; getSign: waits for user to press '+' or '-'. Ignores other chars. 
+					;          Valid input sign character is echoed to screen.
+					; Input parameters:
+					; 	none.
+					; Output parameters:
+					;	AL: Returns a zero for '+' and one for '-'
+					getSign:
+1035	52			push DX
+1036	BAE904			mov DX, Display
+						getSignLoop:
+1039	E8C4FF			call getChar
+						
+103C	3C2D			cmp AL, '-'
+103E	7508			jne skipNegativeSign
+1040	EE			out DX, AL
+1041	E8CBFF			call newLine
+1044	B001			mov AL, 1
+1046	5A			pop DX
+1047	C3			RET
+						
+						skipNegativeSign:
+						
+1048	3C2B			cmp AL, '+'
+104A	7508			jne skipPositiveSign
+104C	EE			out DX, AL
+104D	E8BFFF			call newLine
+1050	B000			mov AL, 0
+1052	5A			pop DX
+1053	C3			RET
+						
+						skipPositiveSign:
+						
+1054	E9E2FF			jmp getSignLoop
+1057	5A			pop DX
+1058	C3			RET
+						
+					
+					;;;;;;;;;;;;;;;;;
+					; getDigit: waits for user to press 0-9 digit. Ignores other chars except RETURN
+					; Input parameters:
+					; 	none.
+					; Output parameters:
+					;	AL: Returns binary value of digit in AL. Returns 99 if user presses ENTER
+					
+					; Constants used by this subroutine
+					ENTERK .EQU 0Ah
+					
+					getDigit:
+1059	52		push DX
+105A	BAE904		mov DX, Display
+						getDigitLoop:
+						
+105D	E8A0FF			CALL getChar		
+						
+1060	3C0A			cmp AL, ENTERK
+1062	7504			jne skipEnterKey
+1064	B063			mov AL, 99
+1066	5A			pop DX
+1067	C3			RET
+						skipEnterKey:
+						
+1068	3C39			cmp AL, '9'
+106A	7FF1			jg getDigitLoop
+106C	3C30			cmp AL, '0'
+106E	7CED			jl getDigitLoop
+1070	EE			out DX, AL
+1071	2C30			sub AL, '0'
+1073	5A			pop DX
+1074	C3			RET
+						
+					
+					;;;;;;;;;;;;;;;;;
+					; getNumber: Accepts a series of decimal digits and builds a binary number using shift-add
+					; Input parameters:
+					; 	none.
+					; Output parameters:
+					;	AL: Returns binary value of number in AL. 
+					
+					; Constants used by this subroutine
+					DONE .EQU 99
+					
+					getNumber:				; FIX ME -- complete entire subroutine
+1075	51			PUSH CX				; Save CX register
+1076	53			PUSH BX
+1077	B500			MOV CH, 0			; Use CH for running sum
+1079	B10A			MOV CL, 10			; Use CL for multiplier=10
+107B	B000			mov AL, 0
+					loopGN:
+					
+107D	E8D9FF			call getDigit
+1080	3C63			cmp AL, 99
+1082	740F			je doneGN
+1084	88C3			mov BL, AL
+					
+1086	88E8			mov AL, CH
+1088	F6E1			mul CL
+108A	88C5			mov CH, AL
+					
+108C	88D8			mov AL, BL
+						
+					
+					
+108E	00C5			add CH, AL
+					
+1090	E9EAFF			JMP loopGN
+					doneGN:
+1093	88E8			mov AL, CH			; Put final sum into AL
+1095	5B			POP BX
+1096	59			POP CX				; Restore CX
+1097	C3			RET
+						
+					
+1098	456E7465..		Message1: .DB	'Enter a number BW -29 to +30.$'		; FIX ME -- Message to be printed on screen
+					
+							
+					;;;;;;;;;;;;;
+					; Main function: Asks the user to enter a signed number between -MAX to +MAX 
+					; 				Computes quarter-precision 8-bit IEEE-754 representation
+					;
+					;				Uses printStr, newline, and getChar subroutines.
+					main:
+10B6	BAE904			mov DX, Display			;FIX ME Print prompt
+10B9	BE9810			mov SI, Message1
+10BC	E85EFF			call printStr			;FIX ME
+10BF	E84DFF			call newLine			;FIX ME
+					
+					part2:			
+10C2	E870FF			call getSign			;FIX ME - call getSign to get +/- sign from keyboard
+10C5	88060000			mov [SIGN], AL			;FIX ME - Save sign to global variable SIGN
+10C9	E8A9FF			call getNumber			;FIX ME -  call getNumber to get the unsigned number
+10CC	88060100			mov [NUM], AL			;FIX ME -  Save number to global variable NUM
+					
+					;Quit
+10D0	F4			HLT
+						
+						
+					
+					.END main		;Entry point of program is main()
+					
+					
+					
+					
+					
+					
+					
+					
+					

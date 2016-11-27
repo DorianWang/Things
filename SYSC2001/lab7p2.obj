@@ -1,0 +1,102 @@
+3 101 178 231   
+0000150printStrpush AX20
+0001153push BX20
+0002152push DX20
+00033BAE904mov DX, 04E9H20
+00063BB0000mov BX, 020
+000928A00LoopPSmov AL, [BX + SI]20
+000B23C24cmp AL, '$'20
+000D27405je quitPS20
+000F1EEout DX, AL20
+0010143inc BX20
+00113E9F5FFjmp LoopPS20
+001415AquitPSpop DX20
+001515Bpop BX20
+0016158pop AX20
+00171C3ret20
+0018150printDigitpush AX20
+0019152push DX20
+001A3BAE904mov DX, 04E9H20
+001D20430add AL, '0'20
+001F1EEout DX, AL20
+002015Apop DX20
+0021158pop AX20
+00221C3ret20
+0023150printIntpush AX20
+0024151push CX20
+0025152push DX20
+00263BAE904mov DX, 04E9H20
+00292B10Amov CL, 1020
+002B23C0ALoopPIcmp AL, 1020
+002D27C0Cjl printLast20
+002F2B400mov AH, 020
+00312F6F1div CL20
+00333E8E2FFcall printDigit20
+0036288E0mov AL, AH20
+00383E9F0FFjmp LoopPI20
+003B3E8DAFFprintLastcall printDigit20
+003E15Apop DX20
+003F159pop CX20
+0040158pop AX20
+00411C3ret20
+004252C30303024s_thousands',000$'20
+0047124s_dollars'$'20
+0048150printSalarypush AX20
+0049156push SI20
+004A152push DX20
+004B3BAE904mov DX, 04E9H20
+004E288C4mov AH, AL20
+005048A064700mov AL, [s_dollars]20
+00541EEout DX, AL20
+0055288E0mov AL, AH20
+00573E8C9FFcall printInt20
+005A3BE4200mov SI, s_thousands20
+005D3E8A0FFcall printStr20
+006015Apop DX20
+006115Epop SI20
+0062158pop AX20
+00631C3ret20
+0064150newLinepush AX20
+0065152push DX20
+00663BAE904mov DX, 04E9H20
+00692B00Amov AL, 0AH20
+006B1EEout DX, AL20
+006C2B00Dmov AL, 0DH20
+006E1EEout DX, AL20
+006F15Apop DX20
+0070158pop AX20
+00711C3ret20
+0072152getCharpush DX20
+00733BA6400GCWaitmov DX, 0064H20
+00761ECin AL, DX20
+007723C01cmp AL, 120
+0079275F8jne GCWait20
+007B3BA6000mov DX, 0060H20
+007E1ECin AL, DX20
+007F15AGCDonepop DX20
+00801C3ret20
+008132456E7465722061206E756D626572206265747765656E203020616E6420392E24Message1'Enter a number between 0 and 9.$'20
+00A117486176652061206E696365206461792124Message2'Have a nice day!$'20
+00B23BE8100mainmov SI, Message120
+00B53E848FFcall printStr20
+00B83E8A9FFcall newLine20
+00BB3E8B4FFgetNewDigitLoopcall getChar20
+00BE23C30cmp AL, '0'20
+00C027CF9jl getNewDigitLoop20
+00C223C39cmp AL, '9'20
+00C427FF5jg getNewDigitLoop20
+00C63BAE904mov DX, 04E9H20
+00C91EEout DX, AL20
+00CA3E897FFcall newLine20
+00CD23C30cmp AL, '0'20
+00CF2740Fje foundDiv3Digit20
+00D123C33cmp AL, '3'20
+00D32740Bje foundDiv3Digit20
+00D523C36cmp AL, '6'20
+00D727407je foundDiv3Digit20
+00D923C39cmp AL, '9'20
+00DB27403je foundDiv3Digit20
+00DD3E9D2FFjmp main20
+00E03BEA100foundDiv3Digitmov SI, Message220
+00E33E81AFFcall printStr20
+00E61F4hlt20

@@ -1,0 +1,224 @@
+					; Lab3b Part I - Subroutine to prompt the user to enter a key
+					;				get a character from the keyboard
+					; 				and check if the user presses 'y'
+					
+					; Constant definitions
+					Display	.EQU 04E9h	; address of Libra display
+					
+					
+					;---------------------------
+					;Insert subroutines printStr and newLine from Lab 5 here
+					;---------------------------
+					
+					;;;;;;;;;;;;;;;;;
+					; printStr: Subroutine to print a '$'-terminated string
+					; Input parameters:
+					; 	SI: Address of start of string to be printed
+					; Output parameters:
+					;	None.
+					printStr:
+						; Save registers modified by this subroutine
+0000	50			PUSH AX			; FIX ME
+0001	53			PUSH BX			; FIX ME
+0002	52			PUSH DX			; FIX ME
+					
+0003	BAE904			MOV DX, Display
+0006	BB0000			MOV BX,0
+					LoopPS:
+0009	8A00			MOV AL, [SI+BX]	; Load the next char to be printed - USING INPUT PARAMETER SI
+000B	3C24			CMP AL, '$'		; Compare the char to '$'
+000D	7405			JE quitPS		; If it is equal, then quit subroutine and return to calling code
+000F	EE			OUT DX,AL		; If it is not equal to '$', then print it
+0010	43			INC BX			; Point to the next char to be printed
+0011	E9F5FF			jmp LoopPS		; Jump back to the top of the loop
+					quitPS:
+						; Restore registers
+0014	5A			POP DX			; FIX ME
+0015	5B			POP BX			; FIX ME
+0016	58			POP AX			; FIX ME
+					
+0017	C3			RET
+					
+					
+					;;;;;;;;;;;;;;;;;
+					; printDigit: Subroutine to print a single decimal digit
+					; Input parameters:
+					; 	AL: Unsigned decimal digit (between 0-9) to be printed
+					; Output parameters:
+					;	None.
+					printDigit:
+						; Save registers modified by this subroutine
+0018	50			PUSH AX			; FIX ME
+0019	52			PUSH DX			; FIX ME
+						
+001A	BAE904			MOV DX, Display
+001D	0430			ADD AL, '0'		; Convert number to ASCII code
+001F	EE			OUT DX,AL		; Print it
+						
+						; Restore registers
+0020	5A			POP DX			; FIX ME
+0021	58			POP AX			; FIX ME
+						
+0022	C3			RET
+						
+							
+					;;;;;;;;;;;;;;;;;
+					; printInt: Subroutine to print a 1-byte unsigned (short) integer between 0-255
+					; Input parameters:
+					; 	AL: Unsigned short int to be printed
+					; Output parameters:
+					;	None.
+					printInt:
+						; Save registers modified by this subroutine
+0023	50			PUSH AX			; FIX ME
+0024	51			PUSH CX			; FIX ME
+0025	52			PUSH DX			; FIX ME
+						
+0026	BAE904			MOV DX, Display
+0029	B10A			MOV CL, 10		; Will be dividing by 10...
+						
+					LoopPI:
+002B	3C0A			CMP AL, 10		; Compare the number to 10
+002D	7C0C			JL printLast	; If it is less than 10, then print this digit
+						; If it is greater than 10, divide by 10
+002F	B400			MOV AH, 0		; Clear AH
+0031	F6F1			DIV CL			; Divide number by 10
+0033	E8E2FF			CALL printDigit ; Print the quotient in AL
+0036	88E0			MOV AL, AH		; Move remainder into AL to be printed
+0038	E9F0FF			jmp LoopPI		; Jump back to the top of the loop
+					printLast:
+003B	E8DAFF			CALL printDigit
+						
+						; Restore registers
+003E	5A			POP DX			; FIX ME
+003F	59			POP CX			; FIX ME
+0040	58			POP AX			; FIX ME
+						
+0041	C3			RET
+					
+					
+					;;;;;;;;;;;;;;;;;
+					; printSalary: Subroutine to print employee salary
+					; Input parameters:
+					; 	AL: Unsigned short int (0-99) representing salary in 1000's of $
+					; Output parameters:
+					;	None.
+					
+					; Constant strings for this subroutine:
+0042	2C30303024		s_thousands: .DB ',000$'
+0047	24		s_dollars: .DB '$'
+					
+					printSalary:
+						; Save registers modified by this subroutine
+0048	50			PUSH AX		
+0049	56			PUSH SI			
+004A	52			PUSH DX			
+						
+004B	BAE904			MOV DX, Display
+						
+004E	88C4			MOV AH,AL			; Keep a copy of the salary in AH (need AL for printing...)
+0050	8A064700			MOV AL, [s_dollars]	; Print '$' preceeding number
+0054	EE			OUT DX,AL			; Print it
+0055	88E0			MOV AL,AH			; Move salary back into AL
+0057	E8C9FF			CALL printInt		; Print the salary (0-255)
+005A	BE4200			MOV SI, s_thousands	; Move the starting address of s_thousands string into BX
+005D	E8A0FF			CALL printStr 		; Print ',000'
+						
+						; Restore registers
+0060	5A			POP DX			
+0061	5E			POP SI			
+0062	58			POP AX			
+						
+0063	C3			RET
+					
+					
+					;;;;;;;;;;;;;;;;;
+					; newLine: Subroutine to print a newline and a linefeed character
+					; Input parameters:
+					; 	None.
+					; Output parameters:
+					;	None.
+					
+					; Constants for this subroutine:
+					s_CR .EQU 0Dh		; ASCII value for Carriage return
+					s_LF .EQU 0Ah		; ASCII value for NewLine
+					
+					newLine:
+						; Save registers modified by this subroutine
+0064	50			PUSH AX			; FIX ME
+0065	52			PUSH DX			; FIX ME
+						
+0066	BAE904			MOV DX, Display		; Initialize the output port number in DX
+0069	B00A			MOV AL, s_LF		; Load line feed (LF) into AL
+006B	EE			out DX,AL			; print the char
+006C	B00D			MOV AL, s_CR		; Load carriage return (CR) into AL
+006E	EE			out DX,AL			; print the char
+						
+						; Restore registers
+006F	5A			POP DX			; FIX ME
+0070	58			POP AX			; FIX ME
+						
+0071	C3			RET
+						
+					;---------------------------
+					;End of subroutines printStr and newLine from Lab 5 here
+					;---------------------------
+					
+					
+					;;;;;;;;;;;;;;;;;
+					; getChar: waits for a keypress and returns pressed key in AL
+					; Input parameters:
+					; 	none.
+					; Output parameters:
+					;	AL: ASCII Value of key pressed by user
+					
+					; Constants used by this subroutine
+					KBSTATUS .EQU 0064h			; port number of keyboard STATUS reg
+					KBBUFFER .EQU 0060h			; port number of keyboard BUFFER reg
+					
+					getChar:
+0072	52			push DX        ; save reg used
+					GCWait:
+0073	BA6400			MOV DX, KBSTATUS	; load addr of keybrd STATUS
+0076	EC			IN	AL, DX			; Read contents of keyboard STATUS register
+0077	3C01			cmp AL, 1			; key pressed?
+0079	75F8			jne GCWait			; no, go back and check again for keypress
+					
+007B	BA6000			MOV DX, KBBUFFER	; load port number of kbrd BUFFER register
+007E	EC			IN  AL, DX			; get key into AL from BUFFER
+					GCDone:
+007F	5A			pop DX        	; restore regs
+0080	C3			ret
+					
+						
+0081	446F2079..		Message1: .DB	'Do you want to quit? (y/n)$'		; Message to be printed on screen
+							
+					;;;;;;;;;;;;;
+					; Main function: Asks the user whether they want to quit or not. 
+					; 				Repeats until user presses 'y'
+					;
+					;				Uses printStr, newline, and getChar subroutines.
+					main:
+009C	BE8100			mov SI, Message1				;Move starting address of Message1 to SI
+009F	E85EFF			call printStr					;Call prtstr to print Message1
+00A2	E8BFFF			call newLine					;Print a new line
+								
+00A5	E8CAFF			call getChar					;call Getchar to get value from keyboard
+								
+00A8	BAE904			mov DX, Display
+00AB	EE			out DX, AL						; Echo the character back to the display
+00AC	E8B5FF			call newLine
+														
+00AF	3C79			cmp AL, 'y'						; compare input character with 'y'
+00B1	75E9			jne main						;If user did not press 'y', then re-prompt (start over)
+						;Quit
+00B3	F4			HLT
+						
+						
+					
+					.END main		;Entry point of program is main()
+					
+					
+					
+					
+					
