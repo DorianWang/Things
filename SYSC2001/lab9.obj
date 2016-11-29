@@ -1,0 +1,188 @@
+3 187 4365 494   
+0000100SIGN020
+0001100NUM020
+0002100EXP020
+0003100MENT020
+0004100FP020
+1000152getCharpush DX20
+10013BA6400GCWaitmov DX, 0064H20
+10041ECin AL, DX20
+100523C01cmp AL, 120
+1007275F8jne GCWait20
+10093BA6000mov DX, 0060H20
+100C1ECin AL, DX20
+100D15AGCDonepop DX20
+100E1C3ret20
+100F150newLinepush AX20
+1010152push DX20
+10113BAE904mov DX, 04E9H20
+10142B00Amov AL, 0AH20
+10161EEout DX, AL20
+10172B00Dmov AL, 0DH20
+10191EEout DX, AL20
+101A15Apop DX20
+101B158pop AX20
+101C1C3ret20
+101D150printStrpush AX20
+101E153push BX20
+101F152push DX20
+10203BAE904mov DX, 04E9H20
+10233BB0000mov BX, 020
+102628A00LoopPSmov AL, [BX + SI]20
+102823C24cmp AL, '$'20
+102A27405je quitPS20
+102C1EEout DX, AL20
+102D143inc BX20
+102E3E9F5FFjmp LoopPS20
+103115AquitPSpop DX20
+103215Bpop BX20
+1033158pop AX20
+10341C3ret20
+10352B007normalizeNumbermov AL, 720
+103748A1E0100mov BL, [NUM]20
+103B3C0E301loopBackNormalizeshl BL, 120
+103E27209jc finishShiftingNormalize20
+104023C00cmp AL, 020
+104227405je finishShiftingNormalize20
+10442FEC8dec AL20
+10463E9F2FFjmp loopBackNormalize20
+1049488060200finishShiftingNormalizemov [EXP], AL20
+104D4881E0300mov [MENT], BL20
+10511C3ret20
+1052152getSignpush DX20
+10533BAE904mov DX, 04E9H20
+10563E8A7FFgetSignLoopcall getChar20
+105923C2Dcmp AL, '-'20
+105B27505jne skipNegativeSign20
+105D1EEout DX, AL20
+105E2B001mov AL, 120
+106015Apop DX20
+10611C3ret20
+106223C2BskipNegativeSigncmp AL, '+'20
+106427505jne skipPositiveSign20
+10661EEout DX, AL20
+10672B000mov AL, 020
+106915Apop DX20
+106A1C3ret20
+106B3E9E8FFskipPositiveSignjmp getSignLoop20
+106E15Apop DX20
+106F1C3ret20
+1070152getDigitpush DX20
+10713BAE904mov DX, 04E9H20
+10743E889FFgetDigitLoopcall getChar20
+107723C0Acmp AL, 0AH20
+107927504jne skipEnterKey20
+107B2B063mov AL, 9920
+107D15Apop DX20
+107E1C3ret20
+107F23C39skipEnterKeycmp AL, '9'20
+108127FF1jg getDigitLoop20
+108323C30cmp AL, '0'20
+108527CEDjl getDigitLoop20
+10871EEout DX, AL20
+108822C30sub AL, '0'20
+108A15Apop DX20
+108B1C3ret20
+108C151getNumberpush CX20
+108D153push BX20
+108E2B500mov CH, 020
+10902B10Amov CL, 1020
+10922B000mov AL, 020
+10943E8D9FFloopGNcall getDigit20
+109723C63cmp AL, 9920
+10992740Fje doneGN20
+109B288C3mov BL, AL20
+109D288E8mov AL, CH20
+109F2F6E1mul CL20
+10A1288C5mov CH, AL20
+10A3288D8mov AL, BL20
+10A5200C5add CH, AL20
+10A73E9EAFFjmp loopGN20
+10AA288E8doneGNmov AL, CH20
+10AC15Bpop BX20
+10AD159pop CX20
+10AE1C3ret20
+10AF35456E7465722061207369676E6564206E756D2028757020746F202B2D203330293A2024Message1'Enter a signed num (up to +- 30): $'20
+10D221496E206E6F726D616C697A656420666F726D3A2024Message2part1'In normalized form: $'20
+10E76207820325E24Message2part2' x 2^$'20
+10ED32496E207175617274657220707265636973696F6E20494545452D3735343A2024Message3'In quarter precision IEEE-754: $'20
+110D3BAE904mainmov DX, 04E9H20
+11103BEAF10mov SI, Message120
+11133E807FFcall printStr20
+11163E839FFpart2call getSign20
+1119488060000mov [SIGN], AL20
+111D3E86CFFcall getNumber20
+1120488060100mov [NUM], AL20
+11243E80EFFcall normalizeNumber20
+112748A1E0000mov BL, [SIGN]20
+112B3C0E301shl BL, 120
+112E48B3E0200mov DI, [EXP]20
+11323C1E70Dshl DI, 1320
+11353C1E701shl DI, 120
+1138380D300adc BL, 020
+113B3C0E301shl BL, 120
+113E3C1E701shl DI, 120
+1141380D300adc BL, 020
+11443C0E301shl BL, 120
+11473C1E701shl DI, 120
+114A380D300adc BL, 020
+114D3C0E301shl BL, 120
+115048B360300mov SI, [MENT]20
+11543C1E608shl SI, 820
+11573C1E601shl SI, 120
+115A380D300adc BL, 020
+115D3C0E301shl BL, 120
+11603C1E601shl SI, 120
+1163380D300adc BL, 020
+11663C0E301shl BL, 120
+11693C1E601shl SI, 120
+116C380D300adc BL, 020
+116F3C0E301shl BL, 120
+11723C1E601shl SI, 120
+1175380D300adc BL, 020
+11784881E0400mov [FP], BL20
+117C3E890FEprintPrettyStuffcall newLine20
+117F3BED210mov SI, Message2part120
+11823E898FEcall printStr20
+11853BAE904mov DX, 04E9H20
+118848A060000mov AL, [SIGN]20
+118C48B3E0100mov DI, [NUM]20
+11903C1E708shl DI, 820
+119323C01cmp AL, 120
+119527406je printNegativeSign20
+11972B02Bmov AL, '+'20
+11991EEout DX, AL20
+119A3E90300jmp printBinary20
+119D2B02DprintNegativeSignmov AL, '-'20
+119F1EEout DX, AL20
+11A03B90400printBinarymov CX, 420
+11A32B031mov AL, '1'20
+11A51EEout DX, AL20
+11A62B02Emov AL, '.'20
+11A81EEout DX, AL20
+11A948A1E0300mov BL, [MENT]20
+11AD2B000printBinaryLoopmov AL, 020
+11AF149dec CX20
+11B03C0E301shl BL, 120
+11B321430adc AL, '0'20
+11B51EEout DX, AL20
+11B6481F90000cmp CX, 020
+11BA275F1jne printBinaryLoop20
+11BC3BEE710mov SI, Message2part220
+11BF3E85BFEcall printStr20
+11C248A060200mov AL, [EXP]20
+11C620430add AL, '0'20
+11C81EEout DX, AL20
+11C93E843FEcall newLine20
+11CC3BEED10mov SI, Message320
+11CF3E84BFEcall printStr20
+11D248A1E0400mov BL, [FP]20
+11D63B90800mov CX, 820
+11D92B000printBinaryLoop2mov AL, 020
+11DB149dec CX20
+11DC3C0E301shl BL, 120
+11DF21430adc AL, '0'20
+11E11EEout DX, AL20
+11E2481F90000cmp CX, 020
+11E6275F1jne printBinaryLoop220
+11E81F4hlt20
