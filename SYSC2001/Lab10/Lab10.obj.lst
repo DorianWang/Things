@@ -1,0 +1,171 @@
+					; Lab10 - Magic 8 Ball
+					;	Set up the Timer interrupt
+					; 	Prompt user to ask a question, then press a button
+					; 	When a key is pressed, choose a message to print, depending on TICKS % 3
+					;	Go back and prompt the user
+					
+					; Constant definitions
+					Display	.EQU 04E9h	; address of Libra display
+					
+					; Set up Timer ISR vector (3 lines)
+					.ORG 0x0020
+0020	3503		.dw TimerISR
+					numTick .EQU 1000
+					
+					; Data segment (beyond interrupt vector region)
+					.ORG 0x200
+0200	00		TICKS: .DB 0;			; Tracks how many ticks have elapsed.
+					
+0201	41736B20..		prompt: .DB	'Ask your question, then press a key...$'		; Prompt message to be printed on screen
+					
+0228	5965732C..		message0: .DB 'Yes, absolutely!$'
+0239	4E6F2077..		message1: .DB 'No way dude...$'
+0248	41736B20..		message2: .DB 'Ask your mother instead.$'
+					
+					; Code segment
+					.ORG 0x300
+					
+					;---------------------------
+					;Insert Sub-routines printStr, newLine, and getChar from Lab8 here
+					;---------------------------
+					
+					KBSTATUS .EQU 0064h			; port number of keyboard STATUS reg
+					KBBUFFER .EQU 0060h			; port number of keyboard BUFFER reg
+					
+					getChar:
+0300	52			push DX        ; save reg used
+					GCWait:
+0301	BA6400			MOV DX, KBSTATUS	; load addr of keybrd STATUS
+0304	EC			IN	AL, DX			; Read contents of keyboard STATUS register
+0305	3C01			cmp AL, 1			; key pressed?
+0307	75F8			jne GCWait			; no, go back and check again for keypress
+					
+0309	BA6000			MOV DX, KBBUFFER	; load port number of kbrd BUFFER register
+030C	EC			IN  AL, DX			; get key into AL from BUFFER
+					GCDone:
+030D	5A			pop DX        	; restore regs
+030E	C3			ret
+					
+					;;;;;;;;;;;;;;;;;
+					; newLine: Subroutine to print a newline and a linefeed character
+					; Input parameters:
+					; 	None.
+					; Output parameters:
+					;	None.
+					
+					; Constants for this subroutine:
+					s_CR .EQU 0Dh		; ASCII value for Carriage return
+					s_LF .EQU 0Ah		; ASCII value for NewLine
+					
+					newLine:
+						; Save registers modified by this subroutine
+030F	50			PUSH AX			; FIX ME
+0310	52			PUSH DX			; FIX ME
+						
+0311	BAE904			MOV DX, Display		; Initialize the output port number in DX
+0314	B00A			MOV AL, s_LF		; Load line feed (LF) into AL
+0316	EE			out DX,AL			; print the char
+0317	B00D			MOV AL, s_CR		; Load carriage return (CR) into AL
+0319	EE			out DX,AL			; print the char
+						
+						; Restore registers
+031A	5A			POP DX			; FIX ME
+031B	58			POP AX			; FIX ME
+						
+031C	C3			RET
+					
+					;;;;;;;;;;;;;;;;;
+					; printStr: Subroutine to print a '$'-terminated string
+					; Input parameters:
+					; 	SI: Address of start of string to be printed
+					; Output parameters:
+					;	None.
+					printStr:
+						; Save registers modified by this subroutine
+031D	50			PUSH AX			; FIX ME
+031E	53			PUSH BX			; FIX ME
+031F	52			PUSH DX			; FIX ME
+					
+0320	BAE904			MOV DX, Display
+0323	BB0000			MOV BX,0
+					LoopPS:
+0326	8A00			MOV AL, [SI+BX]	; Load the next char to be printed - USING INPUT PARAMETER SI
+0328	3C24			CMP AL, '$'		; Compare the char to '$'
+032A	7405			JE quitPS		; If it is equal, then quit subroutine and return to calling code
+032C	EE			OUT DX,AL		; If it is not equal to '$', then print it
+032D	43			INC BX			; Point to the next char to be printed
+032E	E9F5FF			jmp LoopPS		; Jump back to the top of the loop
+					quitPS:
+						; Restore registers
+0331	5A			POP DX			; FIX ME
+0332	5B			POP BX			; FIX ME
+0333	58			POP AX			; FIX ME
+					
+0334	C3			RET
+					
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					; END OF SUBROUTINES FROM lab8.asm
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					; INSERT modified TIMER ISR
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					TimerISR:          ;FIX ME: Timer ISR (2 lines)
+0335	FE060002		INC BYTE [TICKS]
+0339	CF		IRET
+							
+					;;;;;;;;;;;;;
+					; Main function: Prompt the user to ask a question, then press a key 
+					; 				When a user presses a key, compute CX%3, 
+					;				then choose one of the 3 messages to print
+					;				repeat...
+					;
+					;				Uses printStr, newline, and getChar subroutines.
+					main:
+						; Configure the timer subsystem (6 lines)
+033A	BA4000			MOV DX, 0x40    ;point DX to the timer subsystem DATA port 
+033D	B8E803			MOV AX, numTick ;1000 millisecond count
+0340	EF			OUT DX, AX      ;Set the new count in the timer
+0341	BA4300			MOV DX, 0x43    ;point DX to the timer subsystem CONTROL port
+0344	B006			MOV AL, 0x06    ;enable timer (bit 1) and timer interrupts (bit 2) (0x02 | 0x04 == 0x06)
+0346	EE			OUT DX, AL      ;start timer
+0347	FB			STI
+					
+					; Set up infinite Loop to prompt user and print answer
+					PromptUser:
+0348	BE0102			mov SI, prompt					;FIX ME: Move starting address of prompt to SI
+034B	E8CFFF			call printStr					;FIX ME: Call prtstr to print prompt message
+034E	E8BEFF			call newLine					;FIX ME: Print a new line
+								
+0351	E8ACFF			call getChar					;FIX ME: call Getchar to get value from keyboard
+						
+						; FIX ME: Compute TICKS%3 (3 lines)
+0354	B400			mov AH, 00h ;Extra bit to make sure AX is clear.
+0356	8A1E0002			mov BL, [TICKS]
+035A	F6F3			div BL
+						
+					
+						; Depending on remainder, set SI to point to the correct message (~12 lines)
+035C	BE4802			mov SI, message2
+035F	80FC02			cmp AH, 2
+0362	740B			je print
+0364	BE3902			mov SI, message1
+0367	80FC01			cmp AH, 1
+036A	7403			je print
+036C	BE2802			mov SI, message0
+						
+						
+						; Print the selected message (2 lines)
+					print:
+036F	E8ABFF			call printStr					;FIX ME: Call prtstr to print selected Message (Pointed to by SI)
+0372	E89AFF			call newLine					;FIX ME: Print new line
+						
+0375	E9D0FF			JMP PromptUser		; Go back and do it again
+					
+					.END main		;Entry point of program is main()
+					
+					
+					
+					
+					
+					
