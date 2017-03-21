@@ -1,6 +1,7 @@
 ; Set up the Timer ISR's Vector:
 .ORG 0x20       ;location of ISR type 8
 .dw timerISR        ;install ISR type 8
+; I think it should be at 16?, because it is type 8?
 
 numTick .EQU 1000
 

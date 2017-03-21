@@ -1,0 +1,12 @@
+3 11 512 21    
+00202110220
+02003BA4000startmov DX, 40H20
+02033B8E803mov AX, 100020
+02061EFout DX, AX20
+02073BA4300mov DX, 43H20
+020A2B006mov AL, 06H20
+020C1EEout DX, AL20
+020D1FBsti20
+020E3E9FDFFDonejmp Done20
+0211141timerISRinc CX20
+02121CFiret20

@@ -1,0 +1,67 @@
+3 66 826 219   
+00202350320
+0200100TICKS020
+02013941736B20796F7572207175657374696F6E2C207468656E2070726573732061206B65792E2E2E24prompt'Ask your question, then press a key...$'20
+0228175965732C206162736F6C7574656C792124message0'Yes, absolutely!$'20
+0239154E6F2077617920647564652E2E2E24message1'No way dude...$'20
+02482541736B20796F7572206D6F7468657220696E73746561642E24message2'Ask your mother instead.$'20
+0300152getCharpush DX20
+03013BA6400GCWaitmov DX, 0064H20
+03041ECin AL, DX20
+030523C01cmp AL, 120
+0307275F8jne GCWait20
+03093BA6000mov DX, 0060H20
+030C1ECin AL, DX20
+030D15AGCDonepop DX20
+030E1C3ret20
+030F150newLinepush AX20
+0310152push DX20
+03113BAE904mov DX, 04E9H20
+03142B00Amov AL, 0AH20
+03161EEout DX, AL20
+03172B00Dmov AL, 0DH20
+03191EEout DX, AL20
+031A15Apop DX20
+031B158pop AX20
+031C1C3ret20
+031D150printStrpush AX20
+031E153push BX20
+031F152push DX20
+03203BAE904mov DX, 04E9H20
+03233BB0000mov BX, 020
+032628A00LoopPSmov AL, [BX + SI]20
+032823C24cmp AL, '$'20
+032A27405je quitPS20
+032C1EEout DX, AL20
+032D143inc BX20
+032E3E9F5FFjmp LoopPS20
+033115AquitPSpop DX20
+033215Bpop BX20
+0333158pop AX20
+03341C3ret20
+03354FE060002TimerISRinc [TICKS]20
+03391CFiret20
+033A3BA4000mainmov DX, 40H20
+033D3B8E803mov AX, 100020
+03401EFout DX, AX20
+03413BA4300mov DX, 43H20
+03442B006mov AL, 06H20
+03461EEout DX, AL20
+03471FBsti20
+03483BE0102PromptUsermov SI, prompt20
+034B3E8CFFFcall printStr20
+034E3E8BEFFcall newLine20
+03513E8ACFFcall getChar20
+03542B400mov AH, 00H20
+035648A1E0002mov BL, [TICKS]20
+035A2F6F3div BL20
+035C3BE4802mov SI, message220
+035F380FC02cmp AH, 220
+03622740Bje print20
+03643BE3902mov SI, message120
+0367380FC01cmp AH, 120
+036A27403je print20
+036C3BE2802mov SI, message020
+036F3E8ABFFprintcall printStr20
+03723E89AFFcall newLine20
+03753E9D0FFjmp PromptUser20
