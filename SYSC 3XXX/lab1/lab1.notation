@@ -184,4 +184,29 @@
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ch8TkPl4EeegkpWAdSEpwg" id="(0.6211180124223602,0.0)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ch8Tkfl4EeegkpWAdSEpwg" id="(0.33222591362126247,1.0)"/>
   </edges>
+  <edges xmi:type="notation:Connector" xmi:id="__RiJ8P7hEeev-IoEpUI4pw" type="Association_Edge" source="_rQEmAPlrEeegkpWAdSEpwg" target="_oUSU4PlsEeegkpWAdSEpwg">
+    <children xmi:type="notation:DecorationNode" xmi:id="__RtwIP7hEeev-IoEpUI4pw" type="Association_StereotypeLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__RtwIf7hEeev-IoEpUI4pw" y="-20"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="__RuXMP7hEeev-IoEpUI4pw" type="Association_NameLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__RuXMf7hEeev-IoEpUI4pw" y="20"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="__RuXMv7hEeev-IoEpUI4pw" type="Association_TargetRoleLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__RuXM_7hEeev-IoEpUI4pw" y="-20"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="__RuXNP7hEeev-IoEpUI4pw" type="Association_SourceRoleLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__RuXNf7hEeev-IoEpUI4pw" y="20"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="__RuXNv7hEeev-IoEpUI4pw" type="Association_SourceMultiplicityLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__RuXN_7hEeev-IoEpUI4pw" y="20"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="__RuXOP7hEeev-IoEpUI4pw" type="Association_TargetMultiplicityLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__RuXOf7hEeev-IoEpUI4pw" y="-20"/>
+    </children>
+    <styles xmi:type="notation:FontStyle" xmi:id="__RiJ8f7hEeev-IoEpUI4pw"/>
+    <element xmi:type="uml:Association" href="lab1.uml#__O3QcP7hEeev-IoEpUI4pw"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__RiJ8v7hEeev-IoEpUI4pw" points="[401, 290, -643984, -643984]$[580, 280, -643984, -643984]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__TDz8P7hEeev-IoEpUI4pw" id="(1.0,0.5882352941176471)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__TDz8f7hEeev-IoEpUI4pw" id="(0.0,0.425531914893617)"/>
+  </edges>
 </notation:Diagram>
