@@ -1,0 +1,22 @@
+y
+y
+y
+n - paul too many
+n - too few for MyCompany and no work for Sarah
+n - too few for YourCompany
+
+
+Company has a name, which is a string
+Offices have an address and phone numbers, both of which are strings
+Multiple but at least 1 department is at each office, with each one having a location
+Headquarters is a specific type of office
+Company is made up of offices and departments, of which there are at least 1 of each.
+Departments can be made up of up to 1 subDepartment, which are also departments
+Departments have 1 head, and at least 1 member, which are Person
+Each person belongs to only one department
+Each person has a name and private title, both of which are strings
+There is a function to get photos, contact info and personal records from Persons
+Each Person has only 1 contact info and 1 personal record
+Contact info holds a private address which is a string
+personal record holds a private employment history which is a string
+Company holds at least 1 employees, which are all Persons, but each person only has 1 company 
