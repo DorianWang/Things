@@ -4,19 +4,18 @@ import sys
 def startup():
     if len(sys.argv) < 3:
         print("Missing argument: Port")
-        exit()
+        sys.exit()
     else:
-        serverIP = sys.argv[1]
+        server_name = sys.argv[1]
         running_port = int(sys.argv[2])
-        print("Client will send to : " + serverIP + ":" + str(running_port))
+        print("Client will send to : " + server_name + ":" + str(running_port))
+    for (open)
 
 
 
+def cleanup():
 
-
-
-
-
+    sys.exit(0)
 
 
 
