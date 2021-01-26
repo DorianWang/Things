@@ -1,7 +1,7 @@
 import csv
 import math
 
-filename = "Scope_Square.txt"
+filename = "Scope_Rect.txt"
 rows = []
 
 
@@ -13,7 +13,7 @@ with open(filename, newline='') as f:
         except ValueError:
             continue
         i2 = float(row[1])
-        rows.append([i1, i2])
+        rows.append([i1, i2 - 0.3569])
         #print(row)
 
 #print(rows)
