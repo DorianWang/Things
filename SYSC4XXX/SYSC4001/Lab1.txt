@@ -1,0 +1,19 @@
+Q1
+ls lists items in the current directory
+ls -a lists all items, including hidden (special?) files/folders
+ls -l lists the permisions, latest change date, owner & group and size in bytes, for all items from ls
+
+Q2
+ls dirname acts as if you called ls while dirname was the current directory, while cd dirname changes the current directory to dirname if possible.
+
+Q3
+cd ~ acts like cd /home/CURRENTUSER
+cd ~username acts like cd /home/USERNAME
+cd - changes the current directory to the last active directory, kinda like back button
+
+Q4
+mkdir makes a folder, but fails if the folder path is incomplete
+mkdir -p will create any parent directories as required to complete the path of the new folder
+
+Q5
+The use of the two commands "cp a b" and "rm a" will emulate "mv a b". I guess you could also use "cat a > b" instead of "cp a b".
