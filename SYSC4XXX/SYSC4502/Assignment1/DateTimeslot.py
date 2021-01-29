@@ -3,6 +3,7 @@ if sys.version_info < (3, 7):
     print("This script requires Python 3.7 or newer to run!")
     sys.exit(1)
 import math
+import threading
 from dataclasses import dataclass, field
 
 # Flags
@@ -18,13 +19,14 @@ HOURS_IN_DAY = 24
 # 00:00 is the beginning of a day and functionally equal to 24:00 of the previous day.
 @dataclass(unsafe_hash=True)
 class _Timeslot:
-    """Holds a start value and duration of a timeslot."""
+    """Holds a start and end times of a timeslot."""
     start: int = field(default=0)
     end: int = field(default=0)
 
     def __init__(self, times: tuple):
         """Creates the timeslot using two 24 hour clock strings in a tuple.
         The starting time cannot be 24:00 and the end time cannot be 00:00.
+
         Keyword arguments:
         times -- A tuple containing the start time and end time. (Two strings of format "HH:MM" or "H:MM")
         """
@@ -79,6 +81,10 @@ class _Timeslot:
             end_time = str(math.floor(self.end + self.end / 60)).zfill(2) + ":" + str(self.end % 60).zfill(2)
         return start_time, end_time
 
+    def __str__(self):
+        a, b = self.get_timeslot_24hour_tuple()
+        return a + "-" + b
+
     def __lt__(self, other):
         """Returns true when a timeslot ends before or at the same time that the other starts."""
         if self.end <= other.start:
@@ -126,43 +132,117 @@ class DateTimeslot:
 
 
 class RoomDateTimeslotManager:
-    days_dict: dict
-    timeslots_dict: dict
-    rooms_dict: dict
-    all_slots_flags: list  # For now it will just be a static list of reservations.
+    _days_dict: dict
+    _timeslots_dict: dict
+    _rooms_dict: dict
+    _all_slots_flags: list  # For now it will just be a static list of reservation IDs.
 
-    def __init__(self, room_list, date_list, timeslot_list, current_reservations=[]):
-        self.rooms_dict = dict()
-        self.days_dict = dict()
-        self.timeslots_dict = dict()
+    def __init__(self, room_list, date_list, timeslot_list, reservations_file_name="reservations.txt"):
+        self._rooms_dict = dict()
+        self._days_dict = dict()
+        self._timeslots_dict = dict()
+        self._all_slots_set = set()
 
         for room in room_list:
             room = room.strip(" \t\r\n,.")
-            self.rooms_dict[room] = self.rooms_dict.__len__()
+            self._rooms_dict[room] = self._rooms_dict.__len__()
 
         for day in date_list:
             day = day.strip(" \t\r\n,.")  # remove leading and trailing spaces and punctuation
-            self.days_dict[day] = self.days_dict.__len__()
+            self._days_dict[day] = self._days_dict.__len__()
 
         for timeslot_line in timeslot_list:
-            self.timeslots_dict[_Timeslot.new_timeslot_24hour(timeslot_line)] = (self.timeslots_dict.__len__())
+            self._timeslots_dict[_Timeslot.new_timeslot_24hour(timeslot_line)] = (self._timeslots_dict.__len__())
 
-        # Creates a 2D array with the first value as the day value, and the second the timeslot value
-        self.all_slots_flags = [[[False for i in range(self.timeslots_dict.__len__())]
-                                 for j in range(self.days_dict.__len__())]
-                                for k in range(self.rooms_dict.__len__())]
+        # Sets the reservation ID modifiers
+        self.__rooms_multiplier = self._timeslots_dict.__len__() * self._days_dict.__len__()
+        self.__days_multiplier = self._timeslots_dict.__len__()
 
-        for reservation in current_reservations:
-            # All these values are assumed to be clean.
-            room, timeslot, day = reservation.split()
-            self.all_slots_flags[self.rooms_dict[room]][self.days_dict[day]][
-                self.timeslots_dict[_Timeslot.new_timeslot_24hour(timeslot)]] = True
+        with open(reservations_file_name) as current_reservations:
+            self.load_reservations(current_reservations)
 
-        print(self.rooms_dict)
-        print(self.days_dict)
-        print(self.timeslots_dict)
-        print(self.all_slots_flags)
+        print(self._rooms_dict)
+        print(self._days_dict)
+        print(self._timeslots_dict)
+        print(self._all_slots_set)
 
+    def __parse_reservation(self, new_reservation: str) -> int:
+        new_reservation = new_reservation.strip(" \n\t")
+
+        room, timeslot, day = new_reservation.split()
+        return (self._rooms_dict[room] * self.__rooms_multiplier + self._days_dict[day] * self.__days_multiplier
+                + self._timeslots_dict[_Timeslot.new_timeslot_24hour(timeslot)])
+
+    def load_reservations(self, input_file):
+        """Takes a file handle (generally from the reservations.txt file), extracts the reservations,
+         and then sets them as reserved. This data is assumed to be clean, so any problem is an error.
+         The caller is responsible for opening and closing the file.
+
+        Keyword arguments:
+        current_reservations -- A list of strings with each string in the format "ROOM TIMESLOT DAY"
+        """
+        for rev in input_file:
+            try:
+                self._all_slots_set.add(self.__parse_reservation(rev))
+            except KeyError:
+                sys.stderr.write("Invalid key in line: " + rev)
+                sys.stderr.write("This reservation has been ignored!")
+
+    def add_reservation(self, new_reservation: str) -> int:
+        """Takes a string containing a reservation, extracts the room, timeslot and day,
+         and then sets them as reserved. This function returns True if a reservation is added, or false otherwise.
+         Returns 0 if successful, 1 if reservation already exists, and negative values for exceptions.
+
+        Keyword arguments:
+        new_reservation -- A string in the format "ROOM TIMESLOT DAY"
+        """
+        try:
+            temp_res = self.__parse_reservation(new_reservation)
+        except KeyError:
+            print("Invalid key in line: " + new_reservation)
+            return -1
+        except ValueError:
+            print("Could not properly split line: " + new_reservation)
+            return -2
+
+        if temp_res in self._all_slots_set:
+            return 1  # Reservation already in set, return error message to client
+        self._all_slots_set.add(temp_res)
+        return 0
+
+    def remove_reservation(self, reservation_to_remove: str) -> int:
+        """Takes a string containing a reservation, and checks if it exists. If it does the reservation is removed.
+         Returns 0 if successful at removal, 1 if reservation does not exists, and negative values for exceptions.
+
+        Keyword arguments:
+        reservation_to_remove -- A string in the format "ROOM TIMESLOT DAY"
+        """
+        try:
+            temp_reservation_id = self.__parse_reservation(reservation_to_remove)
+        except KeyError:
+            print("Invalid key in line: " + reservation_to_remove)
+            return -1
+        except ValueError:
+            print("Could not properly split line: " + reservation_to_remove)
+            return -2
+
+        if temp_reservation_id in self._all_slots_set:
+            self._all_slots_set.remove(temp_reservation_id)
+            return 0
+
+        return 1
+
+    def export_reservations(self, reservations_file_name="reservations.txt"):
+        rooms = self._rooms_dict.keys()
+        days = self._days_dict.keys()
+        timeslots = self._timeslots_dict.keys()
+        with open(reservations_file_name, mode="wt") as reservation_file:
+            for res_id in self._all_slots_set:
+                timeslot_id = res_id % self.__days_multiplier
+                day_id = (res_id % self.__rooms_multiplier) // self.__days_multiplier
+                room_id = res_id // self.__rooms_multiplier
+                reservation_string = rooms[room_id] + " " + timeslots[timeslot_id].__str__() + " " + days[day_id] + "\n"
+                reservation_file.write(reservation_string)
 
 
 

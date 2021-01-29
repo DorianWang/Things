@@ -1,0 +1,2 @@
+https://stackoverflow.com/questions/4938723/what-is-the-correct-way-to-make-my-pyqt-application-quit-when-killed-from-the-console
+- For how to set up signal.set_wakeup_fd()
