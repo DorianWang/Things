@@ -21,7 +21,7 @@ class MessageID(Enum):
     Names starting with REQ_ are for client requests to the server,
     while RES_ are for responses from the server.
     """
-    _NULL = b'\x00'
+    NULL = b'\x00'
     REQ_ROOMS = b'\x19'
     REQ_DAYS = b'\x2B'
     REQ_TIMESLOTS = b'\x32'
@@ -60,6 +60,7 @@ class ResponseStrings(Enum):
     SUCCESS = "The server has completed the request."
     FAILURE = "The server has not completed your request due to being invalid."
     ERROR = "The server experienced an error while processing your request. It has not been completed."
+    CLIENT_ERROR = "The client has received an unexpected response."
     DATA_RECEIVED = "Server response:"
 
     HELP = "No help is coming, because I wasted too much time daydreaming."
