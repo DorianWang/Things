@@ -27,7 +27,6 @@ def parse_response(server_data: list) -> tuple:
     return ID, data
 
 
-
 def main():
 
     if len(sys.argv) < 3:
@@ -43,39 +42,67 @@ def main():
     print("What command do you wish to send to the server?")
     while True:
         user_input = input("Enter Command: ")
+        if user_input == "":
+            continue
         user_input = user_input.strip()
-        user_input = user_input.split(" ")
+        user_input = list(filter(None, user_input.split(" ")))
 
         payload = bytearray()
+        print(user_input)
 
         if not user_input:  # Just ignore empty strings
             continue
-        elif user_input == CommandStrings.ROOMS:
-            pass
-        elif user_input == CommandStrings.DAYS:
-            pass
-        elif user_input == CommandStrings.TIMESLOTS:
-            pass
-        elif user_input == CommandStrings.CHECK_ROOM:
-            pass
-        elif user_input == CommandStrings.MAKE_RESERVATION:
-            pass
-        elif user_input == CommandStrings.DELETE_RESERVATION:
-            pass
-        elif user_input == CommandStrings.STOP_SERVER:
+        elif user_input[0] == CommandStrings.ROOMS:
+            payload.append(MessageID.REQ_ROOMS)
+        elif user_input[0] == CommandStrings.DAYS:
+            payload.append(MessageID.REQ_DAYS)
+        elif user_input[0] == CommandStrings.TIMESLOTS:
+            payload.append(MessageID.REQ_TIMESLOTS)
 
+        elif user_input[0] == CommandStrings.CHECK_ROOM:
+            if user_input.__len__() < 2:
+                print("Please specify a room to check for!")
+                continue
+            payload.append(MessageID.REQ_CHECK_ROOM)
+            payload = payload + user_input[1].encode()
+            payload.append(MessageID.NULL)
+
+        elif user_input[0] == CommandStrings.MAKE_RESERVATION:
+            if user_input.__len__() < 4:
+                print("Not enough arguments to make a reservation!")
+                continue
+            payload.append(MessageID.REQ_MAKE_RESERVATION)
+            payload = payload + user_input[1].encode()
+            payload.append(MessageID.NULL)
+            payload = payload + user_input[2].encode()
+            payload.append(MessageID.NULL)
+            payload = payload + user_input[3].encode()
+            payload.append(MessageID.NULL)
+
+        elif user_input[0] == CommandStrings.DELETE_RESERVATION:
+            if user_input.__len__() < 4:
+                print("Not enough arguments to delete a reservation!")
+                continue
+            payload.append(MessageID.REQ_DELETE_RESERVATION)
+            payload = payload + user_input[1].encode()
+            payload.append(MessageID.NULL)
+            payload = payload + user_input[2].encode()
+            payload.append(MessageID.NULL)
+            payload = payload + user_input[3].encode()
+            payload.append(MessageID.NULL)
+
+        elif user_input[0] == CommandStrings.STOP_SERVER:
+            payload.append(MessageID.REQ_STOP_SERVER)
             break
         else:
             print(ResponseStrings.UNRECOGNIZED_COMMAND)
             continue
 
-        client_socket.send()
+        print(payload)
+        client_socket.sendto(payload, (server_name, running_port))
 
     print("Exiting!")
     sys.exit(0)
 
-a = ""
-b = "asdf wefe"
-print(a.strip())
-print(a.split())
-print(b.split())
+
+main()
