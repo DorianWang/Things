@@ -3,8 +3,9 @@
 # Both the client and server will use this file, but some messages are specific to the client.
 
 class NetConsts:
-    """Currently only has 1 value, this enum will likely increase in size when new functions are required"""
-    TIMEOUT = 1  # assume that a packet is lost after 1 second
+    """Currently only has 2 values, this enum will likely increase in size when new functions are required"""
+    TIMEOUT = 1  # assume that a packet is lost after 1 second, this might be a bit too short for my behemoth...
+    MAX_BUFFER = 2048
 
 
 # http://www.ee.unb.ca/cgi-bin/tervo/polygen2.pl?d=4&p=11111&s=1&c=1&a=0&g=1
@@ -26,7 +27,7 @@ class MessageID:
     REQ_MAKE_RESERVATION = 0x56
     REQ_DELETE_RESERVATION = 0x64
 
-    REQ_RESEND = 0xE3  # currently not implemented
+    REQ_RESEND = 0xE3  # currently really simple
     REQ_STOP_SERVER = 0xFA
 
     RES_SUCCESS = 0x7D
@@ -47,6 +48,7 @@ class CommandStrings:
     CHECK_ROOM = "check"
     MAKE_RESERVATION = "reserve"
     DELETE_RESERVATION = "delete"
+    RESEND = "resend"
     STOP_SERVER = "quit"
     HELP = "help"
 
@@ -58,7 +60,10 @@ class ResponseStrings:
     FAILURE = "The server has not completed your request due to being invalid."
     ERROR = "The server experienced an error while processing your request. It has not been completed."
     CLIENT_ERROR = "The client has received an unexpected response."
+    SOCKET_TIMED_OUT = 'Client timed out! Use "resend" to see the last request the server processed.'
     DATA_RECEIVED = "Server response:"
+    RESEND_CUE = "Last completed request resulted in:"
+    RESEND_NO_DATA = "Server does not have a previous result to return."
 
     HELP = "No help is coming, because I wasted too much time daydreaming."
 

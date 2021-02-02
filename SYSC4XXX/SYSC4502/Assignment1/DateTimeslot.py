@@ -135,7 +135,7 @@ class RoomDateTimeslotManager:
     _days_dict: dict
     _timeslots_dict: dict
     _rooms_dict: dict
-    _all_slots_flags: list  # For now it will just be a static list of reservation IDs.
+    _all_slots_set: set  # For now it will just be a static list of reservation IDs.
 
     def __init__(self, room_list, date_list, timeslot_list, reservations_file_name="reservations.txt"):
         self._rooms_dict = dict()
@@ -166,6 +166,11 @@ class RoomDateTimeslotManager:
         print(self._timeslots_dict)
         print(self._all_slots_set)
 
+    def __res_id_from_values(self, room: str, timeslot: str, day:str):
+        # Note all exceptions must be handled by caller.
+        return (self._rooms_dict[room] * self.__rooms_multiplier + self._days_dict[day] * self.__days_multiplier
+                        + self._timeslots_dict[_Timeslot.new_timeslot_24hour(timeslot)])
+
     def __parse_reservation(self, new_reservation: str) -> int:
         new_reservation = new_reservation.strip(" \n\t")
 
@@ -188,8 +193,8 @@ class RoomDateTimeslotManager:
                 sys.stderr.write("Invalid key in line: " + rev)
                 sys.stderr.write("This reservation has been ignored!")
 
-    def add_reservation(self, new_reservation: str) -> int:
-        """Takes a string containing a reservation, extracts the room, timeslot and day,
+    def add_reservation(self, room: str, timeslot: str, day:str) -> int:
+        """Takes 3 string values, the room, timeslot and day, and attempts to add the
          and then sets them as reserved. This function returns True if a reservation is added, or false otherwise.
          Returns 0 if successful, 1 if reservation already exists, and negative values for exceptions.
 
@@ -197,34 +202,28 @@ class RoomDateTimeslotManager:
         new_reservation -- A string in the format "ROOM TIMESLOT DAY"
         """
         try:
-            temp_res = self.__parse_reservation(new_reservation)
+            temp_res = self.__res_id_from_values(room, timeslot, day)
         except KeyError:
-            print("Invalid key in line: " + new_reservation)
+            print("Invalid key in add_reservation!")
             return -1
-        except ValueError:
-            print("Could not properly split line: " + new_reservation)
-            return -2
 
         if temp_res in self._all_slots_set:
             return 1  # Reservation already in set, return error message to client
         self._all_slots_set.add(temp_res)
         return 0
 
-    def remove_reservation(self, reservation_to_remove: str) -> int:
-        """Takes a string containing a reservation, and checks if it exists. If it does the reservation is removed.
+    def remove_reservation(self, room:str, timeslot:str, day:str) -> int:
+        """Takes 3 strings defining a reservation, and checks if it exists. If it does the reservation is removed.
          Returns 0 if successful at removal, 1 if reservation does not exists, and negative values for exceptions.
 
         Keyword arguments:
         reservation_to_remove -- A string in the format "ROOM TIMESLOT DAY"
         """
         try:
-            temp_reservation_id = self.__parse_reservation(reservation_to_remove)
+            temp_reservation_id = self.__res_id_from_values(room, timeslot, day)
         except KeyError:
-            print("Invalid key in line: " + reservation_to_remove)
+            print("Invalid key in add_reservation!")
             return -1
-        except ValueError:
-            print("Could not properly split line: " + reservation_to_remove)
-            return -2
 
         if temp_reservation_id in self._all_slots_set:
             self._all_slots_set.remove(temp_reservation_id)
@@ -233,19 +232,65 @@ class RoomDateTimeslotManager:
         return 1
 
     def export_reservations(self, reservations_file_name="reservations.txt"):
+        with open(reservations_file_name, mode="wt") as reservation_file:
+            for res_id in self._all_slots_set:
+
+                reservation_file.write(self.get_reservation_string(res_id))
+
+    def get_days(self):
+        return self._days_dict.keys()
+
+    def get_timeslots(self):
+        temp = self._timeslots_dict.keys()
+        return [timeslot.__str__() for timeslot in temp]
+
+    def get_rooms(self):
+        return self._rooms_dict.keys()
+
+    def get_reservation_string(self, res_id):
         rooms = self._rooms_dict.keys()
         days = self._days_dict.keys()
         timeslots = self._timeslots_dict.keys()
-        with open(reservations_file_name, mode="wt") as reservation_file:
-            for res_id in self._all_slots_set:
-                timeslot_id = res_id % self.__days_multiplier
-                day_id = (res_id % self.__rooms_multiplier) // self.__days_multiplier
-                room_id = res_id // self.__rooms_multiplier
-                reservation_string = rooms[room_id] + " " + timeslots[timeslot_id].__str__() + " " + days[day_id] + "\n"
-                reservation_file.write(reservation_string)
 
+        timeslot_id = res_id % self.__days_multiplier
+        day_id = (res_id % self.__rooms_multiplier) // self.__days_multiplier
+        room_id = res_id // self.__rooms_multiplier
 
+        reservation_string = rooms[room_id] + " " + timeslots[timeslot_id].__str__() + " " + days[day_id] + "\n"
+        return reservation_string
 
+    def get_reservations_with_values(self, room=None, date=None, timeslot=None) -> list:
+        matching_reservations = []
+        room_id = 0
+        date_id = 0
+        timeslot_id = 0
+        # For each possible
+        try:
+            if room is not None:
+                room_id = self._rooms_dict[room]
+            if date is not None:
+                date_id = self._days_dict[date]
+            if timeslot is not None:
+                timeslot_id = self._timeslots_dict[_Timeslot.new_timeslot_24hour(timeslot)]
+        except KeyError:
+            return []
+
+        for reservation in self._all_slots_set:
+
+            # If all the checked values equal to the provided one, then add the value to the array
+            if room is not None:
+                if reservation // self.__rooms_multiplier != room_id:
+                    continue
+            if date is not None:
+                if (reservation % self.__rooms_multiplier) // self.__days_multiplier != date_id:
+                    continue
+            if timeslot is not None:
+                if reservation % self.__days_multiplier != timeslot_id:
+                    continue
+
+            matching_reservations.append(self.get_reservation_string(reservation))
+
+        return matching_reservations
 
 
 

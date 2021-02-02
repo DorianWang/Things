@@ -11,15 +11,16 @@ void ding(int sig)
    alarm_fired = 1;
 }
 
-
-
-
-
 int main()
 {
    pid_t pid;
+   struct sigaction act;
+   act.sa_handler = ding;
+   sigemptyset(&act.sa_mask);
+   act.sa_flags = 0;
+   sigaction(SIGALRM, &act, 0); // Hopefully this will connect the signal up
 
-   printf("alarm application starting\n")
+   printf("alarm application starting\n");
 
    pid = fork();
 
@@ -34,9 +35,8 @@ int main()
       exit(0);
    }
 
-   printf("waiting for alarm to go off\n");
-   (void) signal(SIGALRM, ding);
-
+   //Ideally this would put the thread to sleep and be unscheduled
+   //until the alarm signal wakes it, instead of wasting CPU cycles.
    pause();
    if (alarm_fired)
       printf("Ding!\n");
