@@ -1,16 +1,18 @@
-
-import socket
 import sys
-import time
-import datetime
+if sys.version_info < (3, 7):
+    print("This script requires Python 3.7 or newer to run!")
+    sys.exit(1)
+import socket
 import DateTimeslot
-import timeit
 import signal
 import select
 from CommandDefinitions import NetConsts, MessageID
 
 
 RESERVATIONS_FILE_NAME = "reservations.txt"
+ROOMS_FILE_NAME = "rooms.txt"
+DAYS_FILE_NAME = "days.txt"
+TIMESLOTS_FILE_NAME = "timeslots.txt"
 _is_running = True
 
 
@@ -22,6 +24,7 @@ def handler(signal_received, frame):
 
 class Server:
 
+    # Signal Handling Sockets
     error_listener: socket.socket
     error_writer: socket.socket
 
@@ -36,6 +39,7 @@ class Server:
             running_port = int(args[1])
             print("Server will run on port: " + str(running_port))
 
+        # Creates a pair of sockets so that certain signals will instead get the server to export and clean up.
         self.error_listener, self.error_writer = socket.socketpair()
         self.error_listener.setblocking(False)
         signal.set_wakeup_fd(self.error_writer.fileno())
@@ -43,30 +47,16 @@ class Server:
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.server_socket.bind(('localhost', running_port))
 
-        rooms = []
-        days = []
-        times = []
-        reservations = []
-        with open("rooms.txt") as f:
-            rooms = f.readlines()
-
-        with open("days.txt") as f:
-            days = f.readlines()
-
-        with open("timeslots.txt") as f:
-            times = f.readlines()
-
-
-# print(timeit.timeit("x = DateTimeslot._Timeslot.new_timeslot_24hour('7:30-12:30')", setup='import DateTimeslot'))
-# print(timeit.timeit("x = [int('1234'), int('5678')]", setup='import DateTimeslot'))
-        self.reservation_manager = DateTimeslot.RoomDateTimeslotManager(rooms, days, times, RESERVATIONS_FILE_NAME)
+        # Initializes the database with the static files. Rebuilding the database will suck later on though...
+        self.reservation_manager = DateTimeslot.\
+            RoomDateTimeslotManager(ROOMS_FILE_NAME, DAYS_FILE_NAME, TIMESLOTS_FILE_NAME, RESERVATIONS_FILE_NAME)
 
     @staticmethod
     def parse_request(client_data) -> tuple:
         if client_data.__len__() == 0:
             return MessageID.NULL, []
 
-        ID = client_data[0]
+        message_id = client_data[0]
         data = []
         if client_data.__len__() > 1:
             payload = (client_data[1:]).decode("utf-8")
@@ -84,9 +74,9 @@ class Server:
                     else:
                         data.append(payload[last_slice_position+1:i])
                         last_slice_position = i
-            if last_slice_position != payload.__len__():
+            if last_slice_position + 1 < payload.__len__():  # If the message was not 0 terminated add the last part.
                 data.append(payload[last_slice_position+1:])
-        return ID, data
+        return message_id, data
 
     def main_loop(self):
         global _is_running
@@ -103,9 +93,10 @@ class Server:
             data, client_address = self.server_socket.recvfrom(NetConsts.MAX_BUFFER)
             request_type, data = self.parse_request(data)
             payload = bytearray()
+
             if request_type == MessageID.NULL:
                 print("Message invalid?")
-                pass
+                continue
             elif request_type == MessageID.REQ_ROOMS:
                 payload.append(MessageID.RES_DATA)
                 payload.extend((chr(MessageID.NULL)).join(self.reservation_manager.get_rooms()).encode("utf-8"))
@@ -118,14 +109,20 @@ class Server:
                 payload.append(MessageID.RES_DATA)
                 payload.extend((chr(MessageID.NULL)).join(self.reservation_manager.get_timeslots()).encode("utf-8"))
                 payload.append(MessageID.NULL)
+
             elif request_type == MessageID.REQ_CHECK_ROOM:
                 if data.__len__() == 0:
                     payload.append(MessageID.RES_ERROR)
                 else:
-                    payload.append(MessageID.RES_DATA)
-                    payload = payload + (chr(MessageID.NULL)).join(
-                        self.reservation_manager.get_reservations_with_values(room=data[0])).encode()
-                    payload.append(MessageID.NULL)
+                    try:
+                        temp = (chr(MessageID.NULL)).join(
+                            self.reservation_manager.get_reservations_with_values(room=data[0])).encode()
+                        payload.append(MessageID.RES_DATA)
+                        payload = payload + temp
+                        payload.append(MessageID.NULL)
+                    except ValueError:
+                        # This happens if the provided room does not exist.
+                        payload.append(MessageID.RES_ERROR)
 
             elif request_type == MessageID.REQ_MAKE_RESERVATION:
                 if data.__len__() != 3:
@@ -149,18 +146,22 @@ class Server:
                         payload.append(MessageID.RES_FAILURE)
                     else:
                         payload.append(MessageID.RES_ERROR)
+
             elif request_type == MessageID.REQ_RESEND:
                 if old_payload[1] == client_address:
                     payload = old_payload[0]
                 else:
                     payload.append(MessageID.REQ_RESEND)
 
+            elif request_type == MessageID.REQ_STOP_SERVER:
+                self.reservation_manager.export_reservations(RESERVATIONS_FILE_NAME)
+                _is_running = False
+                payload.append(MessageID.RES_SUCCESS)
+
             self.server_socket.sendto(payload, client_address)
-            print(payload)
             old_payload = (payload, client_address)
 
-
-        print("Out!")
+        print("Server is stopping!")
         self.server_socket.close()
 
 
