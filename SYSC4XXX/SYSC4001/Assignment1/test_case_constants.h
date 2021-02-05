@@ -28,7 +28,11 @@
    m_4x4_t I_4X4 = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
    m_4x4_t* T2_RESULT = &M_T2
 
-   //
+   // Hadamard matrix
+
+   // Example Rotation matrix
+
+   // Example dense and sparse matrix
 
 #endif // TEST_CASES_COMMON_OPERATIONS
 

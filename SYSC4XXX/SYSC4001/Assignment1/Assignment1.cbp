@@ -31,9 +31,16 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="main.c">
+		<Unit filename="MMULT.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="README" />
+		<Unit filename="makefile" />
+		<Unit filename="row_calc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="row_calc.h" />
+		<Unit filename="test_case_constants.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
