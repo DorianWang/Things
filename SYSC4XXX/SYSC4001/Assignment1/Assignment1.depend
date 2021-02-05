@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1612549374 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4001\assignment1\row_calc.c
+	"row_calc.h"
+
+1612549823 c:\users\admin\documents\github\things\sysc4xxx\sysc4001\assignment1\row_calc.h
+	<limits.h>
+
+1612549412 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4001\assignment1\mmult.c
+	<stdio.h>
+	<stdlib.h>
+	"row_calc.h"
+	"test_case_constants.h"
+
+1612549822 c:\users\admin\documents\github\things\sysc4xxx\sysc4001\assignment1\test_case_constants.h
+	"row_calc.h"
+

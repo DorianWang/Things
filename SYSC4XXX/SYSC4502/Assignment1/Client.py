@@ -130,7 +130,7 @@ def main():
         else:
             if message_id == MessageID.RES_DATA:
                 print(ResponseStrings.DATA_RECEIVED)
-                if extra_data.__len__()
+                if extra_data.__len__():
             elif message_id == MessageID.REQ_RESEND:
                 print(ResponseStrings.RESEND_NO_DATA)
             else:
