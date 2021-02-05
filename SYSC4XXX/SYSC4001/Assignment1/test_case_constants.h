@@ -21,18 +21,28 @@
    // Multiplication with mixed negatives
    m_4x4_t M_T1 = {{1, 2, 4, 8}, {2, 4, 8, 16}, {4, 8, 16, 32}, {8, 16, 32, 64}};
    m_4x4_t N_T1 = {{2, 3, 5, 7}, {-2, 3, -5, 7}, {1, 5, 2, -9}, {0, -17, -2, 3}};
-   m_4x4_t T1_RESULT = {}; // TODO: enter this into a calculator
+   m_4x4_t T1_RESULT = {}; // TODO: enter values into a matrix calculator
+
+   // "Regular" matrix multiplication example
+   m_4x4_t M_T2 = {{1, 2, 4, 8}, {2, 4, 8, 16}, {4, 8, 16, 32}, {8, 16, 32, 64}};
+   m_4x4_t N_T2 = {{2, 3, 5, 7}, {-2, 3, -5, 7}, {1, 5, 2, -9}, {0, -17, -2, 3}};
+
+   m_4x4_t T2_RESULT = {};
 
    // Identity matrix multiplication, should return the same value
-   m_4x4_t M_T2 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {2, -4, 6, -8}, {-10, 12, -14, 16}}
+   m_4x4_t M_T3 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {2, -4, 6, -8}, {-10, 12, -14, 16}};
    m_4x4_t I_4X4 = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
-   m_4x4_t* T2_RESULT = &M_T2
+   m_4x4_t* T3_RESULT = &M_T3
 
-   // Hadamard matrix
+   // Example Hadamard matrix, from wikipedia ("Walsh Matrix")
+   m_4x4_t M_T4 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {2, -4, 6, -8}, {-10, 12, -14, 16}};
+   m_4x4_t H_4X4 = {{1, 1, 1, 1}, {1, -1, 1, -1}, {1, 1, -1, -1}, {1, -1, -1, 1}};
 
    // Example Rotation matrix
+   m_4x4_t M_T5 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {2, -4, 6, -8}, {-10, 12, -14, 16}};
+   m_4x4_t R_4X4 = {{-1, 0, 0, 0}, {0, -1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
 
-   // Example dense and sparse matrix
+
 
 #endif // TEST_CASES_COMMON_OPERATIONS
 
