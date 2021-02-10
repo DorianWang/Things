@@ -2,12 +2,12 @@
 
 
 /**
-This function takes three 4x4 int array pointers (first, second, output),
-which are all stored in a MMultStruct.
+This function takes the row value, and three 4x4 int array pointers (first, second, output)
+which are stored in a MMultStruct.
 
 It returns the greatest value calculated in the row.
 */
-int calc_row_mmult(MMultStruct input_matrices)
+int calc_row_mmult(int row_value, MMultStruct input_matrices)
 {
    int highest_value = INT_MIN;
 

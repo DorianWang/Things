@@ -18,7 +18,7 @@ typedef struct matrix_multiplication_4_by_4
 
 
 
-int calc_row_mmult(MMultStruct input_matrices);
+int calc_row_mmult(int row_value, MMultStruct input_matrices);
 
 
 
