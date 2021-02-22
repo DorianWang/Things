@@ -1,0 +1,8 @@
+1 context Student : self -> select(registeredCourses | registeredCourses.year = 2019 and registeredCourses.term = Semester::Summer)
+2 context Student : self -> select(registeredCourses | registeredCourses.year = 2019 and registeredCourses.term = Semester::Summer) -> size()
+3 context Student : (self -> select(registeredCourses | registeredCourses.year = 2019 and registeredCourses.term = Semester::Summer)).course.sum(credit)
+
+4 let Sum19courses:set = (context Student : self -> select(registeredCourses | registeredCourses.year = 2019 and registeredCourses.term = Semester::Summer)) 
+  context Student : self -> select(self -> select(registeredCourses | Sum19courses.exists(registeredCourses.course.isPreRequisiteOf = Sum19courses.course)))
+
+5 context Student : self -> registeredCourses.select(course | course.code = 12345)
