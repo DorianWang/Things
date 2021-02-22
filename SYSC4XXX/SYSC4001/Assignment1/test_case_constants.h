@@ -18,7 +18,7 @@
 #endif // DEACTIVATE_MANDATORY_TEST
 
 #ifdef TEST_CASES_COMMON_OPERATIONS
-   // Multiplication with mixed negatives
+   // Second multiplication case
    m_4x4_t M_T1 = {{1, 2, 4, 8}, {2, 4, -8, 16}, {4, 8, 16, 32}, {8, 16, 32, -64}};
    m_4x4_t N_T1 = {{2, 3, 5, 7}, {-2, 3, -5, 7}, {1, 5, 2, -9}, {0, -17, -2, 3}};
    m_4x4_t T1_RESULT = {{2, -107, -13, 9}, {-12, -294, -58, 162},
@@ -45,7 +45,8 @@
    m_4x4_t R_4X4 = {{-1, 0, 0, 0}, {0, -1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
    m_4x4_t T5_RESULT = {{-1, -2, 3, 4}, {-5, -6, 7, 8}, {-2, 4, 6, -8}, {10, -12, -14, 16}};
 
-
+/*
+   // Superseded by assemble_test_cases() below
    int common_operations_test_cases(MMultStruct** test_cases)
    {
       MMultStruct* values =
@@ -59,14 +60,48 @@
 
       return 5; // Total number of cases
    }
-
-
-
+   */
 #endif // TEST_CASES_COMMON_OPERATIONS
 
 
-
-
+// Well, this should work, but it shouldn't exist \o_o/
+int assemble_test_cases(MMultStruct** test_cases)
+{
+   int total_tests = 0;
+   #ifndef DEACTIVATE_MANDATORY_TEST
+      #ifdef TEST_CASES_COMMON_OPERATIONS
+         total_tests = 6;
+         MMultStruct* values = (MMultStruct*) malloc(sizeof(MMultStruct) * total_tests);
+         values[0].first = &M; values[0].second = &N;
+         values[1].first = &M_T1; values[1].second = &N_T1;
+         values[2].first = &M_T2; values[2].second = &N_T2;
+         values[3].first = &M_T3; values[3].second = &I_4X4;
+         values[4].first = &M_T4; values[4].second = &H_4X4;
+         values[5].first = &M_T5; values[5].second = &R_4X4;
+         *test_cases = values;
+      #else
+         total_tests = 1;
+         MMultStruct* values = (MMultStruct*) malloc(sizeof(MMultStruct) * total_tests);
+         values[0].first = &M; values[0].second = &N;
+         *test_cases = values;
+      #endif
+   #else
+      #ifdef TEST_CASES_COMMON_OPERATIONS
+         total_tests = 5;
+         MMultStruct* values = (MMultStruct*) malloc(sizeof(MMultStruct) * total_tests);
+         values[0].first = &M_T1; values[0].second = &N_T1; values[0].output = &T1_RESULT;
+         values[1].first = &M_T2; values[1].second = &N_T2; values[1].output = &T2_RESULT;
+         values[2].first = &M_T3; values[2].second = &I_4X4; values[2].output = T3_RESULT;
+         values[3].first = &M_T4; values[3].second = &H_4X4; values[3].output = &T4_RESULT;
+         values[4].first = &M_T5; values[4].second = &R_4X4; values[4].output = &T5_RESULT;
+         *test_cases = values;
+      #else
+         total_tests = 0;
+         *test_cases = NULL;
+      #endif
+   #endif
+   return total_tests;
+}
 
 
 
