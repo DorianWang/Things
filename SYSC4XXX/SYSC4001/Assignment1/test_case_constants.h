@@ -64,7 +64,7 @@
 #endif // TEST_CASES_COMMON_OPERATIONS
 
 
-// Well, it should work, but it shouldn't exist \o_o/
+// Well, this should work, but it shouldn't exist \o_o/
 int assemble_test_cases(MMultStruct** test_cases)
 {
    int total_tests = 0;

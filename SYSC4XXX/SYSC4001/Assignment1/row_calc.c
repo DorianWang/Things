@@ -18,6 +18,7 @@ int calc_row_mmult(int row_value, MMultStruct input_matrices)
          temp_sum += (*(input_matrices.first))[row_value][j] * (*(input_matrices.second))[j][i];
       }
       (*(input_matrices.output))[row_value][i] = temp_sum;
+
       if (temp_sum > highest_value){
          highest_value = temp_sum;
       }
@@ -26,6 +27,7 @@ int calc_row_mmult(int row_value, MMultStruct input_matrices)
    return highest_value;
 }
 
+// Formated 4x4 matrix printing. 8 spaces for digits should be enough for anyone!
 void print_m_4x4_t(m_4x4_t* input)
 {
    int i;

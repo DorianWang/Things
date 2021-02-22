@@ -1,6 +1,5 @@
 
 
-
 How to compile and run this program:
 
    For only the mandatory test case, run "make mandatory" followed by "./MMULT".
@@ -14,6 +13,7 @@ How to compile and run this program:
 I would also like to thank the nerds on stackoverflow and other sites
 for providing various solutions of sometimes dubious quality.
 
+https://stackoverflow.com/questions/14808908/pointer-to-2d-arrays-in-c
 https://stackoverflow.com/questions/49581349/how-to-get-return-value-from-child-process-to-parent
 https://stackoverflow.com/questions/7083482/how-to-prevent-gcc-from-optimizing-out-a-busy-wait-loop
 https://stackoverflow.com/questions/16400820/how-to-use-posix-semaphores-on-forked-processes-in-c
