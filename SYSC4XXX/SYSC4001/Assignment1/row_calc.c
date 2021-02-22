@@ -11,10 +11,11 @@ int calc_row_mmult(int row_value, MMultStruct input_matrices)
 {
    int highest_value = INT_MIN;
    int i; int j;
-   for (i = 0; i < MATRIX_SIZE_CONST; i++){ // The Column value in the output matrix, row value is already defined.
+   for (i = 0; i < MATRIX_SIZE_CONST; i++){ // The column value in the output and second matrix.
       int temp_sum = 0;
       for (j = 0; j < MATRIX_SIZE_CONST; j++){ // Iterator for column value in first and row value in second.
-         temp_sum += (*(input_matrices.first))[row_value][j] * (*(input_matrices.second))[j][i]; // This is very ugly but it works.
+         // This is very ugly and probably murders the cache, but it works!
+         temp_sum += (*(input_matrices.first))[row_value][j] * (*(input_matrices.second))[j][i];
       }
       (*(input_matrices.output))[row_value][i] = temp_sum;
       if (temp_sum > highest_value){

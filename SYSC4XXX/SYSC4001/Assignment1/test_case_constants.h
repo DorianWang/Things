@@ -18,7 +18,7 @@
 #endif // DEACTIVATE_MANDATORY_TEST
 
 #ifdef TEST_CASES_COMMON_OPERATIONS
-   // Multiplication with mixed negatives
+   // Second multiplication case
    m_4x4_t M_T1 = {{1, 2, 4, 8}, {2, 4, -8, 16}, {4, 8, 16, 32}, {8, 16, 32, -64}};
    m_4x4_t N_T1 = {{2, 3, 5, 7}, {-2, 3, -5, 7}, {1, 5, 2, -9}, {0, -17, -2, 3}};
    m_4x4_t T1_RESULT = {{2, -107, -13, 9}, {-12, -294, -58, 162},
