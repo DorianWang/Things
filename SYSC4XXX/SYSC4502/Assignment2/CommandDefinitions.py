@@ -5,7 +5,10 @@
 class NetConsts:
     """Currently only has 2 values, this enum will likely increase in size when new functions are required"""
     TIMEOUT = 1  # assume that a packet is lost after 1 second, this might be a bit too short for my behemoth...
-    MAX_BUFFER = 2048
+    MAX_BUFFER = 2048  # How large of a buffer should the message data be allocated.
+
+    MESSAGE_SENT_BUFFER = 4
+    MESSAGE_RECEIVED_BUFFER = 8
 
 
 # http://www.ee.unb.ca/cgi-bin/tervo/polygen2.pl?d=4&p=11111&s=1&c=1&a=0&g=1

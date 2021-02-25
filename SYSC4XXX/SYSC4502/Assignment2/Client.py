@@ -2,22 +2,24 @@ import sys
 if sys.version_info < (3, 7):
     print("This script requires Python 3.7 or newer to run!")
     sys.exit(1)
+
+import StateVariables
 from CommandDefinitions import MessageID, CommandStrings, ResponseStrings, NetConsts
+
 import socket
 from threading import Thread
 
-_is_running = True
+StateVariables.is_running = True
 current_packet_number = 0
 
 
 def listener(s_local, port_local):
-    global _is_running
     print("AAAA!")
-    while _is_running == 1:
+    while StateVariables.is_running == 1:
         buf, address = s_local.recvfrom(port_local)
         if len(buf):
             print("Received %s bytes from %s: %s " % (len(buf), address, buf.decode('utf-8')))
-        if _is_running == 0:
+        if StateVariables.is_running == 0:
             break
     print("Out of listener!")
 

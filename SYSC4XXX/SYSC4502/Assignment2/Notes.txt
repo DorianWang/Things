@@ -1,0 +1,3 @@
+CPython makes the Threading module not actually run more than one instruction at a time, but the Multiprocessing module
+is likely too much for this simple project. I wonder if it would be more or less efficient, as most of this program is
+IO bound and only needs the second thread for that.
