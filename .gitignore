@@ -2,3 +2,4 @@
 # Keeping all those pesky compiled C files out
 *.exe
 *.o
+*.tar
