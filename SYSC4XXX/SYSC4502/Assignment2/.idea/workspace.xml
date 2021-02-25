@@ -2,24 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="201a589f-81c1-4c5c-a25e-e31d1c3c0fa7" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/../Assignment2/.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Assignment1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/.idea/Assignment2.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/Client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CommandDefinitions.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/CommandDefinitions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DateTimeslot.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/DateTimeslot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/README.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resources.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/Resources.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/Server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/days.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/days.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reservations.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/reservations.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rooms.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/rooms.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/timeslots.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/timeslots.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../SYSC 3XXX/SYSC 3020/Lab4.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../SYSC 3XXX/SYSC 3020/Lab5.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment2/Client.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/Client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment2/Server.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment2/Server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,7 +91,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../../SYSC3010-Lab2/udpReceiver.py" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager" selected="Python.Client">

@@ -169,6 +169,7 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, handler)
     signal.signal(signal.SIGBREAK, handler)
     new_server = Server(sys.argv)
+
     new_server.main_loop()
 
     sys.exit(0)
