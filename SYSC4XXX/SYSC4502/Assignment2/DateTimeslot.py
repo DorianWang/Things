@@ -4,6 +4,7 @@ if sys.version_info < (3, 7):
     sys.exit(1)
 # import threading
 from dataclasses import dataclass, field
+import DBConsistencyFncs
 
 # Flags
 CROSS_DATE_TIMESLOTS = False
@@ -135,6 +136,7 @@ class RoomDateTimeslotManager:
     _timeslots_dict: dict
     _rooms_dict: dict
     _all_slots_set: set  # For now it will just be a static list of reservation IDs.
+    _DB_hash: int
 
     def __init__(self, room_file_name="rooms.txt", date_file_name="days.txt", timeslot_file_name="timeslots.txt",
                  reservations_file_name="reservations.txt"):
@@ -142,6 +144,7 @@ class RoomDateTimeslotManager:
         self._days_dict = dict()
         self._timeslots_dict = dict()
         self._all_slots_set = set()
+        self._DB_hash = 0
 
         with open(room_file_name) as room_file:
             for line in room_file:  # remove leading and trailing spaces and punctuation

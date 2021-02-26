@@ -4,12 +4,15 @@ if sys.version_info < (3, 7):
     sys.exit(1)
 import socket
 import signal
-import select
+from threading import Thread
+import time
+import random
 
-from CommandDefinitions import NetConsts, MessageID
+from CommandDefinitions import MessageID
 import StateVariables
 import DateTimeslot
 import QueuedNetworking
+import DBConsistencyFncs
 
 RESERVATIONS_FILE_NAME = "reservations.txt"
 ROOMS_FILE_NAME = "rooms.txt"
@@ -21,6 +24,20 @@ def handler(signal_received, frame):
     StateVariables.is_running = False
     StateVariables.got_message.set()  # force the server to get a result
     print("Intercepted Quit, Cleaning Up!")
+
+
+class MessageWorker(Thread):
+    current_message: bytes
+
+    def __init__(self):
+        Thread.__init__(self)
+
+    def run(self) -> None:
+        time.sleep(random.randint(5, 10))  # server is "busy"
+
+    def set_message(self, message_in: bytes):
+        self.current_message = message_in
+
 
 
 class Server:
@@ -86,13 +103,7 @@ class Server:
         old_payload = ([], ())
 
         while StateVariables.is_running:
-            ready_sockets = select.select([self.error_listener, self.server_socket], [], [])
-            if ready_sockets[0][0] == self.error_listener or ready_sockets[0].__len__() == 2:
-                # Set a flag to dump and clean up here.
-                break
 
-            data, client_address = self.server_socket.recvfrom(NetConsts.MAX_BUFFER)
-            request_type, data = self.parse_request(data)
             payload = bytearray()
 
             if request_type == MessageID.NULL:

@@ -9,6 +9,7 @@ class NetConsts:
 
     MESSAGE_SENT_BUFFER = 4
     MESSAGE_RECEIVED_BUFFER = 8
+    DB_HASH_BUFFER = 4
 
 
 # http://www.ee.unb.ca/cgi-bin/tervo/polygen2.pl?d=4&p=11111&s=1&c=1&a=0&g=1
@@ -30,7 +31,7 @@ class MessageID:
     REQ_MAKE_RESERVATION = 0x56
     REQ_DELETE_RESERVATION = 0x64
 
-    REQ_RESEND = 0xE3  # currently really simple
+    REQ_RESEND = 0xE3
     REQ_STOP_SERVER = 0xFA
 
     RES_SUCCESS = 0x7D
@@ -38,8 +39,9 @@ class MessageID:
     RES_ERROR = 0x9E
     RES_DATA = 0xAC  # Used to indicate that the client should print additional data, is a form of success.
 
-    _UNUSED_COMMAND_11 = 0xB5
-    _UNUSED_COMMAND_12 = 0xC8
+    SYN_REQ_JOIN = 0xB5
+    SYN_MESSAGE = 0xC8
+
     _UNUSED_COMMAND_13 = 0xD1
 
 
