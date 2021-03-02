@@ -6,9 +6,8 @@ import socket
 import signal
 from threading import Thread
 import time
-import random
+import struct
 
-from CommandDefinitions import MessageID
 import StateVariables
 import DateTimeslot
 import QueuedNetworking
@@ -26,20 +25,6 @@ def handler(signal_received, frame):
     print("Intercepted Quit, Cleaning Up!")
 
 
-class MessageWorker(Thread):
-    current_message: bytes
-
-    def __init__(self):
-        Thread.__init__(self)
-
-    def run(self) -> None:
-        time.sleep(random.randint(5, 10))  # server is "busy"
-
-    def set_message(self, message_in: bytes):
-        self.current_message = message_in
-
-
-
 class Server:
 
     # Signal Handling Sockets
@@ -51,12 +36,12 @@ class Server:
     networking_manager: QueuedNetworking.QueuedNetworking
 
     def __init__(self, args) -> None:
-        if len(args) < 2:
-            print("Missing argument: Port")
-            sys.exit(1)
+        if len(sys.argv) < 3:
+            print("Missing argument(s), requires: HOSTNAME PORT")
+            sys.exit()
         else:
-            running_port = int(args[1])
-            print("Server will run on port: " + str(running_port))
+            multicast_group_name = sys.argv[1]
+            running_port = int(sys.argv[2])
 
         # Creates a pair of sockets so that certain signals will instead get the server to export and clean up.
         self.error_listener, self.error_writer = socket.socketpair()
@@ -66,112 +51,28 @@ class Server:
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.server_socket.bind(('localhost', running_port))
 
+        group = socket.inet_aton(multicast_group_name)
+        mreq = struct.pack('4sL', group, socket.INADDR_ANY)
+        self.server_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+
         # Initializes the database with the static files. Rebuilding the database will suck later on though...
         self.reservation_manager = DateTimeslot.\
             RoomDateTimeslotManager(ROOMS_FILE_NAME, DAYS_FILE_NAME, TIMESLOTS_FILE_NAME, RESERVATIONS_FILE_NAME)
 
-    @staticmethod
-    def parse_request(client_data) -> tuple:
-        if client_data.__len__() == 0:
-            return MessageID.NULL, []
-
-        message_id = client_data[0]
-        data = []
-        if client_data.__len__() > 1:
-            payload = (client_data[1:]).decode("utf-8")
-            last_slice_position = -1
-            for i in range(payload.__len__()):
-                if payload[i] == '\x00':  # if the character is null, it is the end of the string.
-                    data.append(payload[last_slice_position + 1:i])
-                    last_slice_position = i
-                    continue
-
-                if payload[i] == '\n':  # Added support for windows line endings because I felt like it.
-                    if i > 0 and payload[i-1] == '\r':
-                        data.append(payload[last_slice_position+1:i-1])
-                        last_slice_position = i
-                    else:
-                        data.append(payload[last_slice_position+1:i])
-                        last_slice_position = i
-            if last_slice_position + 1 < payload.__len__():  # If the message was not 0 terminated add the last part.
-                data.append(payload[last_slice_position+1:])
-        return message_id, data
+        self.networking_manager = QueuedNetworking.QueuedNetworking(self.error_listener, self.server_socket)
 
     def main_loop(self):
-
+        self.networking_manager.start()
         # very primitive resending support
         old_payload = ([], ())
 
         while StateVariables.is_running:
-
-            payload = bytearray()
-
-            if request_type == MessageID.NULL:
-                print("Message invalid?")
-                continue
-            elif request_type == MessageID.REQ_ROOMS:
-                payload.append(MessageID.RES_DATA)
-                payload.extend((chr(MessageID.NULL)).join(self.reservation_manager.get_rooms()).encode("utf-8"))
-                payload.append(MessageID.NULL)
-            elif request_type == MessageID.REQ_DAYS:
-                payload.append(MessageID.RES_DATA)
-                payload.extend((chr(MessageID.NULL)).join(self.reservation_manager.get_days()).encode("utf-8"))
-                payload.append(MessageID.NULL)
-            elif request_type == MessageID.REQ_TIMESLOTS:
-                payload.append(MessageID.RES_DATA)
-                payload.extend((chr(MessageID.NULL)).join(self.reservation_manager.get_timeslots()).encode("utf-8"))
-                payload.append(MessageID.NULL)
-
-            elif request_type == MessageID.REQ_CHECK_ROOM:
-                if data.__len__() == 0:
-                    payload.append(MessageID.RES_ERROR)
-                else:
-                    try:
-                        temp = (chr(MessageID.NULL)).join(
-                            self.reservation_manager.get_reservations_with_values(room=data[0])).encode()
-                        payload.append(MessageID.RES_DATA)
-                        payload = payload + temp
-                        payload.append(MessageID.NULL)
-                    except ValueError:
-                        # This happens if the provided room does not exist.
-                        payload.append(MessageID.RES_ERROR)
-
-            elif request_type == MessageID.REQ_MAKE_RESERVATION:
-                if data.__len__() != 3:
-                    payload.append(MessageID.RES_ERROR)
-                else:
-                    value = self.reservation_manager.add_reservation(data[0], data[1], data[2])
-                    if value == 0:
-                        payload.append(MessageID.RES_SUCCESS)
-                    elif value == 1:
-                        payload.append(MessageID.RES_FAILURE)
-                    else:
-                        payload.append(MessageID.RES_ERROR)
-            elif request_type == MessageID.REQ_DELETE_RESERVATION:
-                if data.__len__() != 3:
-                    payload.append(MessageID.RES_ERROR)
-                else:
-                    value = self.reservation_manager.remove_reservation(data[0], data[1], data[2])
-                    if value == 0:
-                        payload.append(MessageID.RES_SUCCESS)
-                    elif value == 1:
-                        payload.append(MessageID.RES_FAILURE)
-                    else:
-                        payload.append(MessageID.RES_ERROR)
-
-            elif request_type == MessageID.REQ_RESEND:
-                if old_payload[1] == client_address:
-                    payload = old_payload[0]
-                else:
-                    payload.append(MessageID.REQ_RESEND)
-
-            elif request_type == MessageID.REQ_STOP_SERVER:
-                self.reservation_manager.export_reservations(RESERVATIONS_FILE_NAME)
-                StateVariables.is_running = False
-                payload.append(MessageID.RES_SUCCESS)
-
-            self.server_socket.sendto(payload, client_address)
-            old_payload = (payload, client_address)
+            data, address = self.networking_manager.get_next_packet(blocking=True)
+            if data is None:
+                break
+            process_message(self.reservation_manager, data, self.server_socket, address)
+            print(data)
+            time.sleep(1)
 
         print("Server is stopping!")
         self.server_socket.close()

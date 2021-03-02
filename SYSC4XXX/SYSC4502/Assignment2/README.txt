@@ -5,7 +5,7 @@ timeslots
 check [room]
 reserve [room] {timeslot} [day]
 delete [room] {timeslot} [day]
-resend
+*resend* Currently not implemented
 quit
 help
 

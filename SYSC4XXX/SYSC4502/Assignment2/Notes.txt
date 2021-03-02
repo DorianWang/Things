@@ -1,3 +1,15 @@
 CPython makes the Threading module not actually run more than one instruction at a time, but the Multiprocessing module
 is likely too much for this simple project. I wonder if it would be more or less efficient, as most of this program is
 IO bound and only needs the second thread for that.
+
+
+Current Message Structure
+Command (1), "unique" number (1), timestamp (4), message data (...)
+
+
+How does the server sync work?
+First the server loads up everything it needs, including the current reservations.txt file.
+It then sends a message into the network stating its current database hash. All listening servers will check to see
+if the new server is up to date, and try to send the required messages for it to be caught up.
+
+

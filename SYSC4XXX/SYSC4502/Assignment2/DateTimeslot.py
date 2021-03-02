@@ -4,6 +4,7 @@ if sys.version_info < (3, 7):
     sys.exit(1)
 # import threading
 from dataclasses import dataclass, field
+import os
 import DBConsistencyFncs
 
 # Flags
@@ -13,6 +14,8 @@ CROSS_DATE_TIMESLOTS = False
 MINUTES_IN_HOUR = 60
 MINUTES_IN_DAY = 1440
 HOURS_IN_DAY = 24
+
+TEMP_RESERVATION_FILE_NAME = "reservations_temp"
 
 
 # Timeslots measure time in minutes, with 0 minutes signifying 00:00, and MINUTES_IN_HOUR * HOURS_IN_DAY for 24:00
@@ -232,9 +235,10 @@ class RoomDateTimeslotManager:
         return 1
 
     def export_reservations(self, reservations_file_name="reservations.txt"):
-        with open(reservations_file_name, mode="wt") as reservation_file:
+        with open(TEMP_RESERVATION_FILE_NAME, mode="wt") as reservation_file:
             for res_id in self._all_slots_set:
                 reservation_file.write(self.get_reservation_string(res_id) + "\n")
+        os.replace(TEMP_RESERVATION_FILE_NAME, reservations_file_name)
 
     def get_days(self):
         return self._days_dict.keys()

@@ -11,6 +11,8 @@ class NetConsts:
     MESSAGE_RECEIVED_BUFFER = 8
     DB_HASH_BUFFER = 4
 
+    MULTICAST_DEFAULT_IP = '255.1.1.1'  # Don't ship to production, lol
+
 
 # http://www.ee.unb.ca/cgi-bin/tervo/polygen2.pl?d=4&p=11111&s=1&c=1&a=0&g=1
 # Had lots of fun learning how this works, even though I don't think I'll ever write any algorithm like that.
@@ -40,7 +42,7 @@ class MessageID:
     RES_DATA = 0xAC  # Used to indicate that the client should print additional data, is a form of success.
 
     SYN_REQ_JOIN = 0xB5
-    SYN_MESSAGE = 0xC8
+    SYN_MESSAGE = 0xC8  # Functionally equivalent to RES_DATA
 
     _UNUSED_COMMAND_13 = 0xD1
 

@@ -1,2 +1,5 @@
 https://stackoverflow.com/questions/4938723/what-is-the-correct-way-to-make-my-pyqt-application-quit-when-killed-from-the-console
 - For how to set up signal.set_wakeup_fd()
+
+https://stackoverflow.com/questions/6893968/how-to-get-the-return-value-from-a-thread-in-python
+- For cool ways to run functions as new threads
