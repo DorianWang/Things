@@ -5,7 +5,14 @@
       <change beforePath="$PROJECT_DIR$/.idea/Assignment2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Assignment2.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client.py" beforeDir="false" afterPath="$PROJECT_DIR$/Client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CommandDefinitions.py" beforeDir="false" afterPath="$PROJECT_DIR$/CommandDefinitions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DateTimeslot.py" beforeDir="false" afterPath="$PROJECT_DIR$/DateTimeslot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/QueuedNetworking.py" beforeDir="false" afterPath="$PROJECT_DIR$/QueuedNetworking.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/README.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server.py" beforeDir="false" afterPath="$PROJECT_DIR$/Server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StateVariables.py" beforeDir="false" afterPath="$PROJECT_DIR$/StateVariables.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reservations.txt" beforeDir="false" afterPath="$PROJECT_DIR$/reservations.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,7 +145,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Server.py" />
-      <option name="PARAMETERS" value="12346" />
+      <option name="PARAMETERS" value="235.1.1.1 12346" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
