@@ -5,6 +5,7 @@ import time
 import concurrent.futures.thread as cf_thread
 import functools
 import random
+import struct
 
 import StateVariables
 import DateTimeslot
@@ -25,9 +26,15 @@ def thread_pool_wrapper(f):
 def process_message(reservation_manager: DateTimeslot.RoomDateTimeslotManager,
                     current_message: bytes, sock: socket.socket, address: tuple):
 
-    time.sleep(random.randint(5, 10))  # server is "busy"
-    request_type, data = parse_request(current_message)
+    request_type, key_num, timestamp, data = parse_request(current_message)
     payload = bytearray()
+    if request_type == MessageID.SYN_REQ_JOIN:
+        payload.append(MessageID.SYN_MESSAGE)
+
+
+    time.sleep(random.randint(5, 10))  # server is "busy"
+
+
 
     if request_type == MessageID.NULL:
         print("Message invalid?")
@@ -94,13 +101,15 @@ def process_message(reservation_manager: DateTimeslot.RoomDateTimeslotManager,
 
 
 def parse_request(client_data) -> tuple:
-    if client_data.__len__() == 0:
-        return MessageID.NULL, []
+    if client_data.__len__() < 6:
+        return MessageID.NULL, 0, 0, []
 
     message_id = client_data[0]
+    message_key_num = client_data[1]
+    message_timestamp = struct.unpack("<L", client_data[2:6])[0]
     data = []
-    if client_data.__len__() > 1:
-        payload = (client_data[1:]).decode("utf-8")
+    if client_data.__len__() > 6:
+        payload = (client_data[6:]).decode("utf-8")
         last_slice_position = -1
         for i in range(payload.__len__()):
             if payload[i] == '\x00':  # if the character is null, it is the end of the string.
@@ -117,7 +126,7 @@ def parse_request(client_data) -> tuple:
                     last_slice_position = i
         if last_slice_position + 1 < payload.__len__():  # If the message was not 0 terminated add the last part.
             data.append(payload[last_slice_position + 1:])
-    return message_id, data
+    return message_id, message_key_num, message_timestamp, data
 
 
 class QueuedNetworking(Thread):
@@ -146,11 +155,25 @@ class QueuedNetworking(Thread):
     def bootstrap(self):
         message = bytearray()
         message.append(MessageID.SYN_REQ_JOIN)
-        message.append(random.randint(0, 255))
+        key_val = random.randint(0, 255)
+        message.append(key_val)
         message.append(MessageID.NULL)
         self.server_socket.send(message)
         time.sleep(NetConsts.TIMEOUT)
         temp_buffer = []
+        self.server_socket.setblocking(False)
+        while True:
+            try:
+                data, address = self.server_socket.recvfrom(NetConsts.MAX_BUFFER)
+                if data[0] != MessageID.SYN_MESSAGE and data[0] != MessageID.SYN_REQ_JOIN and data[1] != key_val:
+                    temp_buffer.append(data)
+                else:
+                    break
+            except BlockingIOError:  # This is the windows error, I'm not going to bother finding the linux or mac ones.
+                # You are alone in the woods...
+                self.server_socket.setblocking(True)
+                break
+
 
 
     def get_next_packet(self, blocking=True):
