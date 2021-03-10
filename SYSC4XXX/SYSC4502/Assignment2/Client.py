@@ -1,27 +1,19 @@
+import random
 import sys
+import time
+
 if sys.version_info < (3, 7):
     print("This script requires Python 3.7 or newer to run!")
     sys.exit(1)
+import struct
+import socket
 
 import StateVariables
 from CommandDefinitions import MessageID, CommandStrings, ResponseStrings, NetConsts
 
-import socket
-from threading import Thread
 
 StateVariables.is_running = True
 current_packet_number = 0
-
-
-def listener(s_local, port_local):
-    print("AAAA!")
-    while StateVariables.is_running == 1:
-        buf, address = s_local.recvfrom(port_local)
-        if len(buf):
-            print("Received %s bytes from %s: %s " % (len(buf), address, buf.decode('utf-8')))
-        if StateVariables.is_running == 0:
-            break
-    print("Out of listener!")
 
 
 def parse_response(server_data: bytes) -> tuple:
@@ -29,38 +21,34 @@ def parse_response(server_data: bytes) -> tuple:
     This function takes data returned from the server and returns the MessageID byte
     together with string values in a list. The resulting list may be empty.
     """
-    if server_data.__len__() == 0:
-        return MessageID.NULL, []
+
+    if server_data.__len__() < 6:
+        return MessageID.NULL, 0, 0, []
 
     message_id = server_data[0]
+    message_key_num = server_data[1]
+    message_timestamp = struct.unpack("<L", server_data[2:6])[0]
     data = []
-    if server_data.__len__() > 1:
-        payload = (server_data[1:]).decode("utf-8")
+    if server_data.__len__() > 6:
+        payload = (server_data[6:]).decode("utf-8")
         last_slice_position = -1
         for i in range(payload.__len__()):
             if payload[i] == '\x00':  # if the character is null, it is the end of the string.
-                temp = payload[last_slice_position+1:i]
-                if temp:
-                    data.append(temp)
+                data.append(payload[last_slice_position + 1:i])
                 last_slice_position = i
                 continue
 
             if payload[i] == '\n':  # Added support for windows line endings because I felt like it.
-                if i > 0 and payload[i-1] == '\r':
-                    temp = payload[last_slice_position+1:i-1]
-                    if temp:
-                        data.append(temp)
+                if i > 0 and payload[i - 1] == '\r':
+                    data.append(payload[last_slice_position + 1:i - 1])
                     last_slice_position = i
                 else:
-                    temp = payload[last_slice_position+1:i]
-                    if temp:
-                        data.append(temp)
+                    data.append(payload[last_slice_position + 1:i])
                     last_slice_position = i
+        if last_slice_position + 1 < payload.__len__():  # If the message was not 0 terminated add the last part.
+            data.append(payload[last_slice_position + 1:])
+    return message_id, message_key_num, message_timestamp, data
 
-        if last_slice_position != payload.__len__():
-            if payload[last_slice_position+1:]:  # This adds a final slice if the data was not 0 terminated.
-                data.append(payload[last_slice_position+1:])
-    return message_id, data
 
 
 def main():
@@ -74,9 +62,9 @@ def main():
         print("Client will send to : " + server_name + ":" + str(running_port))
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    client_socket.settimeout(NetConsts.TIMEOUT)
+    client_socket.settimeout(NetConsts.CLIENT_TIMEOUT)
 
-    stopping = 0  # This variable is used to close the client after sending the stop command to the server.
+    # stopping = 0  # This variable is used to close the client after sending the stop command to the server.
 
     print("What command do you wish to send to the server?")
     while True:
@@ -87,22 +75,30 @@ def main():
         user_input = list(filter(None, user_input.split(" ")))  # this removes any empty inputs, when there are 2 spaces
 
         payload = bytearray()
-        # print(user_input)
+        key_val = random.randint(0, 255)
+        timestamp = int(time.time())
+        centre_data = bytearray()
+        centre_data.append(key_val)
+        centre_data = centre_data + struct.pack("<L", timestamp)
 
         if not user_input:  # Just ignore empty strings
             continue
         elif user_input[0] == CommandStrings.ROOMS:
             payload.append(MessageID.REQ_ROOMS)
+            payload += centre_data
         elif user_input[0] == CommandStrings.DAYS:
             payload.append(MessageID.REQ_DAYS)
+            payload += centre_data
         elif user_input[0] == CommandStrings.TIMESLOTS:
             payload.append(MessageID.REQ_TIMESLOTS)
+            payload += centre_data
 
         elif user_input[0] == CommandStrings.CHECK_ROOM:
             if user_input.__len__() < 2:
                 print("Please specify a room to check for!")
                 continue
             payload.append(MessageID.REQ_CHECK_ROOM)
+            payload += centre_data
             payload = payload + user_input[1].encode()
             payload.append(MessageID.NULL)
 
@@ -111,6 +107,7 @@ def main():
                 print("Not enough arguments to make a reservation!")
                 continue
             payload.append(MessageID.REQ_MAKE_RESERVATION)
+            payload += centre_data
             payload = payload + user_input[1].encode()
             payload.append(MessageID.NULL)
             payload = payload + user_input[2].encode()
@@ -123,6 +120,7 @@ def main():
                 print("Not enough arguments to delete a reservation!")
                 continue
             payload.append(MessageID.REQ_DELETE_RESERVATION)
+            payload += centre_data
             payload = payload + user_input[1].encode()
             payload.append(MessageID.NULL)
             payload = payload + user_input[2].encode()
@@ -135,37 +133,45 @@ def main():
             continue
 
         elif user_input[0] == CommandStrings.RESEND:
-            payload.append(MessageID.REQ_RESEND)
+            # payload.append(MessageID.REQ_RESEND)
             print(ResponseStrings.RESEND_CUE)
+            continue
 
         elif user_input[0] == CommandStrings.STOP_SERVER:
-            payload.append(MessageID.REQ_STOP_SERVER)
-            stopping = 1  # mark client for stopping
+            # payload.append(MessageID.REQ_STOP_SERVER)
+            # stopping = 1  # mark client for stopping
+            break
         else:
             print(ResponseStrings.UNRECOGNIZED_COMMAND)
             continue
 
-        # print(payload)
+        print(payload)
+        print(payload.__len__())
         client_socket.sendto(payload, (server_name, running_port))
 
         try:
-            server_response = client_socket.recv(NetConsts.MAX_BUFFER)
-            message_id, extra_data = parse_response(server_response)
+            message_id = MessageID.RES_ERROR
+            extra_data = []
+            while StateVariables.is_running:
+                server_response = client_socket.recv(NetConsts.MAX_BUFFER)
+                message_id, key_id, rec_timestamp, extra_data = parse_response(server_response)
+                if key_id == key_val and rec_timestamp == timestamp:
+                    break
         except TimeoutError:
             print(ResponseStrings.SOCKET_TIMED_OUT)
-            if stopping:
-                break
+            # if stopping:
+            #    break
             continue
         except socket.timeout:
             print(ResponseStrings.SOCKET_TIMED_OUT)
-            if stopping:
-                break
+            # if stopping:
+            #    break
             continue
 
         if message_id == MessageID.RES_SUCCESS:
             print(ResponseStrings.SUCCESS)
-            if stopping:
-                break
+            # if stopping:
+            #    break
         elif message_id == MessageID.RES_FAILURE:
             print(ResponseStrings.FAILURE)
         elif message_id == MessageID.RES_ERROR:
@@ -186,6 +192,5 @@ def main():
     print("Client is closing!")
 
 
-thread = Thread(target=listener, args=(in_s, port + 1, ))
 main()
 sys.exit(0)

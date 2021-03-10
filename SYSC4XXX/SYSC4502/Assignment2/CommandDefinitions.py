@@ -5,13 +5,14 @@
 class NetConsts:
     """Currently only has 2 values, this enum will likely increase in size when new functions are required"""
     TIMEOUT = 1  # assume that a packet is lost after 1 second, this might be a bit too short for my behemoth...
+    CLIENT_TIMEOUT = 12  # wait 12 seconds for servers to reply
     MAX_BUFFER = 2048  # How large of a buffer should the message data be allocated.
 
-    MESSAGE_SENT_BUFFER = 4
     MESSAGE_RECEIVED_BUFFER = 8
     DB_HASH_BUFFER = 4
 
-    MULTICAST_DEFAULT_IP = '255.1.1.1'  # Don't ship to production, lol
+    SERVER_MIN_DELAY = 5
+    SERVER_MAX_DELAY = 10
 
 
 # http://www.ee.unb.ca/cgi-bin/tervo/polygen2.pl?d=4&p=11111&s=1&c=1&a=0&g=1
@@ -67,10 +68,10 @@ class ResponseStrings:
     FAILURE = "The server has not completed your request due to it being invalid."
     ERROR = "The server experienced an error while processing your request. It has not been completed."
     CLIENT_ERROR = "The client has received an unexpected response."
-    SOCKET_TIMED_OUT = 'Client timed out! Use "resend" to see the last request the server processed.'
+    SOCKET_TIMED_OUT = 'Client timed out!'
     DATA_RECEIVED = "Server response:"
     DATA_EMPTY = "No additional data was attached."
-    RESEND_CUE = "Last completed request resulted in:"
+    RESEND_CUE = "Resending is currently not implemented."
     RESEND_NO_DATA = "Server does not have a previous result to return."
 
     HELP = "Try entering one of these commands: rooms days timeslots check reserve delete resend quit\n" \

@@ -5,6 +5,7 @@ if sys.version_info < (3, 7):
 # import threading
 from dataclasses import dataclass, field
 import os
+from threading import Lock
 import DBConsistencyFncs
 
 # Flags
@@ -141,6 +142,8 @@ class RoomDateTimeslotManager:
     _all_slots_set: set  # For now it will just be a static list of reservation IDs.
     _DB_hash: int
 
+    _DB_lock: Lock
+
     def __init__(self, room_file_name="rooms.txt", date_file_name="days.txt", timeslot_file_name="timeslots.txt",
                  reservations_file_name="reservations.txt"):
         self._rooms_dict = dict()
@@ -148,6 +151,7 @@ class RoomDateTimeslotManager:
         self._timeslots_dict = dict()
         self._all_slots_set = set()
         self._DB_hash = 0
+        self._DB_lock = Lock()
 
         with open(room_file_name) as room_file:
             for line in room_file:  # remove leading and trailing spaces and punctuation
@@ -168,6 +172,7 @@ class RoomDateTimeslotManager:
 
         with open(reservations_file_name) as current_reservations:
             self.load_reservations(current_reservations)
+
 
     def __res_id_from_values(self, room: str, timeslot: str, day: str):
         # Note all exceptions must be handled by caller.
@@ -195,6 +200,7 @@ class RoomDateTimeslotManager:
             except KeyError:
                 sys.stderr.write("Invalid key in line: " + rev)
                 sys.stderr.write("This reservation has been ignored!")
+        self._DB_hash = DBConsistencyFncs.calc_hash(self._all_slots_set)
 
     def add_reservation(self, room: str, timeslot: str, day: str) -> int:
         """Takes 3 string values, the room, timeslot and day, and attempts to add the
@@ -212,7 +218,10 @@ class RoomDateTimeslotManager:
 
         if temp_res in self._all_slots_set:
             return 1  # Reservation already in set, return error message to client
+        self._DB_lock.acquire()
         self._all_slots_set.add(temp_res)
+        self._DB_hash = DBConsistencyFncs.add_value(self._DB_hash, temp_res)
+        self._DB_lock.release()
         return 0
 
     def remove_reservation(self, room: str, timeslot: str, day: str) -> int:
@@ -229,15 +238,20 @@ class RoomDateTimeslotManager:
             return -1
 
         if temp_reservation_id in self._all_slots_set:
+            self._DB_lock.acquire()
             self._all_slots_set.remove(temp_reservation_id)
+            self._DB_hash = DBConsistencyFncs.remove_value(self._DB_hash, temp_reservation_id)
+            self._DB_lock.release()
             return 0
 
         return 1
 
     def export_reservations(self, reservations_file_name="reservations.txt"):
+        self._DB_lock.acquire()
         with open(TEMP_RESERVATION_FILE_NAME, mode="wt") as reservation_file:
             for res_id in self._all_slots_set:
                 reservation_file.write(self.get_reservation_string(res_id) + "\n")
+        self._DB_lock.release()
         os.replace(TEMP_RESERVATION_FILE_NAME, reservations_file_name)
 
     def get_days(self):
@@ -249,6 +263,9 @@ class RoomDateTimeslotManager:
 
     def get_rooms(self):
         return self._rooms_dict.keys()
+
+    def get_hash(self):
+        return self._DB_hash
 
     def get_reservation_string(self, res_id):
 
