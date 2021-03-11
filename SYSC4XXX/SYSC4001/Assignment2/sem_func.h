@@ -18,5 +18,8 @@ void del_semvalue(int sem_id);
 int semaphore_p(int sem_id, int sem_index);
 int semaphore_v(int sem_id, int sem_index);
 
+int semaphore_check(int sem_id, int sem_index);
+int semaphore_is_zero(int sem_id, int sem_index);
+
 #endif // SEM_FUNC_H_INCLUDED
 

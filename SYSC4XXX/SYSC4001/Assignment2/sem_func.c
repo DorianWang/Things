@@ -51,9 +51,9 @@ int semaphore_check(int sem_id, int sem_index) // Check()
 {
    union semun sem_union;
 
-   sem_union.val = val;
    return semctl(sem_id, sem_index, GETVAL, sem_union);
 }
+
 
 int semaphore_is_zero(int sem_id, int sem_index)
 {
@@ -67,7 +67,7 @@ int semaphore_is_zero(int sem_id, int sem_index)
          fprintf(stderr, "semaphore_p failed\n");
          return(0);
       }
-      return(-1);
+      return(2);
    }
    return(1);
 }
