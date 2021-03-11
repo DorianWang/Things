@@ -47,3 +47,30 @@ int semaphore_v(int sem_id, int sem_index) // Signal()
 }
 
 
+int semaphore_check(int sem_id, int sem_index) // Check()
+{
+   union semun sem_union;
+
+   sem_union.val = val;
+   return semctl(sem_id, sem_index, GETVAL, sem_union);
+}
+
+int semaphore_is_zero(int sem_id, int sem_index)
+{
+   struct sembuf sem_b;
+
+   sem_b.sem_num = sem_index;
+   sem_b.sem_op = 0; // Continue if 0.
+   sem_b.sem_flg = IPC_NOWAIT; // Sets errno to EAGAIN if not 0, instead of waiting.
+   if (semop(sem_id, &sem_b, 1) == -1){
+      if(errno != EAGAIN){
+         fprintf(stderr, "semaphore_p failed\n");
+         return(0);
+      }
+      return(-1);
+   }
+   return(1);
+}
+
+
+
