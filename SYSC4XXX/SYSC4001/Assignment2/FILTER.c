@@ -87,7 +87,7 @@ int main()
          char_array[STRING_LENGTH] = 0;
       }
       else{
-         printf("Continuing without debug mode.\n");
+         printf("Continuing with debug mode OFF.\n");
          char_array[STRING_LENGTH] = 0;
       }
 
@@ -101,19 +101,18 @@ int main()
             }
          }
          if (valid){
-            printf("%s\n", prompt_buffer);
+            //printf("%s\n", prompt_buffer);
             memcpy((char_array), (prompt_buffer), STRING_LENGTH);
             break;
          }
       }
 
-      printf("%s\n", char_array);
-      printf("Getting the messages out!\n");
       // Set semaphores, and then tell processes to run.
       if (!semaphore_v(sem_id, SV_ONE)) exit(EXIT_FAILURE);
       if (!semaphore_v(sem_id, SV_TWO)) exit(EXIT_FAILURE);
       if (!semaphore_v(sem_id, P1_SIG)) exit(EXIT_FAILURE);
       if (!semaphore_v(sem_id, P3_SIG)) exit(EXIT_FAILURE);
+
       if (!semaphore_v(sem_id, START_SIG)) exit(EXIT_FAILURE);
       if (!semaphore_v(sem_id, START_SIG)) exit(EXIT_FAILURE);
       if (!semaphore_v(sem_id, START_SIG)) exit(EXIT_FAILURE);
@@ -134,31 +133,30 @@ int main()
          exit(EXIT_FAILURE);
       }
 
-      for (i = 0; i < 3; i++){
+      for (i = 0; i < 3; i++){ // Wait for all children to exit.
          wait(&status);
          if (!WIFEXITED(status)){
             printf("Something bad happened to a child?\n");
          }
       }
       printf("The sorted list is: %s\n", char_array);
+      // Cleanup is at the very bottom of the function, after this else block.
    }
    else { // Bubblesort, go! Numbers bubble up.
       char* char_array = (char*) shmat(shmid, (void*) 0, 0);
-      char* local_array = char_array + process_number * 2;
+      char* local_array = char_array + process_number * 2; // Shifted pointer to simplify code.
       char swapped = 1; // Starts set so the array is always checked once.
       char running_state = 1; // 0 is stopped, 1 is running, 2 is check before done.
 
-      if (!semaphore_p(sem_id, START_SIG)) exit(EXIT_FAILURE);
+      if (!semaphore_p(sem_id, START_SIG)) exit(EXIT_FAILURE); // Wait for starting flag.
       char debug_set = char_array[STRING_LENGTH];
-
-      if (debug_set) printf("Welcome to debug mode!\n");
-      if (debug_set) printf("I have process number: %d!\n", process_number);
 
       if (process_number == 1){ // This is the second process, the one in the middle.
          while(running_state){
             if (!swapped){ // There were no swaps this time, check to see if the other two are done.
-               // if (debug_set) printf("P2 had no swaps!\n");
+               if (debug_set) printf("P2 no swaps\n");
                if (running_state == 2) break; // Job's done.
+               // These two checks will be true if both P1 and P3 think they are done.
                int left_done = semaphore_is_zero(sem_id, P1_SIG);
                int right_done = semaphore_is_zero(sem_id, P3_SIG);
                if (!left_done || !right_done){
@@ -167,7 +165,6 @@ int main()
                else if (left_done == 1 && right_done == 1)
                {
                   // If nothing is swapped in the next check, quit.
-                  if (debug_set) printf("P2 might quit!\n");
                   running_state = 2;
                }
             }
@@ -184,7 +181,7 @@ int main()
                   SWAP_CHAR(local_array[0], local_array[1]);
                   if (!semaphore_v(sem_id, SV_ONE)) exit(EXIT_FAILURE); // Release lock
                   swapped = 1;
-                  if (debug_set) printf("P2 swapping to the left\n");
+                  if (debug_set) printf("P2 swapping\n");
                }
                else
                {
@@ -200,7 +197,7 @@ int main()
                   SWAP_CHAR(local_array[1], local_array[2]);
                   if (!semaphore_v(sem_id, SV_TWO)) exit(EXIT_FAILURE); // Release lock
                   swapped = 1;
-                  if (debug_set) printf("P2 swapping to the right\n");
+                  if (debug_set) printf("P2 swapping\n");
                }
                else
                {
@@ -228,7 +225,7 @@ int main()
                   if (IS_DIGIT(local_array[1])){
                      SWAP_CHAR(local_array[1], local_array[2]);
                      swapped = 1;
-                     if (debug_set) printf("P1 swapping to the right\n");
+                     if (debug_set) printf("P1 swapping\n");
                   }
                }
                if (!semaphore_v(sem_id, SV_ONE)) exit(EXIT_FAILURE); // Release lock
@@ -237,7 +234,7 @@ int main()
                   if (IS_DIGIT(local_array[0])){
                      SWAP_CHAR(local_array[0], local_array[1]);
                      swapped = 1;
-                     if (debug_set) printf("P1 swapping to the left\n");
+                     if (debug_set) printf("P1 swapping\n");
                   }
                }
 
@@ -259,7 +256,7 @@ int main()
                            break; // Not zero, stop!
                         }
                         // Value is zero, just keep going.
-                        if (debug_set) printf("P1 did not do any swaps!\n");
+                        if (debug_set) printf("P1 no swaps\n");
                      }
                      else
                      {
@@ -287,7 +284,7 @@ int main()
                   if (IS_DIGIT(local_array[0])){
                      SWAP_CHAR(local_array[0], local_array[1]);
                      swapped = 1;
-                     if (debug_set) printf("P3 swapping to the left\n");
+                     if (debug_set) printf("P3 swapping\n");
                   }
                   if (!semaphore_v(sem_id, SV_TWO)) exit(EXIT_FAILURE); // Release lock
                }
@@ -296,7 +293,7 @@ int main()
                   if (IS_DIGIT(local_array[1])){
                      SWAP_CHAR(local_array[1], local_array[2]);
                      swapped = 1;
-                     if (debug_set) printf("P3 swapping to the right\n");
+                     if (debug_set) printf("P3 swapping\n");
                   }
                }
 
@@ -317,7 +314,7 @@ int main()
                            break; // Not zero, stop!
                         }
                         // Value is zero, just keep going.
-                        if (debug_set) printf("P3 did not do any swaps!\n");
+                        if (debug_set) printf("P3 no swaps\n");
                      }
                      else
                      {
@@ -336,11 +333,12 @@ int main()
             }
          }
       }
-      if (debug_set) printf("Child is dying!\n");
       exit(EXIT_SUCCESS); // Worker process is complete!
    }
 
+   // Delete semaphore set and shared memory.
+   del_semvalue(sem_id);
+   shmctl(shmid, IPC_RMID, NULL); // Mark to be removed, happens after exit() call.
 
-    printf("Hello world!\n");
-    return 0;
+   exit(EXIT_SUCCESS);
 }
