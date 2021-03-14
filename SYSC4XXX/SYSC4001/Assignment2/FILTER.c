@@ -102,6 +102,7 @@ int main()
          }
          if (valid){
             //printf("%s\n", prompt_buffer);
+            prompt_buffer[STRING_LENGTH - 1] = 0;
             memcpy((char_array), (prompt_buffer), STRING_LENGTH);
             break;
          }
