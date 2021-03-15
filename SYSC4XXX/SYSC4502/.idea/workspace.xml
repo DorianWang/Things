@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7f6d54b4-3bad-45a8-bb3a-5df5d81a9b72" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/../SYSC4001/Assignment2/Assignment2.layout" beforeDir="false" afterPath="$PROJECT_DIR$/../SYSC4001/Assignment2/Assignment2.layout" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Lab5/ProxyServerSkeleton.py" beforeDir="false" afterPath="$PROJECT_DIR$/Lab5/ProxyServerSkeleton.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +110,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.Server">
+  <component name="RunManager" selected="Python.ProxyServerSkeleton">
     <configuration default="true" type="tests" factoryName="Attests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -130,6 +129,27 @@
       <option name="PATTERN" value="" />
       <option name="USE_PATTERN" value="false" />
       <method />
+    </configuration>
+    <configuration name="ProxyServerSkeleton" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="SYSC4502" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Lab5" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Lab5/ProxyServerSkeleton.py" />
+      <option name="PARAMETERS" value="localhost" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
     </configuration>
     <configuration name="Server" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SYSC4502" />
@@ -198,9 +218,11 @@
       <item itemvalue="Python.UDP_Pinger_Server" />
       <item itemvalue="Python.UDP_Pinger_Client" />
       <item itemvalue="Python.Server" />
+      <item itemvalue="Python.ProxyServerSkeleton" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.ProxyServerSkeleton" />
         <item itemvalue="Python.Server" />
         <item itemvalue="Python.UDP_Pinger_Client" />
         <item itemvalue="Python.UDP_Pinger_Server" />
