@@ -1,3 +1,4 @@
+import os
 from socket import *
 import sys
 import traceback
@@ -44,7 +45,6 @@ while 1:
 		for line in outputdata:
 			tcpCliSock.send(line.encode())
 			tcpCliSock.send("\r\n".encode())
-		tcpCliSock.send("\r\n".encode())
 		f.close()
 		# Fill in end
 
@@ -57,7 +57,7 @@ while 1:
 			print("Host " + hostn)                                   
 			try:
 				# Connect to the socket to port 80
-				print(str(hostn))
+				# print(str(hostn))
 				c.connect((str(hostn), 80))  # Fill in here
 				message = "GET "+"http://" + filename + " HTTP/1.0\r\n\r\n"
 				c.send(message.encode())  
@@ -65,30 +65,27 @@ while 1:
 				
 				# Fill in start
 				message_data = list()
-				buffer = str()
-				running = True
-				while running:
-					buffer += str(c.recv(1024))
-					print(buffer)
-					chunks = buffer.split('\\r\\n')
-					buffer = chunks.pop()  # last value of buffer is kept, as it may be part of the next line.
-					message_data.extend(chunks)
-					print(message_data)
-					for item in chunks:
-						if item.startswith('</html>'):
-							running = False
-							break
+				buffer = bytearray()
+				content_length = -1
+				buffer += c.recv(1024)
+				# print(buffer)
+				chunks = (buffer.decode()).split('\r\n\r\n')  # detect the http response header
+				response_header = chunks[0].split('\r\n')
+				# print(response_header)
+				for item in response_header:
+					if item.startswith('Content-Length:'):
+						content_length = int((item.split(':')[1]).strip())
+						break
 				content_start = False
 				page_content = []
 
-				for line in message_data:
-					if content_start:
-						page_content.append(line)
-					else:
-						if line.startswith('<html>'):
-							page_content.append(line)
-							content_start = True
+				buffer = ("\r\n\r\n".join(chunks[1:])).encode()
+				while content_length != -1 and len(buffer) < content_length:  # I don't think this actually works :(
+					buffer += c.recv(1024)
 				c.close()
+
+				page_content = buffer.decode().split("\r\n")
+
 				# Fill in end
 
 				# Create a new file in the cache for the requested file.
@@ -96,23 +93,31 @@ while 1:
 				tmpFile = open("./" + filetouse, "w")
 
 				# Fill in start
-				if message_data[0].find('404'):
+				if response_header[0].find('404') != -1:
+					# print("Ow! 404")
 					tcpCliSock.send("HTTP/1.0 404 File Not Found\r\n".encode())
-					tcpCliSock.send("Content-Type:text/html\r\n\r\n".encode())
-					for line in page_content:
-						tcpCliSock.send(line.encode())
-						tcpCliSock.send("\r\n".encode())
-					tcpCliSock.send("\r\n".encode())
+					tcpCliSock.send("Content-Length: 35\r\nContent-Type: text/html\r\n\r\n".encode())
+					tcpCliSock.send("Error 404: Nothing here, go away.\r\n".encode())
+					# print(page_content)
 					tmpFile.close()
+					os.remove("./" + filetouse)  # Do not cache 404, to avoid other issues
+					tcpCliSock.close()
 					continue
 				tmpFile.writelines(page_content)
+
+				tmpFile.flush()
 				tmpFile.close()
+				# print("page_content before sending!")
+				# print(page_content)
+
 				tcpCliSock.send("HTTP/1.0 200 OK\r\n".encode())
+				if content_length != -1:
+					tcpCliSock.send(("Content-Length: " + str(content_length) + "\r\n").encode())
 				tcpCliSock.send("Content-Type:text/html\r\n\r\n".encode())
 				for line in page_content:
-					tcpCliSock.send(line.encode())
+					if line:
+						tcpCliSock.send(line.encode())
 					tcpCliSock.send("\r\n".encode())
-				tcpCliSock.send("\r\n".encode())
 				# Fill in end
 			except Exception as e:
 				print(e)
