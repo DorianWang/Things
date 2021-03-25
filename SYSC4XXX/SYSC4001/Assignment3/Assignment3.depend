@@ -1,0 +1,19 @@
+# depslib dependency file v1.0
+1616708806 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4001\assignment3\main.c
+	<stdio.h>
+	<stdlib.h>
+	<errno.h>
+	<unistd.h>
+	<assert.h>
+	<sys/msg.h>
+	"text_storage.h"
+
+1616708866 c:\users\admin\documents\github\things\sysc4xxx\sysc4001\assignment3\text_storage.h
+	<ctype.h>
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+
+1616708905 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4001\assignment3\text_storage.c
+	"text_storage.h"
+

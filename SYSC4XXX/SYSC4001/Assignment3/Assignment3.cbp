@@ -22,10 +22,10 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="main.c">
+		<Unit filename="message_queue_consts.h" />
+		<Unit filename="server.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="message_queue_consts.h" />
 		<Unit filename="text_storage.c">
 			<Option compilerVar="CC" />
 		</Unit>

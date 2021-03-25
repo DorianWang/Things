@@ -24,6 +24,9 @@
 // Max number of characters (bytes) in a sentence, sentences larger will be discarded.
 #define MAX_SENTENCE_LENGTH 64
 
+// All whitespace characters in ascii, as well as some punctuation marks.
+#define DELIMITERS " .,!?&/\\\t\r\n\v\f"
+
 typedef struct text_storage
 {
    size_t size;
@@ -31,14 +34,22 @@ typedef struct text_storage
    char** internal_array;
 } TextStore;
 
-
+// Functions to create and delete the data structure.
 TextStore* create_store();
 void delete_store(TextStore* ts);
 
-int store_append(TextStore* ts, char* str_in);
-int store_delete(TextStore* ts, char* str_in);
-int store_remove(TextStore* ts, char* str_in);
-char* store_search(TextStore* ts, char* str_in);
+// Functions that act on the data structure.
+int store_append(TextStore* ts, const char* str_in);
+int store_delete(TextStore* ts, const char* str_in);
+int store_remove(TextStore* ts, const char* str_in);
+int store_remove_index(TextStore* ts, int index);
+char* store_search(TextStore* ts, const char* str_in);
+
+// Functions which simplify internal code.
+char* clean_search_string(const char* str_in);
+
+// Testing and debugging functions
+void DEBUG_PRINT(TextStore* ts);
 
 
 #endif // TEXT_STORAGE_H_INCLUDED
