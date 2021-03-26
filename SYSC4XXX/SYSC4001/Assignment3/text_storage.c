@@ -295,7 +295,7 @@ int store_remove_index(TextStore* ts, int index)
 }
 
 // Return the first sentence found which contains the word, or NULL if none was found.
-char* store_search(TextStore* ts, const char* str_in)
+const char* store_search(TextStore* ts, const char* str_in)
 {
    char buffer[MAX_SENTENCE_LENGTH];
    size_t i; size_t j; char* token;
@@ -305,7 +305,7 @@ char* store_search(TextStore* ts, const char* str_in)
    if (ts == NULL){
       perror("Pointer to TextStore is NULL, aborting append.");
       free(new_search_str);
-      return 0;
+      return NULL;
    }
 
    for(i = 0; i < ts->size; i++){

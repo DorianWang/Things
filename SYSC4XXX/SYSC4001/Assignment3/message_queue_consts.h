@@ -3,13 +3,23 @@
 
 // From assignment recommendations:
 // "Please ensure that each sentence transferred is no more than 35 characters in length."
-#define MAX_TEXT_LENGTH 35
+#define MAX_TEXT_LENGTH 36
+#define TEXT_COMMAND_BUFFER 64
 
 #define APPEND_E 1
 #define DELETE_E 2
 #define REMOVE_E 3
 #define SEARCH_E 4
 
+#define APPEND_STR_E "append"
+#define DELETE_STR_E "delete"
+#define REMOVE_STR_E "remove"
+#define SEARCH_STR_E "search"
+
+#define FAILURE_E 1
+#define SUCCESS_E 2
+
+// First ID is for client to server comms, second ID is for server responses.
 #define RECIEVE_QUEUE_ID 1236
 #define SEND_QUEUE_ID 1237
 

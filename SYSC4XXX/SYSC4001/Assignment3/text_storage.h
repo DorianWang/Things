@@ -43,7 +43,7 @@ int store_append(TextStore* ts, const char* str_in);
 int store_delete(TextStore* ts, const char* str_in);
 int store_remove(TextStore* ts, const char* str_in);
 int store_remove_index(TextStore* ts, int index);
-char* store_search(TextStore* ts, const char* str_in);
+const char* store_search(TextStore* ts, const char* str_in);
 
 // Functions which simplify internal code.
 char* clean_search_string(const char* str_in);
