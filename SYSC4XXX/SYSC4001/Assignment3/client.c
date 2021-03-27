@@ -77,33 +77,32 @@ int main()
       size_t command_len = strlen(input_slice_pointer);
 
       if(strcmp(input_slice_pointer, APPEND_STR_E) == 0){
-         some_data.my_msg_type = 1;
+         some_data.my_msg_type = APPEND_E;
       }
       else if (strcmp(input_slice_pointer, DELETE_STR_E) == 0){
-         some_data.my_msg_type = 1;
+         some_data.my_msg_type = DELETE_E;
       }
-      else if (strcmp(input_slice_pointer, DELETE_STR_E) == 0){
-         some_data.my_msg_type = 1;
+      else if (strcmp(input_slice_pointer, REMOVE_E) == 0){
+         some_data.my_msg_type = REMOVE_STR_E;
       }
-      else if (strcmp(input_slice_pointer, DELETE_STR_E) == 0){
-         some_data.my_msg_type = 1;
+      else if (strcmp(input_slice_pointer, SEARCH_E) == 0){
+         some_data.my_msg_type = SEARCH_STR_E;
       }
       else{
-         printf("The entered command '%s' is not valid.\r\n", input_slice_pointer);
+         printf("The entered command \'%s\' is not valid.\r\n", input_slice_pointer);
          some_data.my_msg_type = 0;
+         continue;
       }
 
-      strcpy(some_data.some_text, buffer);
+      strcpy(some_data.some_text, input_slice_pointer + command_len + 1);
 
       if (msgsnd(snd_msgid, (void*) &some_data, MAX_TEXT, 0) == -1){
          fprintf(stderr, "msgsnd failed\n");
-         exit(EXIT_FAILURE);
+         running = 0;
       }
-
-
-
-
    }
+   cleanup(rec_msgid, snd_msgid);
+   exit(EXIT_SUCCESS);
 }
 
 
