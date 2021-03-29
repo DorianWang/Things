@@ -2,38 +2,51 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Release" />
-	<File name="text_storage.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="server.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1699" topLine="22" />
+			<Cursor1 position="2408" topLine="58" />
 		</Cursor>
-	</File>
-	<File name="client.c" open="1" top="1" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2885" topLine="71" />
-		</Cursor>
+		<Folding>
+			<Collapse line="30" />
+			<Collapse line="63" />
+		</Folding>
 	</File>
 	<File name="message_queue_consts.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="386" topLine="0" />
+			<Cursor1 position="660" topLine="9" />
 		</Cursor>
 	</File>
-	<File name="server.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="makefile" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4288" topLine="99" />
+			<Cursor1 position="222" topLine="0" />
 		</Cursor>
-		<Folding>
-			<Collapse line="19" />
-			<Collapse line="52" />
-		</Folding>
 	</File>
 	<File name="text_storage.c" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="10138" topLine="37" />
+			<Cursor1 position="7959" topLine="48" />
 		</Cursor>
 		<Folding>
-			<Collapse line="7" />
 			<Collapse line="51" />
 			<Collapse line="71" />
+			<Collapse line="83" />
+			<Collapse line="135" />
+			<Collapse line="151" />
+			<Collapse line="154" />
+			<Collapse line="158" />
+			<Collapse line="163" />
+			<Collapse line="166" />
+			<Collapse line="229" />
+			<Collapse line="267" />
 		</Folding>
+	</File>
+	<File name="client.c" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2214" topLine="96" />
+		</Cursor>
+	</File>
+	<File name="text_storage.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="506" topLine="33" />
+		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

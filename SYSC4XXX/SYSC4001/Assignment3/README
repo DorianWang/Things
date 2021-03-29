@@ -1,0 +1,8 @@
+To compile the two programs:
+make all
+
+The server may be executed with ./SERVER, the client ./CLIENT
+The server accepts 4 commands: append, delete, remove and search.
+The command and the text associated with it must be separated with one space (only).
+Currently, the deletion command still leaves an extra space where the word was, which may complicate removal of sentences.
+The removal of sentences and command words are case sensitive, but word searching is not.

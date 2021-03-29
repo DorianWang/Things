@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "message_queue_consts.h"
+
 // The first two defines are for the maximum and minimum size of the sentence array.
 // The array will not be grown or shrunk if the max size is equal or above/below the constants.
 // If the number of free spaces is 3/4 times length, halve the size of the array.
@@ -24,8 +26,6 @@
 // Max number of characters (bytes) in a sentence, sentences larger will be discarded.
 #define MAX_SENTENCE_LENGTH 64
 
-// All whitespace characters in ascii, as well as some punctuation marks.
-#define DELIMITERS " .,!?&/\\\t\r\n\v\f"
 
 typedef struct text_storage
 {

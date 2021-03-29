@@ -4,7 +4,9 @@
 #include <unistd.h>
 #include <assert.h>
 #include <string.h>
+#include <time.h>
 
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/msg.h>
 #include <signal.h>
@@ -12,9 +14,18 @@
 #include <sys/ipc.h>
 
 #include "text_storage.h"
+#include "message_queue_consts.h"
 
 char running;
 
+u_int8_t num_appends;
+u_int64_t appends_time;
+u_int8_t num_deletes;
+u_int64_t deletes_time;
+u_int8_t num_removes;
+u_int64_t removes_time;
+u_int8_t num_searchs;
+u_int64_t searchs_time;
 
 
 /*
@@ -66,7 +77,7 @@ void setup(int* rec_msgid, int* snd_msgid, TextStore** ts)
       exit(EXIT_FAILURE);
    }
    *snd_msgid = msgget((key_t)SEND_QUEUE_ID, 0666 | IPC_CREAT);
-   if (snd_msgid == -1){
+   if (*snd_msgid == -1){
       fprintf(stderr, "msgget failed with error: %d\n", errno);
       if (msgctl(*rec_msgid, IPC_RMID, 0) == -1){
          fprintf(stderr, "msgctl(IPC_RMID) failed\n");
@@ -90,11 +101,15 @@ void cleanup(int rec_msgid, int snd_msgid, TextStore* ts)
 {
    char success = 1;
    delete_store(ts);
+   printf("Average time for append: %lu us\n", appends_time/num_appends);
+   printf("Average time for delete: %lu us\n", deletes_time/num_deletes);
+   printf("Average time for remove: %lu us\n", removes_time/num_removes);
+   printf("Average time for search: %lu us\n", searchs_time/num_searchs);
    if (msgctl(snd_msgid, IPC_RMID, 0) == -1){
       fprintf(stderr, "msgctl(IPC_RMID) failed\n");
       success = 0;
    } // Still try to remove the other message queue, hope for the best.
-   if (msgctl(msgid, IPC_RMID, 0) == -1){
+   if (msgctl(rec_msgid, IPC_RMID, 0) == -1){
       fprintf(stderr, "msgctl(IPC_RMID) failed\n");
       success = 0;
    }
@@ -107,7 +122,7 @@ int main()
 {
    int rec_msgid; int snd_msgid; TextStore* ts;
    setup(&rec_msgid, &snd_msgid, &ts);
-
+   struct timeval start, end;
    struct my_msg_st some_data;
    long int msg_to_receive = 0;
    int res;
@@ -121,6 +136,8 @@ int main()
          break;
       }
 
+      gettimeofday(&start, NULL);
+
       switch (some_data.my_msg_type)
       {
       case APPEND_E:
@@ -130,6 +147,10 @@ int main()
             fprintf(stderr, "msgsnd failed\n");
             running = 0;
          }
+         num_appends++;
+         gettimeofday(&end, NULL);
+         appends_time += (end.tv_sec * 1000000 + end.tv_usec)
+                        - (start.tv_sec * 1000000 + start.tv_usec);
          break;
       case DELETE_E:
          res = store_delete(ts, some_data.some_text);
@@ -138,6 +159,10 @@ int main()
             fprintf(stderr, "msgsnd failed\n");
             running = 0;
          }
+         num_deletes++;
+         gettimeofday(&end, NULL);
+         deletes_time += (end.tv_sec * 1000000 + end.tv_usec)
+                        - (start.tv_sec * 1000000 + start.tv_usec);
          break;
       case REMOVE_E:
          res = store_remove(ts, some_data.some_text);
@@ -146,8 +171,12 @@ int main()
             fprintf(stderr, "msgsnd failed\n");
             running = 0;
          }
+         num_removes++;
+         gettimeofday(&end, NULL);
+         removes_time += (end.tv_sec * 1000000 + end.tv_usec)
+                        - (start.tv_sec * 1000000 + start.tv_usec);
          break;
-      case SEARCH_E:
+      case SEARCH_E:;
          const char* temp = store_search(ts, some_data.some_text);
          if (temp != NULL){
             some_data.my_msg_type = SUCCESS_E;
@@ -160,6 +189,10 @@ int main()
             fprintf(stderr, "msgsnd failed\n");
             running = 0;
          }
+         num_searchs++;
+         gettimeofday(&end, NULL);
+         searchs_time += (end.tv_sec * 1000000 + end.tv_usec)
+                        - (start.tv_sec * 1000000 + start.tv_usec);
          break;
       default:
          fprintf(stderr, "Message type not valid.\n");
@@ -167,7 +200,7 @@ int main()
       }
    }
 
-   cleanup();
+   cleanup(rec_msgid, snd_msgid, ts);
    exit(EXIT_SUCCESS);
 }
 

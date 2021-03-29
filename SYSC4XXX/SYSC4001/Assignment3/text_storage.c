@@ -21,7 +21,7 @@ char* clean_search_string(const char* str_in)
       return NULL;
    }
    for (i = in_len - 1; i > str_start; i--){
-      if (strchr(DELIMITERS, str_in[i]) == NULL){ // A non-whitespace characer was found.
+      if (strchr(DELIMITERS, str_in[i]) == NULL){ // A non-whitespace character was found.
          if (str_end == 0){ // An end was found.
             str_end = i + 1;
          }
@@ -241,7 +241,7 @@ int store_remove(TextStore* ts, const char* str_in)
          ts->internal_array[i - 1] = ts->internal_array[i];
       }
       else if (strcmp(ts->internal_array[i], str_in) == 0){
-         printf("They compared equal!\n");
+         //printf("They compared equal!\n");
          free(ts->internal_array[i]);
          shifting = 1;
       }
@@ -302,11 +302,15 @@ const char* store_search(TextStore* ts, const char* str_in)
    char* new_search_str = clean_search_string(str_in);
    size_t sentence_len;
 
+   if (new_search_str == NULL){
+      return NULL; // Invalid search string.
+   }
    if (ts == NULL){
       perror("Pointer to TextStore is NULL, aborting append.");
       free(new_search_str);
       return NULL;
    }
+
 
    for(i = 0; i < ts->size; i++){
       sentence_len = strlen(ts->internal_array[i]);
@@ -331,10 +335,10 @@ const char* store_search(TextStore* ts, const char* str_in)
 void DEBUG_PRINT(TextStore* ts)
 {
    size_t i;
-   printf("The max size is %llu and the current size is %llu.\r\n", ts->max_size, ts->size);
+   printf("The max size is %lu and the current size is %lu.\r\n", ts->max_size, ts->size);
    printf("The stored lines are:\n");
    for (i = 0; i < ts->size; i++){
-      printf("%s | Length: %llu\r\n", ts->internal_array[i], strlen(ts->internal_array[i]));
+      printf("%s | Length: %lu\r\n", ts->internal_array[i], strlen(ts->internal_array[i]));
    }
 }
 
