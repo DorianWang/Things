@@ -45,8 +45,8 @@ class Server:
             running_port = int(sys.argv[2])
 
         StateVariables.hash_counter = 0
-        StateVariables.last_x_ids = [0 for i in range(NetConsts.DB_HASH_BUFFER)]
-        StateVariables.last_x_commands = [tuple() for i in range(NetConsts.DB_HASH_BUFFER)]
+        StateVariables.last_x_ids = [0 for _ in range(NetConsts.DB_HASH_BUFFER)]
+        StateVariables.last_x_commands = [tuple() for _ in range(NetConsts.DB_HASH_BUFFER)]
 
         # Creates a pair of sockets so that certain signals will instead get the server to export and clean up.
         self.error_listener, self.error_writer = socket.socketpair()
@@ -54,11 +54,12 @@ class Server:
         signal.set_wakeup_fd(self.error_writer.fileno())
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.server_socket.bind(('', running_port))
 
         group = socket.inet_aton(multicast_group_name)
         mreq = struct.pack('4sL', group, socket.INADDR_ANY)
         self.server_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+        self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.server_socket.bind(('', running_port))
 
         # Initializes the database with the static files. Rebuilding the database will suck later on though...
         self.reservation_manager = DateTimeslot.\
@@ -86,7 +87,7 @@ class Server:
             StateVariables.hash_list_mutex.acquire()
             StateVariables.last_x_ids[StateVariables.hash_counter] = self.reservation_manager.get_hash()
             StateVariables.last_x_commands[StateVariables.hash_counter] = data
-            StateVariables.hash_counter = StateVariables.hash_counter + 1 % NetConsts.DB_HASH_BUFFER
+            StateVariables.hash_counter = (StateVariables.hash_counter + 1) % NetConsts.DB_HASH_BUFFER
             StateVariables.hash_list_mutex.release()
 
             # This returns a future value, which I currently do not use.

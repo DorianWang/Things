@@ -30,28 +30,39 @@ def process_message(reservation_manager: DateTimeslot.RoomDateTimeslotManager,
     payload = bytearray()
 
     if request_type == MessageID.SYN_REQ_JOIN:
-        payload.append(MessageID.SYN_MESSAGE)
-        payload.append(key_num)
-        payload = payload + struct.pack("<L", timestamp)
-        recieved_hash = struct.unpack("<L", data[0])[0]
-        StateVariables.hash_list_mutex.acquire()
-        found_hash = -1
-        for i in range(NetConsts.DB_HASH_BUFFER):
-            if StateVariables.last_x_ids[i] == recieved_hash:
-                found_hash = i
-                break
+        try:
+            print("Found a server join message!")
+            payload.append(MessageID.SYN_MESSAGE)
+            payload.append(key_num)
+            print("before struct.pack")
+            payload = payload + struct.pack("<L", timestamp)
+            print("before struct.unpack")
+            print("data[0] is: " + data[0])
+            print("Type: " + str(type(data[0])))
+            received_hash = struct.unpack("<L", data[0].encode())[0]
+            StateVariables.hash_list_mutex.acquire()
+            found_hash = -1
+            for i in range(NetConsts.DB_HASH_BUFFER):
+                if StateVariables.last_x_ids[i] == received_hash:
+                    found_hash = i
+                    break
 
-        if found_hash == -1:
-            # Shrug, this could be a lot of different things.
-            print("Possible desync!")
-        else:
-            while found_hash != StateVariables.hash_counter:
-                payload = payload + StateVariables[found_hash]
-                payload.append(MessageID.NULL)
-                found_hash = (found_hash + 1) % NetConsts.DB_HASH_BUFFER
-        sock.sendto(payload, address)
-        StateVariables.hash_list_mutex.release()
-        return payload
+            if found_hash == -1:
+                # Shrug, this could be a lot of different things.
+                print("Possible desync!")
+            else:
+                while found_hash != StateVariables.hash_counter:
+                    payload = payload + StateVariables.last_x_commands[found_hash]
+                    payload.append(MessageID.NULL)
+                    found_hash = (found_hash + 1) % NetConsts.DB_HASH_BUFFER
+            print("before sending!")
+            sock.sendto(payload, address)
+            StateVariables.hash_list_mutex.release()
+            print("Here is the bootstrap response:")
+            print(payload)
+            return payload
+        except Exception as e:
+            print(e)
 
     if request_type == MessageID.NULL:
         print("Message invalid?")
@@ -188,7 +199,7 @@ class QueuedNetworking(Thread):
         self.server_socket = server_socket
         self.front = 0  # The index of where the first value in the list should be
         self.back = 0  # The index immediately after the last value in the list. Total values = back - front
-        self._messages = [(0, 0) for i in range(NetConsts.MESSAGE_RECEIVED_BUFFER)]
+        self._messages = [(0, 0) for _ in range(NetConsts.MESSAGE_RECEIVED_BUFFER)]
 
     def bootstrap(self, starting_hash, multicast_address) -> list:
         message = bytearray()
@@ -201,13 +212,13 @@ class QueuedNetworking(Thread):
         message.append(MessageID.NULL)
         self.server_socket.sendto(message, multicast_address)
         time.sleep(NetConsts.TIMEOUT)
-        temp_buffer = []
         self.server_socket.setblocking(False)
         server_response = None
         while True:
             try:
                 packet = self.server_socket.recvfrom(NetConsts.MAX_BUFFER)
                 data, address = packet
+                print(data)
                 if data[0] == MessageID.SYN_MESSAGE:
                     if data[1] == key_val:
                         server_response = data
