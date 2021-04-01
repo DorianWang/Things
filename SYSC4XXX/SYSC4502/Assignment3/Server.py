@@ -11,6 +11,9 @@ import signal
 is_running: bool
 LEADER_TIMEOUT = 1  # seconds before deciding that the current leader is dead and to try to find a new leader.
 
+leader: bool
+other_known_servers: list
+last_seen_leader: float
 
 def handler(signal_received, frame):
     global is_running
@@ -32,13 +35,13 @@ def readTextfile(filename):
 
 
 # write reservations textfile
-def writeTextfile(filename, input):
+def writeTextfile(filename, reservations_lines):
     try:
         f = open(filename, "w")
     except:
         print("File ", filename, " could not be opened for writing")
         return
-    for line in input:
+    for line in reservations_lines:
         f.write(line + "\n")
 
 
@@ -61,6 +64,32 @@ def checkFormat(cmd_components):
 # process a single user command, returning either the result or an appropriate error message
 def processCommand(cmd):
     global res
+    global leader
+    global my_id
+    global last_seen_leader
+    if cmd == "bump":
+        leader_id = cmd[5:]
+        if int(leader_id) > my_id:
+            last_seen_leader = time.time()
+        else:
+
+
+    if cmd == "bump":
+
+    if cmd == "join":
+        joining_id = cmd[5:]
+        if leader:
+            if int(joining_id) > my_id:
+                other_known_servers.append(joining_id)
+                return "handover " + str(my_id)
+            else:
+                return "wait"
+        else:
+            if int(joining_id) > my_id:
+                other_known_servers.append(joining_id)
+            else:
+                return ""
+
     if cmd == "days":
         return days
     if cmd == "rooms":
@@ -151,8 +180,9 @@ class ClientCmdThread(threading.Thread):
 
     def run(self):
         print("Start executing thread for:", self.msg, "with sequence number", self.sequence_number)
-        answer = createMessage(self.sequence_number,processCommand(self.msg))
-        serverSocket.sendto(answer.encode(), (self.ip, self.port))
+        answer = createMessage(self.sequence_number, processCommand(self.msg))
+        if leader:
+            serverSocket.sendto(answer.encode(), (self.ip, self.port))
     # Generate random number in the range of 2 to 4 and sleep
         rand = random.randint(5, 10)   
         time.sleep(rand)

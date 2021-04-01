@@ -2,11 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7f6d54b4-3bad-45a8-bb3a-5df5d81a9b72" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/SYSC4502.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SYSC4502.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/QueuedNetworking.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/QueuedNetworking.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/Server.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/Server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment3/Server.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment3/Server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Lab5/ProxyServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Lab5/ProxyServer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,6 +113,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SearchEverywhereHistoryKey" value="/editor /appearance/&#9;null&#9;null" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
@@ -243,10 +245,10 @@
     </configuration>
     <list>
       <item itemvalue="Python.ProxyServer" />
-      <item itemvalue="Python.UDP_Pinger_Server" />
-      <item itemvalue="Python.UDP_Pinger_Client" />
-      <item itemvalue="Python.Server" />
       <item itemvalue="Python.Server (1)" />
+      <item itemvalue="Python.Server" />
+      <item itemvalue="Python.UDP_Pinger_Client" />
+      <item itemvalue="Python.UDP_Pinger_Server" />
     </list>
     <recent_temporary>
       <list>
