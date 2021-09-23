@@ -2,12 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7f6d54b4-3bad-45a8-bb3a-5df5d81a9b72" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/SYSC4502.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SYSC4502.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment3/Server.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment3/Server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Lab5/ProxyServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Lab5/ProxyServer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Lab6/Client.py" beforeDir="false" afterPath="$PROJECT_DIR$/Lab6/Client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Lab6/RtpPacket.py" beforeDir="false" afterPath="$PROJECT_DIR$/Lab6/RtpPacket.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -17,8 +17,11 @@ class RtpPacket:
 		#--------------
 		# Fill the header bytearray with RTP header fields
 		
-		# header[0] = ...
-		# ...
+		header[0] = 0b1000000
+		header[1] = 26
+		header[2] = segnum // 256
+		header[3] = segnum % 256
+		# Would have more, but...
 		
 		# Get the payload from the argument
 		# self.payload = ...
