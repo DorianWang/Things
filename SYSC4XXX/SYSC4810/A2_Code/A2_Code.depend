@@ -1,15 +1,15 @@
 # depslib dependency file v1.0
-1632432174 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a2_code\main.c
+1632505071 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a2_code\main.c
 	<stdio.h>
 	<stdlib.h>
 	<assert.h>
 	<openssl/bn.h>
 	"BN_utilities.h"
 
-1632432201 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a2_code\bn_utilities.c
+1632505199 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a2_code\bn_utilities.c
 	"BN_utilities.h"
 
-1632432089 c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a2_code\bn_utilities.h
+1632504627 c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a2_code\bn_utilities.h
 	<stdio.h>
 	<stdlib.h>
 	<assert.h>
