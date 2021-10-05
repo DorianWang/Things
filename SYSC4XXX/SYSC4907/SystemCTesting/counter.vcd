@@ -1,0 +1,292 @@
+$date
+     Oct 04, 2021       20:53:21
+$end
+
+$version
+ SystemC 2.3.3-Accellera --- Oct  4 2021 15:46:47
+$end
+
+$timescale
+     1 ps
+$end
+
+$scope module SystemC $end
+$var wire    1  aaaaa  clock       $end
+$var wire    1  aaaab  reset       $end
+$var wire    1  aaaac  enable       $end
+$var wire    4  aaaad  count [3:0]  $end
+$upscope $end
+$enddefinitions  $end
+
+$comment
+All initial values are dumped below at time 0 sec = 0 timescale units.
+$end
+
+$dumpvars
+0aaaaa
+0aaaab
+0aaaac
+b0 aaaad
+$end
+
+#1000
+1aaaaa
+
+#2000
+0aaaaa
+
+#3000
+1aaaaa
+
+#4000
+0aaaaa
+
+#5000
+1aaaaa
+
+#6000
+0aaaaa
+
+#7000
+1aaaaa
+
+#8000
+0aaaaa
+
+#9000
+1aaaaa
+
+#10000
+0aaaaa
+1aaaab
+
+#11000
+1aaaaa
+
+#12000
+0aaaaa
+
+#13000
+1aaaaa
+
+#14000
+0aaaaa
+
+#15000
+1aaaaa
+
+#16000
+0aaaaa
+
+#17000
+1aaaaa
+
+#18000
+0aaaaa
+
+#19000
+1aaaaa
+
+#20000
+0aaaaa
+
+#21000
+1aaaaa
+
+#22000
+0aaaaa
+
+#23000
+1aaaaa
+
+#24000
+0aaaaa
+
+#25000
+1aaaaa
+
+#26000
+0aaaaa
+
+#27000
+1aaaaa
+
+#28000
+0aaaaa
+
+#29000
+1aaaaa
+
+#30000
+0aaaaa
+0aaaab
+
+#31000
+1aaaaa
+
+#32000
+0aaaaa
+
+#33000
+1aaaaa
+
+#34000
+0aaaaa
+
+#35000
+1aaaaa
+
+#36000
+0aaaaa
+
+#37000
+1aaaaa
+
+#38000
+0aaaaa
+
+#39000
+1aaaaa
+
+#40000
+0aaaaa
+1aaaac
+
+#41000
+1aaaaa
+b1 aaaad
+
+#42000
+0aaaaa
+
+#43000
+1aaaaa
+b10 aaaad
+
+#44000
+0aaaaa
+
+#45000
+1aaaaa
+b11 aaaad
+
+#46000
+0aaaaa
+
+#47000
+1aaaaa
+b100 aaaad
+
+#48000
+0aaaaa
+
+#49000
+1aaaaa
+b101 aaaad
+
+#50000
+0aaaaa
+
+#51000
+1aaaaa
+b110 aaaad
+
+#52000
+0aaaaa
+
+#53000
+1aaaaa
+b111 aaaad
+
+#54000
+0aaaaa
+
+#55000
+1aaaaa
+b1000 aaaad
+
+#56000
+0aaaaa
+
+#57000
+1aaaaa
+b1001 aaaad
+
+#58000
+0aaaaa
+
+#59000
+1aaaaa
+b1010 aaaad
+
+#60000
+0aaaaa
+
+#61000
+1aaaaa
+b1011 aaaad
+
+#62000
+0aaaaa
+
+#63000
+1aaaaa
+b1100 aaaad
+
+#64000
+0aaaaa
+
+#65000
+1aaaaa
+b1101 aaaad
+
+#66000
+0aaaaa
+
+#67000
+1aaaaa
+b1110 aaaad
+
+#68000
+0aaaaa
+
+#69000
+1aaaaa
+b1111 aaaad
+
+#70000
+0aaaaa
+
+#71000
+1aaaaa
+b0 aaaad
+
+#72000
+0aaaaa
+
+#73000
+1aaaaa
+b1 aaaad
+
+#74000
+0aaaaa
+
+#75000
+1aaaaa
+b10 aaaad
+
+#76000
+0aaaaa
+
+#77000
+1aaaaa
+b11 aaaad
+
+#78000
+0aaaaa
+
+#79000
+1aaaaa
+b100 aaaad
+
+#80000

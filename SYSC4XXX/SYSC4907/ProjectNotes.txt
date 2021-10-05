@@ -1,0 +1,132 @@
+Might need LaTeX for stuff?
+Use tarball instead? Much easier
+Look at "Instance" class (instance.cc), it holds lots of stuff
+
+>Project stuff
+Aim to make the final codebase all standard C++ 11/14 (Major goal? Or just something to strive for?)
+
+
+Action Items:
+decide which of 3 options (use systemC library, use cross-platform threading for parasol, write own replacement event-system), 
+and justify the choice (For proposal & final report)
+
+Project Proposal on the 22nd of October, should start working on it soon!
+
+
+When installing with the tarball, using Debian GNU/Linux 10 (buster):
+First few commands:
+   sudo apt install clang -y
+   sudo apt install make -y
+   uname -v -> [#1 SMP Debian 4.19.194-2 (2021-06-21)]
+   uname -m -> [x86_64]
+   clang --version ->[clang version 7.0.1-8+deb10u2 (tags/RELEASE_701/final)
+                     Target: x86_64-pc-linux-gnu
+                     Thread model: posix
+                     InstalledDir: /usr/bin]
+
+While in directory 'lqns-5.21'
+run "./config"
+First issue, missing aclocal, sudo apt install automake
+
+when running "make"
+Second issue, missing <expat.h>, sudo apt install libexpat-dev
+Third issue, missing yacc command, sudo apt install bison & sudo apt install byacc
+Fourth issue, can't link to certain variables and functions:
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `resultlineno'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `result_scan_string'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `resultlex'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `resultin'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `result_delete_buffer'
+
+ran "make clean"
+// Probably should have also run "make distclean" here, but I didn't 0_0
+
+back to running "make"
+Fifth issue, missing flex command, sudo apt install flex
+
+Sixth issue, can't link to even more variables and functions:
+
+/bin/bash ./libtool  --tag=CXX   --mode=link c++ -std=c++11 -Wall -Wno-parentheses -Wno-unknown-pragmas -g -O2   -o petrisrvn petrisrvn-actlist.o petrisrvn-activity.o petrisrvn-entry.o petrisrvn-errmsg.o petrisrvn-makeobj.o petrisrvn-model.o petrisrvn-petrisrvn.o petrisrvn-phase.o petrisrvn-place.o petrisrvn-pragma.o petrisrvn-processor.o petrisrvn-results.o petrisrvn-runlqx.o petrisrvn-task.o -L../lqx/libsrc/.libs -llqx -L../lqiolib/src/.libs -llqio -Lwspnlib -lwspn -lm
+libtool: link: c++ -std=c++11 -Wall -Wno-parentheses -Wno-unknown-pragmas -g -O2 -o .libs/petrisrvn petrisrvn-actlist.o petrisrvn-activity.o petrisrvn-entry.o petrisrvn-errmsg.o petrisrvn-makeobj.o petrisrvn-model.o petrisrvn-petrisrvn.o petrisrvn-phase.o petrisrvn-place.o petrisrvn-pragma.o petrisrvn-processor.o petrisrvn-results.o petrisrvn-runlqx.o petrisrvn-task.o  -L../lqx/libsrc/.libs -L../lqiolib/src/.libs /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so -L../../lqx/libsrc/.libs /home/lia/tester/lqns-5.21/lqx/libsrc/.libs/liblqx.so -Lwspnlib -lwspn -lm
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `resultlineno'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `result_scan_string'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `LQIO__delete_buffer'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `srvn_start_token'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `resultlex'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `resultin'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `result_delete_buffer'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `LQIO_lineno'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `LQIO_parse_string'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `LQIO_in'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `LQIO_lex'
+/usr/bin/ld: /home/lia/tester/lqns-5.21/lqiolib/src/.libs/liblqio.so: undefined reference to `LQIO__scan_string'
+
+Another try gives the same error, so next I try with a clean directory (delete and then untar again)
+
+"make" didn't fail! It is complaining about needing LaTeX for documentation, but that shouldn't really matter, unless prof is wrong
+
+"make check" didn't work, fatal error with missing file "testmva.h", but the file does exist in the repo. Probably had some directory changes over time that broke it?
+
+Nth issue when running make install:
+libtool: install: /usr/bin/install -c .libs/liblqx.so.0.0.1 /usr/local/lib/liblqx.so.0.0.1
+/usr/bin/install: cannot create regular file '/usr/local/lib/liblqx.so.0.0.1': Permission denied
+
+sudo make install works, but:
+lqns: error while loading shared libraries: liblqio.so.0: cannot open shared object file: No such file or directory
+
+// This problem could have been partially mitigated by changing the install directory, though you might have to tinker with other settings instead.
+
+(This command fixes newly installed libraries, or at least that's what people on stackover say)
+sudo ldconfig
+
+Now the programs can be executed, but need to test with actual files to see if they are working.
+
+
+
+When latex was installed ("sudo apt install texlive"):
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+grep 'Rerun to get' parasol.log > /dev/null; \
+if [ $? -eq 0 ]; then latex -shell-escape -interaction=nonstopmode -file-line-error parasol.tex | grep -i ".*:[0-9]*:.*\|warning"; fi
+make[4]: [Makefile:620: parasol.dvi] Error 1 (ignored)
+dvips -q -tletter -Ppdf -G0 -o parasol.ps parasol.dvi
+ps2pdf parasol.ps parasol.pdf
+/bin/bash: ps2pdf: command not found
+make[4]: *** [Makefile:608: parasol.pdf] Error 127
+make[4]: Leaving directory '/home/lia/tester/lqns-5.21/parasol/doc'
+
+"sudo apt install ghostscript" (apparently has postscript and pdf tools?)
+
+
+
+
+SystemC Stuff:
+Not that hard to compile, but it needs to either be C++11 or C++14. Trying to then compile with a different C++ error will give you a strange error message.
+It was compiled using MSYS2 with the options for a different output folder and unix folder layout.
+Using MSYS2 and Code::Blocks could compile SystemC's hello world program.
+
+Check out some useful things if we choose to use SystemC
+-https://github.com/accellera-official/systemc
+-https://forums.accellera.org/topic/5932-how-exactly-sc_main-works/
+-https://forums.accellera.org/topic/1502-dynamically-allocating-modules/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
