@@ -95,7 +95,9 @@ make[4]: *** [Makefile:608: parasol.pdf] Error 127
 make[4]: Leaving directory '/home/lia/tester/lqns-5.21/parasol/doc'
 
 "sudo apt install ghostscript" (apparently has postscript and pdf tools?)
-
+"sudo apt install fig2dev"
+'userman.avi does not exist'
+RIP
 
 
 
@@ -112,7 +114,6 @@ Check out some useful things if we choose to use SystemC
 
 Extra papers:
 -http://www.iro.umontreal.ca/~aboulham/pdfs_sources/HDLCon02.pdf
-
 
 
 
