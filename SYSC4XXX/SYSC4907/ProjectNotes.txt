@@ -110,6 +110,8 @@ Check out some useful things if we choose to use SystemC
 -https://forums.accellera.org/topic/1502-dynamically-allocating-modules/
 
 
+Extra papers:
+-http://www.iro.umontreal.ca/~aboulham/pdfs_sources/HDLCon02.pdf
 
 
 
