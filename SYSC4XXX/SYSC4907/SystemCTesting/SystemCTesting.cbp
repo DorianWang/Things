@@ -31,6 +31,9 @@
 		</Compiler>
 		<Unit filename="counter_test.cpp" />
 		<Unit filename="main.cpp" />
+		<Unit filename="tempDelay.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
