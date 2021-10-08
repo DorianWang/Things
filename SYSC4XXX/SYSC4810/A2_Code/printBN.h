@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <openssl/bn.h>
 
-inline void printBN(char* msg, BIGNUM* val)
+inline void printBN(const char* msg, BIGNUM* val)
 {
    char* number_str = BN_bn2dec(val);
    printf("%s %s\n", msg, number_str);

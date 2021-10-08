@@ -1,0 +1,9 @@
+--- Various notes from testing ---
+
+Vector is constant size (24 bytes on laptop), rest of storage should be on heap.
+String is also constant (32 bytes on laptop)
+I guess vector only has pointer, size and max size (8 + 8 + 8), but string has something extra. SSO?
+
+Map and Unordered Map has similar filling speeds, but access speeds are between 20% - 200% faster.
+Increasing the size of memory used didn't cause any issues, but it looks like they will be similar
+for my low number of entries, tilted towards an unordered map.

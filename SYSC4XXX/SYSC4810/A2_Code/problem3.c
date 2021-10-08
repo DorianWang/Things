@@ -12,7 +12,6 @@
 // Many thanks to the people that post complicated maths stuff.
 */
 
-
 /* This solves for ax + by = gcd(a, b) using the extended euclidean algorithm.
 // Because the values of e and carmichael @ n are known to be coprime,
 // the gcd is known to be 1. This means that if a is set as car(n), b as e, and y as d,
@@ -131,10 +130,10 @@ BIGNUM* RSA_private_key_from_values(const char* p_str, const char* q_str, const 
    BN_hex2bn(&q, q_str);
    BN_mul(n, p, q, ctx);
    BN_hex2bn(&e, e_str);
-   printf("End Init!\n");
+   /*printf("End Init!\n");*/
    /* End init */
 
-   /* Carmichael
+   /* Carmichael totient
    // Equals lcm(p - 1, q - 1),
    // or (p - 1) * (q - 1) / gcd(p - 1, q - 1)
    */
