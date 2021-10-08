@@ -21,6 +21,7 @@
 // Inputs: 2 BIGNUM* values, with a > b, and BN_CTX for BIGNUM functions.
 // Output: BIGNUM* value, points value of d, assuming gcd(a, b) is actually 1.
 // If the function fails then the return value will be NULL.
+// This was a lot more fun than just calling BN_mod_inverse(), but I would use that for actual work.
 */
 BIGNUM* extended_euclidean_algorithm(const BIGNUM* a, const BIGNUM* b, BN_CTX* ctx)
 {
@@ -116,7 +117,8 @@ BIGNUM* extended_euclidean_algorithm(const BIGNUM* a, const BIGNUM* b, BN_CTX* c
 
 BIGNUM* RSA_private_key_from_values(const char* p_str, const char* q_str, const char* e_str, BN_CTX* ctx)
 {
-   /* Assuming no errors to keep this simple since it already hurt my brain enough. */
+   /*Assuming no errors to keep this simple,
+   since it would be really messy with the return checks.*/
    /* Init */
    BIGNUM* p = BN_new();
    BIGNUM* q = BN_new();
@@ -154,7 +156,6 @@ BIGNUM* RSA_private_key_from_values(const char* p_str, const char* q_str, const 
    /* Reuse n pointer because lazy */
    n = extended_euclidean_algorithm(car, e, ctx);
    if (n == NULL){
-      printf("NULL!\n");
       return NULL;
    }
 
@@ -162,6 +163,7 @@ BIGNUM* RSA_private_key_from_values(const char* p_str, const char* q_str, const 
    BN_mod(res, res2, car, ctx);
    BN_free(car); BN_free(e); BN_free(res2);
 
+   /* Checks that d * e % car(n) = 1 */
    if(BN_is_one(res) == 1){
       BN_free(res);
       return n;
@@ -181,7 +183,7 @@ int main()
                                                      "FD8F0F9D611E28DD688447C0E9A0CDBD",
                                                      "41AC7", num_factory);
    assert(private_key != NULL);
-   printBN("The private key d would be:", private_key);
+   printBN("The private key d is:", private_key);
    return 0;
 }
 

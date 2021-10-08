@@ -30,8 +30,8 @@ int RSA_verify_signiture_ascii(const char* str_in, const BIGNUM* s, const BIGNUM
    BIGNUM* str_val = string_to_BN(str_in);
    int ret_val;
    BN_mod_exp(m_val, s, e, n, ctx);
-   printBN_hex("message val is  :", m_val);
-   printBN_hex("signiture val is:", str_val);
+   printBN("message val is  :", m_val);
+   printBN("signiture val is:", str_val);
    ret_val = BN_cmp(m_val, str_val);
    BN_free(m_val); BN_free(str_val);
    return ret_val;

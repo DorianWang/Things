@@ -30,6 +30,9 @@ BIGNUM* RSA_encrypt_ascii(const char* str_in, const BIGNUM* n, const BIGNUM* e, 
    BIGNUM* m = string_to_BN(str_in);
    /* n must be bigger than the message, otherwise you would need to chunk it.
    // That's too much work, so I'll just not do that.
+   // This just returns m^e % n. I don't know a good way to do padding so this system
+   // would be vulnerable to a chosen plaintext attack by just guessing combinations of
+   // scan type + result using the public key.
    */
    if (BN_cmp(n, m) > 0){
       BN_mod_exp(cy, m, e, n, ctx);
@@ -48,7 +51,7 @@ int main()
    BIGNUM* e2 = BN_new(); BN_hex2bn(&e2, "24DB1");
    const char* message = "John Doe: Brain MRI -> Clear";
    BIGNUM* cyphertext = RSA_encrypt_ascii(message, n2, e2, num_factory);
-   printBN("The cyphered value would be:", cyphertext);
+   printBN("The cyphertext is:", cyphertext);
    return 0;
 }
 

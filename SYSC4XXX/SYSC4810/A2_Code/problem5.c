@@ -5,8 +5,6 @@
 #include <string.h>
 #include <openssl/bn.h>
 
-
-
 BIGNUM* string_to_BN(const char* str_in)
 {
    /* A character is 8 bits, 2 hex digits is 8 bits.
@@ -45,6 +43,7 @@ void RSA_decrypt_ascii(const BIGNUM* cy, const BIGNUM* pk, const BIGNUM* n, BN_C
 {
    size_t output_size;
    BIGNUM* m = BN_new();
+   /* m = cy^pk % n, where pk is the private key */
    BN_mod_exp(m, cy, pk, n, ctx);
    output_size = BN_num_bytes(m);
    output_size++;

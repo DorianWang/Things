@@ -10,6 +10,7 @@
 
 BIGNUM* RSA_signiture_ascii(const char* str_in, const BIGNUM* pk, const BIGNUM* n, BN_CTX* ctx)
 {
+   /* Converts the message into a number m, then returns m to the power of the private key % n */
    size_t output_size;
    BIGNUM* m = BN_new(); BIGNUM* res = BN_new();
    BN_bin2bn((const unsigned char*) str_in, strlen(str_in), m);
@@ -27,6 +28,8 @@ int main()
 
 
    res = RSA_signiture_ascii("Ben Rice: Knee MRI -> MCL tear", d2, n2, num_factory);
+   printf("Message 1: %s\n", "Ben Rice: Knee MRI -> MCL tear");
+   printf("Message 2: %s\n", "Ben Rice: Knee MRI -> LCL tear");
    printBN("Signiture 1:", res);
    BN_free(res);
    res = RSA_signiture_ascii("Ben Rice: Knee MRI -> LCL tear", d2, n2, num_factory);
