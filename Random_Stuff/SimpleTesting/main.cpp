@@ -20,7 +20,7 @@ using namespace std;
  using std::chrono::duration;
  using std::chrono::microseconds;
 
-int main()
+int main2()
 {
    PROCESS_MEMORY_COUNTERS_EX pmc;
    GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
@@ -145,3 +145,27 @@ int main()
    cout << "Hello world!" << endl;
    return 0;
 }
+
+
+
+
+int main()
+{
+   const static std::map<int,const std::string> help_str;
+   //static const std::vector<const std::string> patterns = { "-*.lqxo", ".lqxo~*~", "-*.lqjo", ".lqjo~*~" };
+   //std::cout << patterns[0] << std::endl;
+   //for ( std::vector<const std::string>::const_iterator match = patterns.begin(); match != patterns.end() ; ++match ) {
+   //   std::cout << *match << std::endl;
+   //}
+   return 0;
+}
+
+
+
+
+
+
+
+
+
+
