@@ -108,7 +108,7 @@ Check out some useful things if we choose to use SystemC
 -https://github.com/accellera-official/systemc
 -https://forums.accellera.org/topic/5932-how-exactly-sc_main-works/
 -https://forums.accellera.org/topic/1502-dynamically-allocating-modules/
-
+https://forums.accellera.org/topic/1454-a-module-with-a-delayed-output/
 
 
 

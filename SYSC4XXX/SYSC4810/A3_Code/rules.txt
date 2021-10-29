@@ -1,0 +1,3 @@
+# Only have two rules right now.
+REQUIRE ^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])
+PROHIBIT $(USERNAME)/i

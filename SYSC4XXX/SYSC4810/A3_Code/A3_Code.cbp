@@ -2,17 +2,18 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="SystemCTesting" />
+		<Option title="A3_Code" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release">
-				<Option output="bin/Release/SystemCTesting" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/A3_Code" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="./" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -21,10 +22,16 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=gnu++17" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="counter_test.cpp" />
+		<Unit filename="PWChecker.cpp" />
+		<Unit filename="PWChecker.h" />
+		<Unit filename="PWDB.cpp" />
+		<Unit filename="PWDB.h" />
 		<Unit filename="main.cpp" />
-		<Extensions />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

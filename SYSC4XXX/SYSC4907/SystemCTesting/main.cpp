@@ -9,6 +9,7 @@ using std::endl;
 
 // If no main in program but "systemc.h" is included
 // sc_main will be run instead like a main function.
+// https://forums.accellera.org/topic/5932-how-exactly-sc_main-works/
 int sc_main (int argc, char* argv[])
 {
    sc_signal<bool> clock;
