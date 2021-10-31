@@ -1,26 +1,24 @@
 # These ones are all common password parts, made while referencing wikipedia's list of common passwords
 # It starts with letter based keyboard patterns.
-(qwe)/i
-(uiop)/i
-(asdf)/i
-(zxcv)/i
-(azer)/i
-(jkl)/i
-(asdf)/i
-(wasd)/i
-^(?=.*(qaz))(?=.*(wsx))/i
+/(qwe)/i
+/(uiop)/i
+/(asdf)/i
+/(zxcv)/i
+/(azer)/i
+/(jkl)/i
+/(asdf)/i
+/(wasd)/i
+/^(?=.*(qaz))(?=.*(wsx))/i
 (\S)\1\1\1
-(abc)/i
+/(abc)/i
 (123)
 (321)
 (987)
 (789)
 (456)
 (654)
-(fuck)/i
 (pass)/i
 (word)/i
-(love)/i
 (access)/i
 (\d)(\d)\1\2
 (\d)\1(\d)\2
@@ -37,4 +35,4 @@
 (\d{3})-(\d{4})
 
 # Adding this because it would be too obvious and it is rather common to do this unfortunately.
-(medview)/i
+/(medview)/i

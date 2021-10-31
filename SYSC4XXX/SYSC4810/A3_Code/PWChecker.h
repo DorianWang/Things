@@ -36,6 +36,10 @@ namespace fs = std::filesystem;
 // https://stackoverflow.com/questions/19605150/regex-for-password-must-contain-at-least-eight-characters-at-least-one-number-a
 // Uses regex modified from answer by user 'anubhava'
 
+
+
+
+
 class PWChecker
 {
    public:
@@ -44,15 +48,24 @@ class PWChecker
       /** Default destructor */
       virtual ~PWChecker();
 
-      void print_values(); // For debugging
+      // This just simplifies the vector templates.
+      struct rStr{
+         bool expected;
+         std::regex_constants::syntax_option_type expFlags;
+         std::string regStr;
+      };
 
+      void print_values(); // For debugging
       // Not compatable with non-ascii whitespace, but unicode support is pain.
       // Sure hope I got all those escape characters...
       const std::string whitespace = " \t\r\n\v\f";
       const std::string regexchars = "-()[]{}*+?.\\^$|#,/:!<=";
+      static constexpr char* regexflagchars = "gimsuy"; // Only the i flag is implemented at this time, regex is too hard to learn in a day :|
 
+      rStr parseRuleFromLine(std::vector <std::string> inputTokens, std::regex_constants::syntax_option_type* globalFlags = nullptr);
       bool read_password_rules_file(const std::filesystem::path& filePath);
-      bool read_common_passwords_file(const std::filesystem::path& filePath);
+      bool read_common_patterns_file(const std::filesystem::path& filePath);
+      bool read_restricted_passwords_file(const std::filesystem::path& filePath);
 
       // Returns 0 if good, a positive value corresponding to the failed regex rule,
       // or a negative value for a failed common password check.
@@ -61,8 +74,9 @@ class PWChecker
    protected:
 
    private:
-      std::vector <std::pair<bool, std::string>> passwordRegexRules;
-      std::vector <std::regex> commonPasswordsFilter;
+      std::vector <rStr> passwordRegexRules; // These are the rules all passwords must follow, has macros for usernames and passwords
+      std::vector <std::regex> commonPasswordsFilter; // These are rules that disqualify passwords, they are not allowed to match.
+      std::set <std::string> restrictedPasswordsFilter; // These are explicitly disallowed passwords, they are matched 1 to 1.
       int minimumLength;
       int maximumLength;
 
@@ -70,3 +84,13 @@ class PWChecker
 };
 
 #endif // PWCHECKER_H
+
+
+
+
+
+
+
+
+
+
