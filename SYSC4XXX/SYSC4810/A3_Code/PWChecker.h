@@ -8,6 +8,7 @@
 #include <sstream> // For stringstream and tokenization of inputs
 #include <vector> // For vectors
 #include <stdexcept> // For exception classes
+#include <set> // For set
 
 // These are used for rules that involve the username or password as variables in the regex.
 // The dummy vales are to check that a given regex with variables in them are valid.
@@ -60,7 +61,7 @@ class PWChecker
       // Sure hope I got all those escape characters...
       const std::string whitespace = " \t\r\n\v\f";
       const std::string regexchars = "-()[]{}*+?.\\^$|#,/:!<=";
-      static constexpr char* regexflagchars = "gimsuy"; // Only the i flag is implemented at this time, regex is too hard to learn in a day :|
+      static constexpr const char* regexflagchars = "gimsuy"; // Only the i flag is implemented at this time, regex is too hard to learn in a day :|
 
       rStr parseRuleFromLine(std::vector <std::string> inputTokens, std::regex_constants::syntax_option_type* globalFlags = nullptr);
       bool read_password_rules_file(const std::filesystem::path& filePath);

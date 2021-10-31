@@ -17,7 +17,7 @@ int main()
    std::filesystem::path badPasses("forbidden_passes.txt");
 
    tester.read_password_rules_file(rules);
-   tester.read_common_passwords_file(commonPasses);
+   tester.read_common_patterns_file(commonPasses);
    tester.read_restricted_passwords_file(badPasses);
    tester.print_values();
 

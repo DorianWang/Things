@@ -17,11 +17,13 @@ void PWChecker::print_values()
 {
    std::cout << "Number of rules and common passes: " << passwordRegexRules.size() << " " << commonPasswordsFilter.size() << std::endl;
    std::cout << "Rules: " << std::endl;
-   for (std::pair<bool, std::string>& rules : passwordRegexRules)
+   for (rStr rule : passwordRegexRules)
    {
-      std::cout << rules.first << " " << rules.second << std::endl;
+      std::cout << (rule.expected ? "True" : "False") << " " << rule.regStr << " " << ((rule.expFlags & std::regex_constants::icase) == std::regex_constants::icase ? "Insensitive" : "Sensitive")<< std::endl;
    }
+   std::cout << "Number of restricted passwords is: " << restrictedPasswordsFilter.size() << std::endl;
    std::cout << "Max and Min are: " << maximumLength << " "<< minimumLength << std::endl;
+
 }
 
 // This parses the extra flags at the end so they actually work like javascript regexes.

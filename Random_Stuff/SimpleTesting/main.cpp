@@ -6,6 +6,7 @@
 #include <chrono> // Timing
 #include <cstdint> // Integer types
 #include <random> // mersenne twister
+#include <fstream> // FileIO
 
 // For getting memory usage
 #include "windows.h"
@@ -151,12 +152,21 @@ int main2()
 
 int main()
 {
-   const static std::map<int,const std::string> help_str;
-   //static const std::vector<const std::string> patterns = { "-*.lqxo", ".lqxo~*~", "-*.lqjo", ".lqjo~*~" };
-   //std::cout << patterns[0] << std::endl;
-   //for ( std::vector<const std::string>::const_iterator match = patterns.begin(); match != patterns.end() ; ++match ) {
-   //   std::cout << *match << std::endl;
-   //}
+   fstream test;
+   test.open("test.txt");
+   if (test.is_open()){
+      size_t stuff[4];
+      for (int i = 0; i < 4; i++){
+         test >> stuff[i];
+         cout << stuff[i] << std::endl;
+      }
+   }
+   std::string temp;
+   test >> temp;
+   cout << temp << endl;
+   test >> temp;
+   cout << temp << endl;
+   test.close();
    return 0;
 }
 
