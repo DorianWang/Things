@@ -52,7 +52,6 @@ PWChecker::rStr PWChecker::parseRuleFromLine(std::vector <std::string> inputToke
       for (size_t i = regexString.size() - 1; i > 0; i--){
          // If I let this grow any more I'm just going to implement a shitty regex engine so I'll stop now >.<
          if (regexString[i] == '/'){
-            int backslashCounter = 0;
             if (regexString[i - 1] == '\\')
                break; // Not possible to be a valid flag set.
             lastSlash = i;
@@ -357,8 +356,7 @@ int PWChecker::check_password(const std::string& username, const std::string& pa
       }
    }
 
-   std::cout << "No owwies..." << std::endl;
-   return 0; // Did not hit any filters!
+   return 0;
 }
 
 
