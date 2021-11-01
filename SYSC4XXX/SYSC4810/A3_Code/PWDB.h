@@ -178,8 +178,8 @@ struct GroupPermissions
    friend bool operator<(const GroupPermissions& lhs, const GroupPermissions& rhs){
       return lhs.groupID < rhs.groupID;
    }
-   void getPermissions(const bool perms[]){
-      rwe[0] = perms[0]; rwe[1] = perms[1]; rwe[2] = perms[2];
+   void setPermissions(int perms){
+      rwe[2] = perms & 4; rwe[1] = perms & 2; rwe[0] = perms & 1;
    }
    int getPermissions() const {
       return (rwe[2] ? 4 : 0) + (rwe[1] ? 2 : 0) + (rwe[0] ? 1 : 0);
@@ -285,6 +285,8 @@ class PermissionsDB
 
       uint_fast64_t try_login(const std::string& username, const std::string& password);
       int check_action_permissions(uint_fast64_t UID, const std::string& actionName, size_t target = std::string::npos);
+
+      std::vector <std::string> getActionsAndFiles();
 
       void print_internal_variables(); // For testing.
       bool read_DB();

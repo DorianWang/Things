@@ -180,7 +180,13 @@ bool PermissionsDB::add_permission_to_activity(std::string name, uint_fast64_t G
    if (it != actionList.end()){
       auto existingEntry = it->second.otherPermissions.find(temp);
       if (existingEntry != it->second.otherPermissions.end()){
-         (*existingEntry).setPerms(perms);
+         int existingPerms = existingEntry->getPermissions();
+         if ((existingPerms | permissions) == existingPerms){
+            return true;
+         }
+         it->second.otherPermissions.erase(existingEntry);
+         temp.setPermissions(existingPerms | permissions);
+         it->second.otherPermissions.insert(temp);
       }
       else{
          it->second.otherPermissions.insert(temp);
@@ -257,6 +263,19 @@ int PermissionsDB::check_action_permissions(uint_fast64_t UID, const std::string
    return NONE_PERM;
 }
 
+std::vector <std::string> PermissionsDB::getActionsAndFiles()
+{
+   std::vector <std::string> res;
+   for (const auto& iter : actionList){
+      res.push_back(iter.first);
+   }
+   res.push_back("\n Possible targets:");
+   for (size_t i = 0; i < patientFiles.size(); i++){
+      res.push_back(patientFiles[i].name + ' ' + std::to_string(i));
+   }
+   return res;
+}
+
 // How to debug, just use prints!
 void PermissionsDB::print_internal_variables()
 {
@@ -281,7 +300,7 @@ void PermissionsDB::print_internal_variables()
    }
    std::cout << "\nHere is the Action list with additional permissions:" << std::endl;
    for (auto iter : actionList){
-      std::cout << "Name: " << iter.first << " Target owner permissions: " << bool_array_to_int(iter.second.owner_rwe) << " " << iter.second.otherPermissions.size() << " Group Permissions:" << "\n";
+      std::cout << "Name: " << iter.first << " Target owner permissions: " << bool_array_to_int(iter.second.owner_rwe) << ", " << iter.second.otherPermissions.size() << " Group Permissions:" << "\n";
       for (const GroupPermissions& permsIter : iter.second.otherPermissions){
          std::cout << "\t" << groupList.at(permsIter.groupID).name << " " << bool_array_to_int(permsIter.rwe) << "\n";
       }

@@ -1,3 +1,4 @@
 # Only have two rules right now.
+# Doesn't restrict other characters because regex too much brain for me.
 REQUIRE ^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{4,}
 PROHIBIT /$(USERNAME)/i
