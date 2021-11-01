@@ -25,6 +25,10 @@
 			<Add option="-std=gnu++17" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Linker>
+			<Add option="-lcrypto" />
+			<Add option="-lssl" />
+		</Linker>
 		<Unit filename="PWChecker.cpp" />
 		<Unit filename="PWChecker.h" />
 		<Unit filename="PWDB.cpp" />
