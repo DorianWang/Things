@@ -166,6 +166,15 @@ int main()
    cout << temp << endl;
    test >> temp;
    cout << temp << endl;
+   while(std::getline(test, temp)){
+      if (temp.empty()){
+         cout << "Ate empty line!" << endl;
+      }
+      else{
+         cout << temp << endl;
+      }
+
+   }
    test.close();
    return 0;
 }

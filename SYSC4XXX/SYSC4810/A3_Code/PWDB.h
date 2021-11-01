@@ -2,7 +2,8 @@
 #define PWDB_H
 
 // Hashing and other crypto stuff
-#include <openssl/sha.h>
+#include <openssl/rand.h>
+#include <openssl/kdf.h>
 #include <openssl/evp.h>
 
 #include "PWChecker.h"
@@ -10,16 +11,77 @@
 #include <string> // For strings as well as stoll() and to_string functions.
 #include <iostream> // For cout, endl, etc
 #include <filesystem> // For std::filesystem
+#include <sstream> // For the power of stringstreams
 
 #include <map>
 #include <set> // For std::set, used to hold permissions, groups and users.
 // I really should be using a sorted vector, but I know the report will take a whole day
 // so corners are getting destroyed here.
 
+// Definitely a bit low for scrypt inputs, but it hurts my computer trying to run it at all, so just say it's for testing.
+#define HASH_OUTPUT_LENGTH 32
+#define SCRYPT_N 262144
+#define SCRYPT_r 8
+#define SCRYPT_p 1
+
+#define RULES_FILE "rules.txt"
+#define COMMON_RULES_FILE "common_passes.txt"
+#define FORBIDDEN_PASSES_FILE "forbidden_passes.txt"
+
+
+
 namespace PWDB{
 
 const bool defaultPerms[3] = {false, false, false};
 
+inline unsigned char two_hex_to_uchar(unsigned char upper, unsigned char lower)
+{
+   unsigned char out = 0;
+   if (upper >= '0' && upper <= '9'){
+      out += (upper - '0') * 16;
+   }
+   else{
+      out += (upper - 'A' + 10) * 16;
+   }
+   if (lower >= '0' && lower <= '9'){
+      out += (lower - '0');
+   }
+   else{
+      out += (lower - 'A' + 10);
+   }
+   return out;
+}
+
+inline std::string hex_str_from_uchar_array(const unsigned char* arrIn, size_t inputSize)
+{
+   // A bit heavy, but it could be fixed by someone else. Probably. Maybe...
+   std::stringstream ss;
+   for (size_t i = 0; i < inputSize; i++){
+      ss << std::setw(2) << std::setfill('0') << std::uppercase << std::hex << (int) arrIn[i];
+   }
+   return ss.str();
+}
+
+inline bool hex_str_to_uchar_array(const std::string& hexInput, unsigned char* arrOut, size_t outputSize)
+{
+   size_t outputCounter = outputSize;
+   if (hexInput.length() % 2 || hexInput.length() < 2) return false;
+   for (size_t i = hexInput.length() - 2; i >= 0; i = i - 2){
+      if (outputCounter == 0){
+         std::cerr << "Hex string input longer than output array capacity.\n";
+         break;
+      }
+      outputCounter--;
+      arrOut[outputCounter] = two_hex_to_uchar(hexInput[i], hexInput[i + 1]);
+   }
+   while(outputCounter > 0){
+      outputCounter--;
+      arrOut[outputCounter] = 0;
+   }
+   return true;
+}
+
+// These structs might be more efficient with bitsets instead of booleans, but I won't bother.
 struct GroupType
 {
    std::string name;
@@ -57,16 +119,18 @@ struct UserEntry
       if (lastComma != 0)
          tokens.push_back(DB_string.substr(0, lastComma));
 
-      if (tokens.size() != 4){
+      if (tokens.size() != 6){
          std::cerr << "Given UserEntry \"" << DB_string << "\" is not valid\n";
       }
       else{
-         // Format of UID, GID, username, name. More entries can be added after.
+         // Format of UID, GID, username, name, salt, and hash.
          try{
-            UID = std::stoull(tokens[3]);
-            GID = std::stoull(tokens[2]);
-            username = tokens[1];
-            name = tokens[0];
+            UID = std::stoull(tokens[5]);
+            GID = std::stoull(tokens[4]);
+            username = tokens[3];
+            name = tokens[2];
+            salt = std::stoull(tokens[1]);
+            hex_str_to_uchar_array(tokens[0], hashedPass, HASH_OUTPUT_LENGTH);
          }
          catch(const std::invalid_argument&){
             std::cerr << "A given UserEntry Argument is not valid\n";
@@ -76,31 +140,32 @@ struct UserEntry
    UserEntry(){};
    std::string to_string() const{
       return (std::to_string((unsigned long long) UID) + ',' + std::to_string((unsigned long long) GID) + ','
-               + username + ',' + name);
+               + username + ',' + name + ',' + std::to_string(salt) + ',' + hex_str_from_uchar_array(hashedPass, HASH_OUTPUT_LENGTH));
    }
    std::string username;
    std::string name;
    uint_fast64_t UID;
    uint_fast64_t GID;
+   unsigned char hashedPass[HASH_OUTPUT_LENGTH];
+   uint64_t salt; // 64 bits should be fine if it's random, NIST recommends minimum 32 bits
 };
 
-// These structs might be more efficient with bitsets instead of booleans, but I won't bother.
 struct GroupPermissions
 {
+   GroupPermissions(){};
    GroupPermissions(uint_fast64_t newID, const bool perms[] = defaultPerms){
       groupID = newID;
       if (perms){
          rwe[0] = perms[0]; rwe[1] = perms[1]; rwe[2] = perms[2];
       }
    };
-   virtual ~GroupPermissions();
    uint_fast64_t groupID;
    bool rwe[3];
    friend bool operator<(const GroupPermissions& lhs, const GroupPermissions& rhs){
       return lhs.groupID < rhs.groupID;
    }
    int getPermissions() const {
-      return (rwe[0] ? 4 : 0) + (rwe[1] ? 2 : 0) + (rwe[0] ? 1 : 0);
+      return (rwe[2] ? 4 : 0) + (rwe[1] ? 2 : 0) + (rwe[0] ? 1 : 0);
    }
    std::string to_string() const {
       std::string temp = std::to_string((unsigned long long)groupID);
@@ -113,19 +178,49 @@ struct GroupPermissions
 //ActionPermissionRequirements
 struct APRs
 {
+   APRs(){};
+   APRs(std::string DB_string){
+      std::istringstream iss(DB_string);
+      std::vector <std::string> subStrings;
+      while (iss)
+      {
+         std::string sub;
+         iss >> sub;
+         if (sub.empty() == false){
+            subStrings.push_back(sub);
+         }
+      }
+      if (subStrings.size() % 2 != 0 || subStrings.size() < 2){
+         std::cerr << "Given Requirements \"" << DB_string << "\" is not valid\n";
+      }
+      else{
+         name = subStrings[0];
+         int ownerPerms = std::stoul(subStrings[1]);
+         owner_rwe[0] = !!(ownerPerms & 1); owner_rwe[1] = !!(ownerPerms & 2); owner_rwe[2] = !!(ownerPerms & 4);
+         size_t i = 2; bool newPerms[3];
+         while (i < subStrings.size()){
+            uint_fast64_t newID = std::stoull(subStrings[i]);
+            int permValue = std::stoul(subStrings[i+1]);
+            newPerms[0] = !!(permValue & 1); newPerms[1] = !!(permValue & 2); newPerms[2] = !!(permValue & 4);
+            GroupPermissions temp(newID, newPerms);
+            otherPermissions.insert(temp);
+         }
+      }
+   }
+
    std::string name; // This struct would be attached to an actual object/caller normally.
    // These are what permissions the owner (set in FileData) has for a file.
    bool owner_rwe[3];
    std::set <GroupPermissions> otherPermissions;
    int getPermissions(uint_fast64_t UID, uint_fast64_t GID, const FileData& target) const {
       if (UID == target.ownerID){
-         return (owner_rwe[0] ? 4 : 0) + (owner_rwe[1] ? 2 : 0) + (owner_rwe[0] ? 1 : 0);
+         return (owner_rwe[2] ? 4 : 0) + (owner_rwe[1] ? 2 : 0) + (owner_rwe[0] ? 1 : 0);
       }
       else{
          GroupPermissions tester(GID);
          const std::set<GroupPermissions>::iterator perms = otherPermissions.find(tester);
          if (perms == otherPermissions.end()){
-            return (defaultPerms[0] ? 4 : 0) + (defaultPerms[1] ? 2 : 0) + (defaultPerms[0] ? 1 : 0);
+            return (defaultPerms[2] ? 4 : 0) + (defaultPerms[1] ? 2 : 0) + (defaultPerms[0] ? 1 : 0);
          }
          else{
             return (*perms).getPermissions();
@@ -134,7 +229,7 @@ struct APRs
    }
    std::string to_string() const {
       std::string temp = name; temp += ' ';
-      temp += std::to_string((owner_rwe[0] ? 4 : 0) + (owner_rwe[1] ? 2 : 0) + (owner_rwe[0] ? 1 : 0));
+      temp += std::to_string((owner_rwe[2] ? 4 : 0) + (owner_rwe[1] ? 2 : 0) + (owner_rwe[0] ? 1 : 0));
       for (auto iter : otherPermissions){
          temp += ' ';
          temp += iter.to_string();
@@ -142,7 +237,6 @@ struct APRs
       return temp;
    }
 };
-
 
 class PermissionsDB
 {
@@ -154,28 +248,42 @@ class PermissionsDB
 
       bool set_restricted_patterns_file(const std::filesystem::path& filePath);
       int check_password();
+      bool scrypt_hashing(std::string& password, uint64_t* saltOut, unsigned char* hashOut, size_t outSize);
 
-   protected:
+      // No removal functions, basically done with this.
+      // Zero for failure, ID for success.
+      uint_fast64_t add_user(std::string name, std::string username, uint_fast64_t GID, std::string password);
+      uint_fast64_t add_group(std::string name);
+      bool add_activity(std::string name, int permissions);
+      bool add_target(std::string name, uint_fast64_t ownerID);
+      bool add_permission_to_activity(std::string name, uint_fast64_t GID, int permissions);
 
    private:
       std::vector <FileData> patientFiles;
       std::map <uint_fast64_t, UserEntry> userList;
       std::map <std::string, APRs> actionList;
-      uint_fast64_t nextUID; // Just count UIDs up for now.
+      std::map <uint_fast64_t, GroupType> groupList;
+      uint_fast64_t nextUID; // Just count IDs up for now.
+      uint_fast64_t nextGID;
       std::filesystem::path DBPath;
+
+      PWChecker passwordFilter;
+
+      // https://www.openssl.org/docs/man1.1.1/man7/scrypt.html
+      // It's built in and should work for passwords.
+      EVP_PKEY_CTX* pctx = nullptr;
 
       bool read_DB();
       bool write_DB();
 
-      bool add_usr_DB(UserEntry& newUser, std::string salted_pass);
-      bool rmv_usr_DB(uint_fast64_t UID);
-
-      bool chg_pw_DB(uint_fast64_t UID, std::string salted_pass);
 
 };
 
 } // End namespace
 #endif // PWDB_H
+
+
+
 
 
 
