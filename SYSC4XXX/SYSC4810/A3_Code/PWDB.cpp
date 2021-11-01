@@ -16,6 +16,10 @@ PermissionsDB::PermissionsDB(const std::filesystem::path& newDBPath)
    passwordFilter.read_password_rules_file(rules);
    passwordFilter.read_common_patterns_file(commonPasses);
    passwordFilter.read_restricted_passwords_file(badPasses);
+   groupList.insert(std::pair<uint_fast64_t, GroupType>(0, GroupType{std::string("DEFAULT"), 0}));
+   userList.insert(std::pair<uint_fast64_t, UserEntry>(0, UserEntry(0, 0)));
+   nextUID = 1; nextGID = 1;
+
 }
 
 PermissionsDB::~PermissionsDB()

@@ -138,6 +138,7 @@ struct UserEntry
       }
    };
    UserEntry(){};
+   UserEntry(uint_fast64_t nUID, uint_fast64_t nGID){UID = nUID; GID = nGID;};
    std::string to_string() const{
       return (std::to_string((unsigned long long) UID) + ',' + std::to_string((unsigned long long) GID) + ','
                + username + ',' + name + ',' + std::to_string(salt) + ',' + hex_str_from_uchar_array(hashedPass, HASH_OUTPUT_LENGTH));

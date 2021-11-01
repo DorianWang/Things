@@ -20,19 +20,25 @@ int main()
 
    std::filesystem::path newerPath("newDB.txt");
    PWDB::PermissionsDB testDB(newerPath);
+   testDB.add_group("Radiologist");
+   testDB.add_group("Physician");
+   testDB.add_group("Nurse");
+   testDB.add_group("Patient");
+   testDB.add_group("Administrator");
+   testDB.add_group("TechSupport");
 
 
-   cout << tester.check_password("A", "Qwerty1!") << endl;
-   cout << tester.check_password("A", "Qwer1!") << endl;
-   cout << tester.check_password("A", "Qwertysahdfku") << endl;
-   cout << tester.check_password("A", "Qwerasdfty1!") << endl;
-   cout << tester.check_password("Dorian", "Qwerasdfty1!") << endl;
-   cout << tester.check_password("Dorian", "Dorian13?") << endl;
-   cout << tester.check_password("Dorian", "dOrian13?") << endl;
 
    cout << "Hello world!" << endl;
    return 0;
 }
+
+
+
+
+
+
+
 
 
 
