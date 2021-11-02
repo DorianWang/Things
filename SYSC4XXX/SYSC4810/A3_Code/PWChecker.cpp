@@ -78,7 +78,7 @@ PWChecker::rStr PWChecker::parseRuleFromLine(std::vector <std::string> inputToke
                // Currently either unimplemented, not applicable, requires more parsing, or is just a pain in the ass (unicode).
                break;
             default:
-               std::cout << "Could not recognize flag: " << (int) in << std::endl;
+               std::cerr << "Could not recognize flag: " << (int) in << std::endl;
                isFlags = false;
                break;
             }
@@ -237,7 +237,6 @@ bool PWChecker::read_common_patterns_file(const std::filesystem::path& filePath)
          if (cleanString.at(0) == '#') continue; //Comment, ignore
 
          try{
-            std::cout << "New pass: " << cleanString << std::endl;
             std::regex newRule(cleanString);
             commonPasswordsFilter.push_back(newRule);
          }
@@ -334,7 +333,7 @@ int PWChecker::check_password(const std::string& username, const std::string& pa
          if (result != regexStruct.expected){
             return i + 2;
          }
-         std::cout << password << " " << i << std::endl;
+         //std::cout << password << " " << i << std::endl;
       }
       else{
          bool result = std::regex_match(username, newRegex);

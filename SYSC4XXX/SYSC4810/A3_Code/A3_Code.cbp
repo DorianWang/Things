@@ -26,8 +26,8 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Linker>
-			<Add option="-lcrypto" />
-			<Add option="-lssl" />
+			<Add option="-lssl -lcrypto -lcrypt32" />
+			<Add library="C:/msys64/mingw64/lib/libssl.a" />
 		</Linker>
 		<Unit filename="PWChecker.cpp" />
 		<Unit filename="PWChecker.h" />

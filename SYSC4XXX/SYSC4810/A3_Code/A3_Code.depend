@@ -1,21 +1,26 @@
 # depslib dependency file v1.0
-1635700765 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a3_code\main.cpp
+1635802076 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a3_code\main.cpp
 	<iostream>
 	"PWDB.h"
 	"PWChecker.h"
+	<openssl/ssl.h>
+	<openssl/err.h>
 	<filesystem>
 
-1635711731 c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a3_code\pwdb.h
-	<openssl/sha.h>
+1635796842 c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a3_code\pwdb.h
+	<openssl/rand.h>
+	<openssl/kdf.h>
 	<openssl/evp.h>
 	"PWChecker.h"
 	<string>
 	<iostream>
 	<filesystem>
+	<sstream>
+	<cassert>
 	<map>
 	<set>
 
-1635701665 c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a3_code\pwchecker.h
+1635777244 c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a3_code\pwchecker.h
 	<iostream>
 	<regex>
 	<filesystem>
@@ -25,10 +30,10 @@
 	<stdexcept>
 	<set>
 
-1635701311 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a3_code\pwchecker.cpp
+1635786089 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a3_code\pwchecker.cpp
 	"PWChecker.h"
 
-1635542038 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a3_code\pwdb.cpp
+1635797148 source:c:\users\admin\documents\github\things\sysc4xxx\sysc4810\a3_code\pwdb.cpp
 	"PWDB.h"
 
 1635728347 source:c:\users\dorian\documents\github\things\sysc4xxx\sysc4810\a3_code\pwchecker.cpp
