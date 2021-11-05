@@ -1,4 +1,5 @@
- Here is a modified source for Bit_Adder.h which emulates the delay between component/modules:
+//Here is a modified source for Bit_Adder.h which emulates the delay between component/modules:
+
 
 #ifndef BIT_ADDER_H_
 #define BIT_ADDER_H_
@@ -93,3 +94,7 @@ Regards,
 
 Ameya Vikram Singh
 //https://forums.accellera.org/topic/5715-delaying-simulated-execution/
+
+// See also:
+// https://stackoverflow.com/questions/62956845/is-there-a-better-alternate-way-to-implement-delay-in-systemc-modules
+

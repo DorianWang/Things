@@ -11,6 +11,7 @@ using std::endl;
 // sc_main will be run instead like a main function.
 int sc_main (int argc, char* argv[])
 {
+
    sc_signal<bool> clock;
    sc_signal<bool> reset;
    sc_signal<bool> enable;
@@ -79,6 +80,6 @@ int sc_main (int argc, char* argv[])
 
 
 
-
+// https://forums.accellera.org/topic/6092-c-class-object-bringing-into-systemc-hierarchy/
 
 
