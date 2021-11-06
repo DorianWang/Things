@@ -1,0 +1,13 @@
+   Name, Username, role number, Current Password
+   testDB.add_user("Howard Linkler", "hlinkler", 1, "Trid142?");
+   testDB.add_user("Veronica Perez", "vperez", 1, "Quadd142?");
+   testDB.add_user("Winston Callahan", "wcallahan", 2, "Ahufe1@!");
+   testDB.add_user("Leslie Stewart", "lstewart", 2, "Trid142?");
+   testDB.add_user("Kelsey Chang", "kchang", 3, "Trid142?");
+   testDB.add_user("James Preston", "jpreston", 3, "Trid142?");
+   testDB.add_user("Rabul Garza", "rgarza", 4, "Trid142?");
+   testDB.add_user("Arjun Singh", "asingh", 4, "Trid142?");
+   testDB.add_user("Heather Anderson", "handerson", 5, "Trid142?");
+   testDB.add_user("Keikilana Kapahu", "kkapahu", 5, "Trid142?");
+   testDB.add_user("Harold Zakara", "hzakara", 6, "Trid142?");
+   testDB.add_user("Mailina Romanoca", "mromanoca", 6, "Trid142?");

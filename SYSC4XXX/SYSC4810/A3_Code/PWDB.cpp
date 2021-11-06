@@ -16,7 +16,7 @@ PermissionsDB::PermissionsDB(const std::filesystem::path& newDBPath)
    passwordFilter.read_password_rules_file(rules);
    passwordFilter.read_common_patterns_file(commonPasses);
    passwordFilter.read_restricted_passwords_file(badPasses);
-   passwordFilter.print_values();
+   //passwordFilter.print_values();
    groupList.insert(std::pair<uint_fast64_t, GroupType>(0, GroupType{std::string("DEFAULT"), 0}));
    userList.insert(std::pair<uint_fast64_t, UserEntry>(0, UserEntry(0, 0, std::string("DEFAULT"), std::string("DEFAULT"))));
    nextUID = 1; nextGID = 1;
@@ -38,6 +38,8 @@ void PermissionsDB::set_DB_path(const std::filesystem::path& newDBPath)
 
 bool PermissionsDB::scrypt_hashing(const std::string& password, uint64_t salt, unsigned char* hashOut, size_t outSize)
 {
+   // Follows the example given in the docs.
+   // https://www.openssl.org/docs/man3.0/man7/EVP_KDF-SCRYPT.html
    if (EVP_PKEY_CTX_set1_pbe_pass(pctx, password.c_str(), password.length()) <= 0) {
       std::cerr << "Failed to set password\n";
       return false;
@@ -195,7 +197,6 @@ bool PermissionsDB::add_permission_to_activity(std::string name, uint_fast64_t G
    }
    return false;
 };
-
 
 bool PermissionsDB::toggle_after_hours(){ isAfterHours = !isAfterHours; return isAfterHours;};
 bool PermissionsDB::toggle_group_restricted_hours(uint_fast64_t GID){

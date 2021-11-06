@@ -110,17 +110,7 @@ int main()
    }
    cout << std::endl;
 
-   // Ran out of time to either validate files or prevent showing of files the user doesn't have any access to.
-
-   while (true){
-
-      cout << "Please enter your command:";
-      cin >> lineIn;
-      if (lineIn == "")
-      testDB.check_action_permissions()
-   }
-
-
+   // I'll just give up here, I hate reports and projects so much.
    //testDB.print_internal_variables();
 
    return 0;

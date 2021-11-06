@@ -7,24 +7,45 @@
 			<Cursor1 position="3057" topLine="43" />
 		</Cursor>
 	</File>
-	<File name="PWChecker.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="PWChecker.cpp" open="1" top="1" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="6886" topLine="69" />
+			<Cursor1 position="1674" topLine="210" />
 		</Cursor>
 		<Folding>
-			<Collapse line="30" />
+			<Collapse line="141" />
 			<Collapse line="255" />
-			<Collapse line="294" />
 		</Folding>
 	</File>
-	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="PWDB.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4729" topLine="97" />
+			<Cursor1 position="1193" topLine="27" />
+		</Cursor>
+		<Folding>
+			<Collapse line="34" />
+			<Collapse line="39" />
+			<Collapse line="95" />
+			<Collapse line="106" />
+			<Collapse line="136" />
+			<Collapse line="155" />
+			<Collapse line="166" />
+			<Collapse line="176" />
+			<Collapse line="201" />
+			<Collapse line="211" />
+			<Collapse line="234" />
+			<Collapse line="267" />
+			<Collapse line="281" />
+			<Collapse line="312" />
+			<Collapse line="378" />
+		</Folding>
+	</File>
+	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="691" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="PWDB.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="PWDB.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="10760" topLine="96" />
+			<Cursor1 position="895" topLine="0" />
 		</Cursor>
 		<Folding>
 			<Collapse line="39" />
@@ -34,23 +55,8 @@
 			<Collapse line="96" />
 			<Collapse line="107" />
 			<Collapse line="114" />
-			<Collapse line="167" />
-			<Collapse line="196" />
 			<Collapse line="198" />
-		</Folding>
-	</File>
-	<File name="PWDB.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="9331" topLine="153" />
-		</Cursor>
-		<Folding>
-			<Collapse line="93" />
-			<Collapse line="104" />
-			<Collapse line="134" />
-			<Collapse line="153" />
-			<Collapse line="164" />
-			<Collapse line="233" />
-			<Collapse line="311" />
+			<Collapse line="246" />
 		</Folding>
 	</File>
 </CodeBlocks_layout_file>
