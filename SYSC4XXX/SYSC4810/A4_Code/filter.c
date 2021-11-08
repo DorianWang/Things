@@ -39,6 +39,42 @@ unsigned int blockUDP(void *priv, struct sk_buff *skb,
    return NF_ACCEPT;
 }
 
+unsigned int blockPing(void *priv, struct sk_buff *skb,
+                       const struct nf_hook_state *state)
+{
+   struct iphdr *iph;
+   struct udphdr *udph;
+
+   if (!skb) return NF_ACCEPT;
+
+   if (iph->protocol == IPPROTO_ICMP) {
+      printk(KERN_WARNING "*** Dropping %pI4 (ICMP), port %d\n", &(iph->daddr), port);
+      return NF_DROP;
+   }
+   return NF_ACCEPT;
+}
+
+unsigned int blockTelnet(void *priv, struct sk_buff *skb,
+                       const struct nf_hook_state *state)
+{
+   struct iphdr *iph;
+   struct tcphdr *udph;
+
+   u16  port   = 23;
+
+   if (!skb) return NF_ACCEPT;
+
+   if (iph->protocol == IPPROTO_TCP) {
+       tcph = tcp_hdr(skb);
+       if (iph->daddr == ip_addr && ntohs(udph->dest) == port){
+            printk(KERN_WARNING "*** Dropping %pI4 (Telnet), port %d\n", &(iph->daddr), port);
+            return NF_DROP;
+        }
+   }
+   return NF_ACCEPT;
+}
+
+
 unsigned int printInfo(void *priv, struct sk_buff *skb,
                  const struct nf_hook_state *state)
 {
