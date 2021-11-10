@@ -16,6 +16,7 @@
 					<Add option="-O2" />
 					<Add option="-std=gnu++14" />
 					<Add directory="C:/Users/Admin/Desktop/SystemC/include" />
+					<Add directory="./" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -29,6 +30,16 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="ClientExample.cpp" />
+		<Unit filename="ClientExample.h" />
+		<Unit filename="PacketType.h" />
+		<Unit filename="QueuedType.h" />
+		<Unit filename="ServerExample.cpp" />
+		<Unit filename="ServerExample.h" />
+		<Unit filename="SimpleQueue.cpp" />
+		<Unit filename="SimpleQueue.h" />
+		<Unit filename="SimpleRouter.cpp" />
+		<Unit filename="SimpleRouter.h" />
 		<Unit filename="counter_test.cpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="tempDelay.cpp">
