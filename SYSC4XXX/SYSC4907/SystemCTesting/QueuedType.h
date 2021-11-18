@@ -12,6 +12,7 @@ enum QueueRules
 };
 
 // A QueuedType must implement adding and removing packets.
+// If you forget what this is -> https://isocpp.org/wiki/faq/abcs
 class QueuedType
 {
    public:
