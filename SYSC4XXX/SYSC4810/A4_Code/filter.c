@@ -13,42 +13,18 @@
 static struct nf_hook_ops hook1, hook2;
 
 
-unsigned int blockUDP(void *priv, struct sk_buff *skb,
-                       const struct nf_hook_state *state)
-{
-   struct iphdr *iph;
-   struct udphdr *udph;
-
-   u16  port   = 53;
-   char ip[16] = "8.8.8.8";
-   u32  ip_addr;
-
-   if (!skb) return NF_ACCEPT;
-
-   iph = ip_hdr(skb);
-   // Convert the IPv4 address from dotted decimal to 32-bit binary
-   in4_pton(ip, -1, (u8 *)&ip_addr, '\0', NULL);
-
-   if (iph->protocol == IPPROTO_UDP) {
-       udph = udp_hdr(skb);
-       if (iph->daddr == ip_addr && ntohs(udph->dest) == port){
-            printk(KERN_WARNING "*** Dropping %pI4 (UDP), port %d\n", &(iph->daddr), port);
-            return NF_DROP;
-        }
-   }
-   return NF_ACCEPT;
-}
-
 unsigned int blockPing(void *priv, struct sk_buff *skb,
                        const struct nf_hook_state *state)
 {
    struct iphdr *iph;
-   struct udphdr *udph;
+   char ip[16] = "10.9.0.1";
+   u32  ip_addr;
 
    if (!skb) return NF_ACCEPT;
-
-   if (iph->protocol == IPPROTO_ICMP) {
-      printk(KERN_WARNING "*** Dropping %pI4 (ICMP), port %d\n", &(iph->daddr), port);
+   iph = ip_hdr(skb);
+   in4_pton(ip, -1, (u8 *)&ip_addr, '\0', NULL);
+   if (iph->daddr == ip_addr && iph->protocol == IPPROTO_ICMP) {
+      printk(KERN_WARNING "*** Dropping %pI4 (ICMP)", &(iph->daddr));
       return NF_DROP;
    }
    return NF_ACCEPT;
@@ -58,16 +34,19 @@ unsigned int blockTelnet(void *priv, struct sk_buff *skb,
                        const struct nf_hook_state *state)
 {
    struct iphdr *iph;
-   struct tcphdr *udph;
+   struct tcphdr *tcph;
+   char ip[16] = "10.9.0.1";
+   u32  ip_addr;
 
    u16  port   = 23;
 
    if (!skb) return NF_ACCEPT;
-
+   iph = ip_hdr(skb);
+   in4_pton(ip, -1, (u8 *)&ip_addr, '\0', NULL);
    if (iph->protocol == IPPROTO_TCP) {
        tcph = tcp_hdr(skb);
-       if (iph->daddr == ip_addr && ntohs(udph->dest) == port){
-            printk(KERN_WARNING "*** Dropping %pI4 (Telnet), port %d\n", &(iph->daddr), port);
+       if (iph->daddr == ip_addr && ntohs(tcph->dest) == port){
+            printk(KERN_WARNING "*** Dropping %pI4 (Telnet), port 23\n", &(iph->daddr));
             return NF_DROP;
         }
    }
@@ -111,14 +90,14 @@ unsigned int printInfo(void *priv, struct sk_buff *skb,
 int registerFilter(void) {
    printk(KERN_INFO "Registering filters.\n");
 
-   hook1.hook = printInfo;
-   hook1.hooknum = NF_INET_LOCAL_OUT;
+   hook1.hook = blockPing;
+   hook1.hooknum = NF_INET_LOCAL_IN;
    hook1.pf = PF_INET;
    hook1.priority = NF_IP_PRI_FIRST;
    nf_register_net_hook(&init_net, &hook1);
 
-   hook2.hook = blockUDP;
-   hook2.hooknum = NF_INET_POST_ROUTING;
+   hook2.hook = blockTelnet;
+   hook2.hooknum = NF_INET_LOCAL_IN;
    hook2.pf = PF_INET;
    hook2.priority = NF_IP_PRI_FIRST;
    nf_register_net_hook(&init_net, &hook2);
