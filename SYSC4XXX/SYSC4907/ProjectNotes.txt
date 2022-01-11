@@ -20,9 +20,9 @@ First few commands:
    uname -v -> [#1 SMP Debian 4.19.194-2 (2021-06-21)]
    uname -m -> [x86_64]
    clang --version ->[clang version 7.0.1-8+deb10u2 (tags/RELEASE_701/final)
-                     Target: x86_64-pc-linux-gnu
-                     Thread model: posix
-                     InstalledDir: /usr/bin]
+     Target: x86_64-pc-linux-gnu
+     Thread model: posix
+     InstalledDir: /usr/bin]
 
 While in directory 'lqns-5.21'
 run "./config"
@@ -86,7 +86,7 @@ Now the programs can be executed, but need to test with actual files to see if t
 When latex was installed ("sudo apt install texlive"):
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 grep 'Rerun to get' parasol.log > /dev/null; \
-if [ $? -eq 0 ]; then latex -shell-escape -interaction=nonstopmode -file-line-error parasol.tex | grep -i ".*:[0-9]*:.*\|warning"; fi
+if [ $? -eq 0 ]; then latex -shell-escape -interaction=nonstopmode -file-line-error parasol.tex 	 grep -i ".*:[0-9]*:.*\	warning"; fi
 make[4]: [Makefile:620: parasol.dvi] Error 1 (ignored)
 dvips -q -tletter -Ppdf -G0 -o parasol.ps parasol.dvi
 ps2pdf parasol.ps parasol.pdf
@@ -98,6 +98,13 @@ make[4]: Leaving directory '/home/lia/tester/lqns-5.21/parasol/doc'
 
 
 
+If latex is giving trouble for whatever reason:
+./configure -disable-latex-doc
+
+From V5 folder:
+autoreconf --install
+./configure -disable-latex-doc
+make
 
 SystemC Stuff:
 Not that hard to compile, but it needs to either be C++11 or C++14. Trying to then compile with a different C++ error will give you a strange error message.
@@ -110,15 +117,176 @@ Check out some useful things if we choose to use SystemC
 -https://forums.accellera.org/topic/1502-dynamically-allocating-modules/
 https://forums.accellera.org/topic/1454-a-module-with-a-delayed-output/
 
+Terms to search for:
+ps_
+para
+parasol
+PS_
 
 
+lia@debian-s-1vcpu-2gb-tor1-01:~/tester/V5$ find . -name *.h -type f -exec grep -l 'ps_' {} +
+./lqiolib/src/headers/lqio/dom_pragma.h - Related to MVA stuff, reiser_ps & rolia_ps, probably not parasol.
+./lqsim/model.h - This references ps_genesis().
+
+lia@debian-s-1vcpu-2gb-tor1-01:~/tester/V5$ find . -name *.h -type f -exec grep -l 'para' {} +
+./lqngen/*.h - Unrelated.
+./lqiolib/src/headers/lqio/*.h - Unrelated.
+./lqiolib/config.h - Unrelated.
+./petrisrvn/*.h - Unrelated.
+./lqn2ps/*.h - Unrelated.
+./lqx/libsrc/headers/lqx/MethodTable.h - Unrelated.
+./srvndiff/*.h - Unrelated.
+./lqneditor/lqneditor/model.h - Unrelated.
+./qnsolver/model.h - Unrelated.
+./lqns/*.h - Unrelated.
+
+# Mostly unrelated, but I'll note things worthwhile to check out
+./lqsim/model.h - struct simulation_parameters -> does this go to parasol?
+./lqsim/processor.h - "Translate input.h types to para_proto.h types."
+./lqsim/lqsim.h - Unrelated?
+./lqsim/task.h - "#include <parasol.h>"
+
+lia@debian-s-1vcpu-2gb-tor1-01:~/tester/V5$ find . -name *.h -type f -exec grep -l 'PS_' {} +
+./lqiolib/src/headers/lqio/input.h - Doesn't seem directly related to PS.
+./lqn2ps/layer.h - Doesn't seem directly related to PS.
+./lqn2ps/lqn2ps.h - Doesn't seem directly related to PS, just header guard.
+./lqn2ps/graphic.h - Doesn't seem directly related to PS, just header guard.
+./libmva/src/headers/mva/multserv.h - All references are related to a "public virtual Server".
+./libmva/src/headers/mva/server.h - Introduces a PS_Server() class inheriting from a "public virtual Server".
+PS_Server may be a "Processor Sharing Server" rather than a parasol one.
+
+lia@debian-s-1vcpu-2gb-tor1-01:~/tester/V5$ find . -name *.c -type f -exec grep -l 'ps_' {} +
+PARASOL only
+
+lia@debian-s-1vcpu-2gb-tor1-01:~/tester/V5$ find . -name *.c -type f -exec grep -l 'para' {} +
+./lqiolib/src/*.c - Unrelated.
+./petrisrvn/wspnlib/*.c - Unrelated.
+./lqx/preprocessing/*.c - Unrelated.
+./srvndiff/*.c - Unrelated.
+
+lia@debian-s-1vcpu-2gb-tor1-01:~/tester/V5$ find . -name *.c -type f -exec grep -l 'PS_' {} +
+./lqiolib/src/srvn_gram.c - Doesn't seem directly related to PS.
+
+// Black magic stack pointer stuff
+#define	ps_myself ((((char *)ps_htp)-ps_task_tab.base)/ps_task_tab.entry_size)
+#define	ps_std_port(task)	(ps_task_ptr((task))->bport)
+
+Functions in square brackets are not in parasol but still affect it.
+Functions in curly brackets are called only from parasol.
+697 model.cc int ps_run_parasol(double, long, long)
+983 model.cc [void ps_genesis(void*)]
+{long init_table(ps_table_t *, long, long)}
+{void init_event(void)}
+{void init_locks(void)}
+{void init_semaphores(void)}
+{int ps_build_node(const char *, long, double, double, long, long)}
+{long get_table_entry(ps_table_t *)}
+{int ps_create(const char *, long, long, void (*)(void *), long)}
+{int ps_create2(const char *, long, long, void (*)(void *), long, long, double)}
+{int ps_allocate_port(const char *, long)}
+{void mctx_create(mctx_t *, void (*)(void *), void *, void *, size_t)}
+{void mctx_create_trampoline(int)}
+{void mctx_create_boot(void)}
+{long create_dye(const char *)}
+{long get_occurence_number(const char *, char **)}
+{int ps_resume(long)}
+{void find_host(ps_task_t *)}
+{void reaper(void *)}
+{long derive_dye(long)}
+{void ready(ps_task_t *)}
+
+int ps_receive(long, double, long *, double *, char **, long *)
+instance.cc	95	( ps_myself );	
+model.cc	989	ps_suspend( ps_myself );	
+task.cc	872	ps_suspend( _task->task_id() );	
+task.cc	1144	ps_suspend( _reader->task_id() );	
+task.cc	1145	ps_suspend( _writer->task_id() );	
+task.cc	1146	ps_suspend( _signal_task->task_id() );	
+
+{long port_receive(long, long, double, long *, double *, char **, long *, long *, long *, long *)}
+{void remove_event(ps_event_t *)}
+{void find_ready(ps_node_t *, ps_cpu_t *)}
+
+instance.h 89 int ps_open_stat(const char *, long)
+
+instance.h 110 long ps_get_node_stat_index(long)
+{ps_event_t *add_event(double, long, long *)}
+
+int ps_reset_stat(long)
+result.cc	122	ps_reset_stat( raw );	
+result.cc	150	ps_reset_stat( raw );	
+result.cc	173	ps_reset_stat( raw );	
+result.cc	206	ps_reset_stat( raw );	
+result.cc	230	ps_reset_stat( raw );	
+
+int ps_sleep(double)
+instance.cc	117	ps_sleep( delay );	
+instance.cc	560	ps_sleep(0);  /* Force context switch */	
+instance.cc	1180	if ( _cp->_compute_func == ps_sleep 		 !ap->has_service_time() ) {	
+instance.cc	1322	ps_sleep( think_time );	
+model.cc	828	ps_sleep( _parameters._initial_delay );	
+model.cc	849	ps_sleep( _parameters._block_period );	
+model.cc	889	ps_sleep(1.0);	
+processor.cc	161	ps_sleep(0);	
+task.cc	106	_compute_func = (!processor 		 processor->is_infinite()) ? ps_sleep : ps_compute;	
+task.cc	180	if ( _compute_func == ps_sleep ) {	
+
+{void sched(void)}
+{void driver(void)} // I think it gets called from ps_run_parasol near the end.
+{void end_sleep_handler(ps_event_t *)}
+
+int ps_send_priority(long, long, char *, long, long)
+target.cc	54	} else if ( ps_send_priority( entry->get_port(), entry->entry_id(),	
+target.cc	89	} else if ( ps_send_priority( entry->get_port(), entry->entry_id(),	
+
+{ps_mess_t *get_mess(void)}
+{void free_mess(ps_mess_t *)}
+{void end_compute_handler(ps_event_t *)}
+
+int ps_compute(double)
+task.cc	106	_compute_func = (!processor 		 processor->is_infinite()) ? ps_sleep : ps_compute;	
+
+int ps_owner(long)
+instance.cc	1427	Instance * dest_ip = object_tab[ps_owner(msg->reply_port)];	
+instance.cc	1753	*thread_end_compute_time = ps_end_compute_time( ps_owner( reply_port ) );	
+
+int ps_send(long, long, char *, long)
+instance.cc 205	ps_send( msg->reply_port , 0, (char *)msg, ps_my_std_port );	
+instance.cc 464	ps_send( worker_port, entry_id, (char *)msg, msg->reply_port );	
+instance.cc	528	ps_send( worker_port, entry_id, (char *)msg, msg->reply_port );	
+instance.cc	576	ps_send( worker_port, entry_id, (char *)msg, msg->reply_port );	
+instance.cc	600	if ( ps_send( _cp->worker_port(), -1, (char *)0, ps_my_std_port ) != OK ) {	
+instance.cc	648	if ( ps_send( cp->worker_port(), -1, (char *)0, ps_my_std_port ) != OK ) {	
+instance.cc	677	if ( ps_send( cp->signal_port(), -1, (char *)0, ps_my_std_port ) != OK ) {	
+instance.cc	752	if ( ps_send( cp->signal_port(), -1, (char *)0, ps_my_std_port ) != OK ) {	
+instance.cc	776	if ( ps_send( cp->worker_port(), -1, (char *)0, ps_my_std_port ) != OK ) {	
+instance.cc	863	if ( ps_send( cp->signal_task()->std_port(), entry_id, (char *)msg, msg->reply_port ) != OK ) { abort(); }	
+instance.cc	992	if ( ps_send( cp->signal_port2(), -1, (char *)0, ps_my_std_port ) != OK ) {	
+instance.cc	1049	if ( ps_send( pp->thread_port(), -1, (char *)ap, ps_my_std_port ) != OK ) {	
+instance.cc	1222	ps_send( reply_port, 0, (char *)msg->init( ep, NULL ), ps_my_std_port );	
+instance.cc	1232	ps_send( fwd.target[i].entry->get_port(), /* Forward request. */	
+instance.cc	1704	if ( ps_send( start_port(), entry_id, (char *)ap, std_port() ) != OK ) {	
+processor.cc	159	ps_send( pp->scheduler(), SN_PREEMPT, nullstr, ip->task_id() );	
+target.cc	54	} else if ( ps_send_priority( entry->get_port(), entry->entry_id(),	
+target.cc	89	} else if ( ps_send_priority( entry->get_port(), entry->entry_id(),	
+
+int ps_add_stat(long, double)
+instance.cc	1366	ps_add_stat( ap->r_proc_delay.raw, delta );	
+instance.cc	1367	ps_add_stat( ap->r_proc_delay_sqr.raw, (delta + ap->_prewaiting) * (delta + ap->_prewaiting) -  ap->_prewaiting * ap->_prewaiting);	
+instance.cc	1370	ps_add_stat( phase->r_proc_delay.raw, delta );	
+instance.cc	1371	ps_add_stat( phase->r_proc_delay_sqr.raw, (delta + phase->_prewaiting) * (delta + phase->_prewaiting) -  phase->_prewaiting * phase->_prewaiting);	
+instance.cc	1473	ps_add_stat( ap->r_proc_delay.raw, ps_preempted_time (task_id()) );	
+instance.cc	1474	ps_add_stat( ap->r_proc_delay_sqr.raw, (ps_preempted_time (task_id()) + ap->_prewaiting) * (ps_preempted_time (task_id()) + ap->_prewaiting) -  ap->_prewaiting * ap->_prewaiting);	
+instance.cc	1478	ps_add_stat( phase->r_proc_delay.raw, ps_preempted_time (task_id()) );	
+instance.cc	1479	ps_add_stat( phase->r_proc_delay_sqr.raw, (ps_preempted_time (task_id()) + phase->_prewaiting) * (ps_preempted_time (task_id()) + phase->_prewaiting) -  phase->_prewaiting * phase->_prewaiting);	
 
 
-
-
-
-
-
+int ps_get_stat(long, double *, double *)
+result.cc	137	ps_get_stat( raw, &value, &count );	
+result.cc	163	ps_get_stat( raw, &mean_squares, &count );	
+result.cc	192	ps_get_stat( r_cycle.raw, &junk, &n_cycles );	
+result.cc	193	ps_get_stat( raw, &value, &n_slices );	
+result.cc	222	ps_get_stat( r_cycle.raw, &junk, &n_cycles );	
 
 
 
