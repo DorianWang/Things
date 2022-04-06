@@ -96,6 +96,14 @@ make[4]: Leaving directory '/home/lia/tester/lqns-5.21/parasol/doc'
 
 "sudo apt install ghostscript" (apparently has postscript and pdf tools?)
 
+If latex is giving trouble for whatever reason:
+./configure -disable-latex-doc
+
+From V5 folder:
+autoreconf --install
+./configure -disable-latex-doc
+make
+
 
 
 If latex is giving trouble for whatever reason:
@@ -110,6 +118,11 @@ SystemC Stuff:
 Not that hard to compile, but it needs to either be C++11 or C++14. Trying to then compile with a different C++ error will give you a strange error message.
 It was compiled using MSYS2 with the options for a different output folder and unix folder layout.
 Using MSYS2 and Code::Blocks could compile SystemC's hello world program.
+
+https://stackoverflow.com/questions/46875731/setting-up-a-systemc-project-with-cmake-undefined-reference-to-sc-core
+
+SC_CPLUSPLUS=201402L
+
 
 Check out some useful things if we choose to use SystemC
 -https://github.com/accellera-official/systemc
